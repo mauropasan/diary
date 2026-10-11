@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'Was hat dich heute zum Lächeln gebracht?',
+    'Beschreibe einen Moment, in dem du dankbar warst.',
+    'Was hast du heute gelernt?',
+    'Was war der beste Moment des Tages?',
+    'Was beschäftigt dich gerade? Schreib darüber.',
+    'Mit wem hast du heute gesprochen, und worüber?',
+    'Was hast du heute getan, das dich deinen Zielen näher bringt?',
+    'Beschreibe deine Umgebung in allen Einzelheiten.',
+    'Was hat dich heute überrascht?',
+    'Wie fühlst du dich körperlich? Und emotional?',
+    'Was hast du heute vermieden, und warum?',
+    'Schreib über etwas, worauf du dich freust.',
+    'Was hast du gelesen, gesehen oder gehört, das dich geprägt hat?',
+    'Was war die größte Herausforderung des Tages?',
+    'Was würdest du heute tun, wenn du keine Angst hättest?',
+    'Beschreibe jemanden, der deinen Tag beeinflusst hat.',
+    'Welche kleine Sache hat dir heute Energie gegeben?',
+    'Woran möchtest du dich in einem Jahr an heute erinnern?',
+    'Was hast du auf morgen verschoben, und warum?',
+    'Schreib drei gute Dinge auf, die heute passiert sind.',
+    'Worauf bist du heute stolz?',
+    'Was war heute am schwersten, und wie bist du damit umgegangen?',
+    'Was braucht dein Körper oder dein Geist jetzt?',
+    'Wenn heute eine Farbe wäre, welche wäre es, und warum?',
+];

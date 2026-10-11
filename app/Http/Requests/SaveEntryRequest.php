@@ -78,16 +78,22 @@ class SaveEntryRequest extends FormRequest
 
     /**
      * Determine whether the submitted entry is effectively empty.
+     *
+     * Content that only references media (for example an image with no text)
+     * still counts as content, so days with attachments are never deleted.
      */
     public function entryIsEmpty(): bool
     {
+        $rawContent = $this->string('content')->toString();
+
         $content = html_entity_decode(
-            strip_tags($this->string('content')->toString()),
+            strip_tags($rawContent),
             ENT_QUOTES | ENT_HTML5,
         );
 
         return blank($this->string('title')->toString())
             && Str::of($content)->replace("\u{00A0}", ' ')->trim()->isEmpty()
-            && blank($this->input('mood'));
+            && blank($this->input('mood'))
+            && ! Str::contains($rawContent, 'data-attachment-id');
     }
 }

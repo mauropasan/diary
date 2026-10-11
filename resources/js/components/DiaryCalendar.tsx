@@ -10,12 +10,11 @@ import {
     parseISO,
     startOfMonth,
 } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { show as diaryShow } from '@/routes/diary';
 import { cn } from '@/lib/utils';
-
-const WEEKDAY_LABELS = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
+import { formatDay, formatMonthYear, weekdayLabels } from '@/lib/dates';
 
 type DiaryCalendarProps = {
     date: string;
@@ -30,6 +29,9 @@ export default function DiaryCalendar({
     entryDates,
     onNavigate,
 }: DiaryCalendarProps) {
+    const { t, i18n } = useTranslation();
+    const locale = i18n.language;
+
     const [visibleMonth, setVisibleMonth] = useState(() =>
         parseISO(`${month}-01`),
     );
@@ -85,7 +87,7 @@ export default function DiaryCalendar({
                 <button
                     type="button"
                     onClick={() => loadMonth(addMonths(visibleMonth, -1))}
-                    aria-label="Mes anterior"
+                    aria-label={t('calendar.previousMonth')}
                     className="rounded-md px-2 py-1 text-sm text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                 >
                     ‹
@@ -96,14 +98,14 @@ export default function DiaryCalendar({
                     onClick={() => loadMonth(startOfMonth(today))}
                     className="text-sm font-medium text-zinc-600 capitalize transition hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-50"
                 >
-                    {format(visibleMonth, 'LLLL yyyy', { locale: es })}
+                    {formatMonthYear(visibleMonth, locale)}
                 </button>
 
                 <button
                     type="button"
                     disabled={!canGoNextMonth}
                     onClick={() => loadMonth(addMonths(visibleMonth, 1))}
-                    aria-label="Mes siguiente"
+                    aria-label={t('calendar.nextMonth')}
                     className="rounded-md px-2 py-1 text-sm text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                 >
                     ›
@@ -116,9 +118,9 @@ export default function DiaryCalendar({
                     loading && 'opacity-50',
                 )}
             >
-                {WEEKDAY_LABELS.map((weekday) => (
+                {weekdayLabels(locale).map((weekday, index) => (
                     <div
-                        key={weekday}
+                        key={index}
                         className="py-1 text-zinc-400 dark:text-zinc-500"
                     >
                         {weekday}
@@ -152,7 +154,7 @@ export default function DiaryCalendar({
                                     'cursor-not-allowed text-zinc-300 dark:text-zinc-600',
                             )}
                         >
-                            {format(day, 'd')}
+                            {formatDay(day, locale)}
                             {hasEntry && (
                                 <span
                                     className={cn(

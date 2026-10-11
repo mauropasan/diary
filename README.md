@@ -11,7 +11,7 @@ your entries in plaintext once they are saved.
 
 ## What it does
 
-- **One entry per day** (`/diario/YYYY-MM-DD`) with a TipTap rich text editor
+- **One entry per day** (`/diary/YYYY-MM-DD`) with a TipTap rich text editor
   and autosave (~2 s debounce, "Guardando…" / "Guardado" indicator).
 - **Envelope encryption** of `title` and `content` (see below). The plaintext
   `date` and `mood` stay queryable so the calendar, mood chart, streaks and
@@ -109,8 +109,20 @@ php artisan serve      # http://localhost:8000
 npm run dev            # Vite dev server with HMR (in another terminal)
 ```
 
-Open the app at `http://localhost:8000`, or whatever host/port you set in
-`APP_URL`.
+The dev stack is **bound to `APP_URL`**: both the PHP server and Vite derive
+their host from it (CDN: Vite also writes `public/hot` pointing at that host).
+To make the diary reachable from other devices on your network, set
+`APP_URL` to your LAN address, e.g.:
+
+```dotenv
+APP_URL=http://192.168.1.4:8000
+```
+
+then start `composer run dev` and open `http://192.168.1.4:8000` from any device
+on the same network (firewall permitting).
+
+> In the default `.env.example`, `APP_URL=http://localhost:8000`, which keeps
+> everything working on just this machine.
 
 > If a frontend change does not appear or you see "Unable to locate file in
 > Vite manifest", run `npm run build` (production) or make sure `npm run dev`
@@ -119,12 +131,12 @@ Open the app at `http://localhost:8000`, or whatever host/port you set in
 ## Creating the first user
 
 On a fresh database there are no accounts. Visit `/login` and you will be
-redirected to **`/registro`**, where you enter a name, email and password. The
+redirected to **`/register`**, where you enter a name, email and password. The
 account, its wrapped key material and a one-time **recovery key** are created
 together, then you are logged in and the diary is unlocked. Save the recovery
 key shown on screen.
 
-Once a user exists, `/registro` returns **404** and is never available again.
+Once a user exists, `/register` returns **404** and is never available again.
 
 You can also create a user from the CLI (it prompts for name, email and
 password and prints the recovery key):
@@ -149,6 +161,10 @@ php artisan diary:create-user
 | `npm run check`                              | Frontend lint + format check (`npm run check:fix` to fix)   |
 | `php artisan migrate`                        | Run database migrations                                     |
 | `php artisan wayfinder:generate --with-form` | Regenerate typed TS route/action helpers                    |
+| `npm run cap:sync`                           | Copy assets/config into the Android project                 |
+| `npm run cap:open`                           | Open the Android project in Android Studio                  |
+| `npm run apk:debug`                          | Build a debug APK (`android/app/build/outputs/apk/debug/`)  |
+| `npm run apk:release`                        | Build a release APK (needs signing, see below)              |
 
 Keep `diary:backup` scheduled in production (e.g. a cron entry or the scheduler)
 so snapshots are taken regularly.

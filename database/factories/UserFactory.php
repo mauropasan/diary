@@ -45,6 +45,16 @@ class UserFactory extends Factory
     }
 
     /**
+     * Indicate that the model is an administrator.
+     */
+    public function asAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_admin' => true,
+        ]);
+    }
+
+    /**
      * Provision diary key material wrapped with the given password.
      */
     public function withDiaryKey(string $password = 'password'): static

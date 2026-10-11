@@ -1,0 +1,214 @@
+{
+    "common": {
+        "brand": "Diario",
+        "email": "Email",
+        "password": "Password",
+        "name": "Nome",
+        "newPassword": "Nuova password",
+        "confirmPassword": "Ripeti la password",
+        "confirmNewPassword": "Ripeti la nuova password",
+        "close": "Chiudi",
+        "cancel": "Annulla",
+        "language": "Lingua",
+        "backToDiary": "Torna al diario",
+        "backToLogin": "Torna all'accesso"
+    },
+    "nav": {
+        "today": "Vai a oggi",
+        "search": "Cerca",
+        "mood": "Umore",
+        "notes": "Note",
+        "export": "Esporta",
+        "password": "Password",
+        "users": "Utenti",
+        "logout": "Esci",
+        "openMenu": "Apri menu",
+        "closeMenu": "Chiudi menu",
+        "more": "Altro"
+    },
+    "theme": {
+        "label": "Tema",
+        "light": "Chiaro",
+        "dark": "Scuro",
+        "system": "Sistema"
+    },
+    "media": {
+        "attach": "Allega",
+        "attachTitle": "Allega un file",
+        "uploading": "Caricamento…",
+        "error": "Impossibile caricare il file."
+    },
+    "login": {
+        "title": "Accedi",
+        "subtitle": "Accedi per scrivere nel tuo diario.",
+        "remember": "Ricordami",
+        "submit": "Accedi",
+        "submitting": "Accesso…",
+        "forgot": "Hai dimenticato la password? Usa la tua chiave di recupero"
+    },
+    "register": {
+        "title": "Crea il tuo diario",
+        "heading": "Crea il tuo diario",
+        "subtitle": "Non esiste ancora alcun account. Definisci il tuo nome, la tua email e una password per iniziare. Essendo il primo account, sarai l'amministratore: solo tu potrai creare ed eliminare altri account. Le tue voci saranno cifrate con una chiave derivata da quella password: se la dimentichi, non potranno essere recuperate senza la chiave di recupero mostrata di seguito.",
+        "submit": "Crea diario",
+        "submitting": "Creazione…"
+    },
+    "password": {
+        "title": "Cambia password",
+        "heading": "Cambia password",
+        "subtitle": "Il tuo diario viene decifrato con questa password. Se la perdi, perderai l'accesso alle voci.",
+        "current": "Password attuale",
+        "submit": "Cambia password",
+        "submitting": "Salvataggio…"
+    },
+    "recovery": {
+        "title": "Recupera l'accesso",
+        "heading": "Recupera l'accesso",
+        "subtitle": "Inserisci la tua email, la chiave di recupero che hai conservato e una nuova password. Senza la chiave di recupero non è possibile accedere alle tue voci.",
+        "recoveryKey": "Chiave di recupero",
+        "submit": "Ripristina l'accesso",
+        "submitting": "Ripristino…"
+    },
+    "unlock": {
+        "title": "Sblocca il diario",
+        "subtitle": "Il tuo diario è bloccato. Inserisci la password per decifrarlo.",
+        "submit": "Sblocca",
+        "submitting": "Decifratura…"
+    },
+    "lock": {
+        "heading": "Diario bloccato",
+        "body": "È trascorso un po' di tempo senza attività. Inserisci la password per continuare a scrivere.",
+        "submit": "Sblocca",
+        "submitting": "Decifratura…"
+    },
+    "show": {
+        "suggestion": "Spunto:",
+        "streakDays_one": "{{count}} giorno di fila",
+        "streakDays_other": "{{count}} giorni di fila",
+        "streakRecord": " · record: {{count}}",
+        "lockCountdown": "Blocco per inattività tra {{time}}",
+        "recoveryTitle": "Conserva la tua chiave di recupero",
+        "recoveryIntro": "È l'unica copia e non verrà mostrata di nuovo. Con essa puoi recuperare il diario se dimentichi la password.",
+        "previous": "← Precedente",
+        "next": "Successivo →",
+        "onThisDay": "In questo giorno",
+        "notesTitle": "Note di questo giorno",
+        "upcomingTitle": "In arrivo"
+    },
+    "calendar": {
+        "previousMonth": "Mese precedente",
+        "nextMonth": "Mese successivo"
+    },
+    "editor": {
+        "titlePlaceholder": "Titolo (facoltativo)",
+        "moodPlaceholder": "Umore",
+        "placeholder": "Scrivi qui la tua giornata…",
+        "insertTime": "Ora attuale",
+        "insertTimeTitle": "Inserisci l'ora attuale (Ctrl+Maiusc+H)",
+        "saving": "Salvataggio…",
+        "saved": "Salvato",
+        "saveError": "Impossibile salvare",
+        "moods": {
+            "1": "Molto male",
+            "2": "Male",
+            "3": "Così così",
+            "4": "Bene",
+            "5": "Molto bene"
+        }
+    },
+    "tags": {
+        "placeholder": "Etichette…",
+        "remove": "Rimuovi {{tag}}"
+    },
+    "search": {
+        "title": "Cerca",
+        "placeholder": "Cerca nel tuo diario…",
+        "empty": "Scrivi qualcosa per cercare nel titolo, nel contenuto o nelle etichette.",
+        "noResults": "Nessuna voce trovata per «{{query}}».",
+        "untitled": "Senza titolo"
+    },
+    "mood": {
+        "title": "Umore",
+        "average_one": "Media {{average}} · {{count}} giorno",
+        "average_other": "Media {{average}} · {{count}} giorni",
+        "noData": "Nessun dato questo mese",
+        "noDataRange": "Nessun dato in questo intervallo",
+        "rangeLabel": "Giorni visibili",
+        "rangeOne": "1 giorno",
+        "rangeThree": "3 giorni",
+        "rangeWeek": "1 settimana",
+        "rangePrev": "Giorni precedenti",
+        "rangeNext": "Giorni successivi",
+        "dayWithMood": "{{date}} · {{mood}}"
+    },
+    "export": {
+        "title": "Esporta",
+        "download": "Scarica Markdown",
+        "print": "Stampa / Salva come PDF",
+        "empty": "Non ci sono ancora voci.",
+        "moodMeta": "Umore: {{mood}}",
+        "tagsMeta": "Etichette: {{tags}}"
+    },
+    "admin": {
+        "title": "Utenti",
+        "heading": "Utenti",
+        "recoveryTitle": "Chiave di recupero del nuovo utente",
+        "recoveryIntro": "Viene mostrata una sola volta. Consegnale all'utente insieme alla password; con essa può recuperare il diario se dimentica la password.",
+        "createTitle": "Crea account",
+        "submit": "Crea account",
+        "submitting": "Creazione…",
+        "accounts_one": "Account ({{count}})",
+        "accounts_other": "Account ({{count}})",
+        "empty": "Non esiste ancora alcun account.",
+        "badge": "Admin",
+        "entries_one": "{{count}} voce",
+        "entries_other": "{{count}} voci",
+        "since": "dal {{date}}",
+        "delete": "Elimina",
+        "confirmDelete": "Eliminare l'account di {{name}}? Tutte le sue voci saranno cancellate e non potranno essere recuperate. Questa azione non può essere annullata."
+    },
+    "notes": {
+        "title": "Note",
+        "subtitle": "Note, promemoria ed eventi. Dai loro un colore e, se vuoi, collegali a un giorno.",
+        "titleLabel": "Titolo",
+        "titlePlaceholder": "Titolo (facoltativo)",
+        "bodyLabel": "Testo",
+        "bodyPlaceholder": "Scrivi qui la tua nota…",
+        "color": "Colore",
+        "kindLabel": "Tipo",
+        "dateLabel": "Giorno",
+        "save": "Salva",
+        "saving": "Salvataggio…",
+        "cancel": "Annulla",
+        "reset": "Azzera",
+        "edit": "Modifica",
+        "delete": "Elimina",
+        "confirmDelete": "Eliminare questa nota? L'operazione non può essere annullata.",
+        "empty": "Non hai ancora note.",
+        "untitled": "Nota senza titolo",
+        "filters": {
+            "all": "Tutti"
+        },
+        "noResults": "Nessuna nota di questo tipo.",
+        "colors": {
+            "yellow": "Giallo",
+            "pink": "Rosa",
+            "blue": "Azzurro",
+            "green": "Verde",
+            "purple": "Viola",
+            "gray": "Grigio"
+        },
+        "customColor": "Colore personalizzato",
+        "backgroundImage": "Immagine di sfondo",
+        "removeBackground": "Rimuovi immagine",
+        "kinds": {
+            "note": "Nota",
+            "reminder": "Promemoria",
+            "event": "Evento"
+        }
+    },
+    "localePicker": {
+        "title": "Scegli la tua lingua",
+        "subtitle": "Seleziona la lingua che vuoi usare."
+    }
+}

@@ -8,9 +8,13 @@ import {
     useImperativeHandle,
     useRef,
     useState,
+    type ChangeEvent,
     type Ref,
 } from 'react';
+import { useTranslation } from 'react-i18next';
+import { MediaNode, type MediaData } from '@/extensions/MediaNode';
 import { update as diaryUpdate } from '@/routes/diary';
+import diaryAttachments from '@/routes/diary/attachments';
 import { cn } from '@/lib/utils';
 import TagInput from '@/components/TagInput';
 
@@ -18,15 +22,22 @@ export type DiaryEditorHandle = {
     flushSave(onFinished?: () => void): void;
 };
 
-const MOODS = [
-    { value: 1, label: 'Muy mal' },
-    { value: 2, label: 'Mal' },
-    { value: 3, label: 'Regular' },
-    { value: 4, label: 'Bien' },
-    { value: 5, label: 'Muy bien' },
-] as const;
+const MOOD_VALUES = [1, 2, 3, 4, 5] as const;
 
 type SaveState = 'idle' | 'pending' | 'saving' | 'saved' | 'error';
+
+type UploadState = 'idle' | 'uploading' | 'error';
+
+/**
+ * Read the Laravel XSRF token from its cookie so media can be uploaded with a
+ * plain `fetch` instead of going through Inertia (we need the response to stay
+ * in the editor without a page reload).
+ */
+function xsrfToken(): string {
+    const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+
+    return match ? decodeURIComponent(match[1]) : '';
+}
 
 type DiaryEditorProps = {
     date: string;
@@ -45,12 +56,14 @@ export default function DiaryEditor({
     initialTags,
     handleRef,
 }: DiaryEditorProps) {
+    const { t, i18n } = useTranslation();
     const timezone = usePage().props.diary.timezone;
 
     const [title, setTitle] = useState(initialTitle ?? '');
     const [mood, setMood] = useState<number | null>(initialMood ?? null);
     const [tags, setTags] = useState<string[]>(initialTags ?? []);
     const [saveState, setSaveState] = useState<SaveState>('idle');
+    const [uploadState, setUploadState] = useState<UploadState>('idle');
     const [hasUnsaved, setHasUnsaved] = useState(false);
 
     const titleRef = useRef(title);
@@ -59,9 +72,10 @@ export default function DiaryEditor({
     const dateRef = useRef(date);
     const dirtyRef = useRef(false);
     const timerRef = useRef<number | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     function formatCurrentTime(): string {
-        return new Intl.DateTimeFormat('es-ES', {
+        return new Intl.DateTimeFormat(i18n.language, {
             hour: '2-digit',
             minute: '2-digit',
             hour12: false,
@@ -73,10 +87,70 @@ export default function DiaryEditor({
         return `<p>${formatCurrentTime()} — </p>`;
     }
 
+    async function uploadMedia(file: File): Promise<void> {
+        setUploadState('uploading');
+
+        const form = new FormData();
+        form.append('attachment', file);
+
+        try {
+            const response = await fetch(
+                diaryAttachments.store.url(dateRef.current),
+                {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'X-XSRF-TOKEN': xsrfToken(),
+                    },
+                    body: form,
+                },
+            );
+
+            if (!response.ok) {
+                throw new Error('upload failed');
+            }
+
+            const payload = (await response.json()) as {
+                attachment: {
+                    id: number;
+                    kind: MediaData['kind'];
+                    original_name: string;
+                    mime: string;
+                    size: number;
+                    src: string;
+                };
+            };
+            const attachment = payload.attachment;
+
+            editor
+                ?.chain()
+                .focus()
+                .insertContent({
+                    type: 'media',
+                    attrs: {
+                        attachmentId: attachment.id,
+                        kind: attachment.kind,
+                        originalName: attachment.original_name,
+                        mime: attachment.mime,
+                        size: attachment.size,
+                        src: attachment.src,
+                    },
+                })
+                .run();
+
+            setUploadState('idle');
+        } catch {
+            setUploadState('error');
+        }
+    }
+
     const editor = useEditor({
         extensions: [
             StarterKit,
-            Placeholder.configure({ placeholder: 'Escribe aquí tu día…' }),
+            Placeholder.configure({
+                placeholder: () => t('editor.placeholder'),
+            }),
+            MediaNode,
             Extension.create({
                 name: 'insertCurrentTime',
                 addKeyboardShortcuts() {
@@ -95,6 +169,34 @@ export default function DiaryEditor({
             }),
         ],
         content: initialContent ?? '',
+        editorProps: {
+            handleDrop(_view, event, _slice, moved) {
+                if (moved) {
+                    return false;
+                }
+
+                const files = Array.from(event.dataTransfer?.files ?? []);
+
+                if (files.length === 0) {
+                    return false;
+                }
+
+                files.forEach((file) => void uploadMedia(file));
+
+                return true;
+            },
+            handlePaste(_view, event) {
+                const files = Array.from(event.clipboardData?.files ?? []);
+
+                if (files.length === 0) {
+                    return false;
+                }
+
+                files.forEach((file) => void uploadMedia(file));
+
+                return true;
+            },
+        },
         onUpdate: () => scheduleSave(),
     });
 
@@ -200,6 +302,7 @@ export default function DiaryEditor({
         setMood(moodRef.current);
         setTags(tagsRef.current);
         setSaveState('idle');
+        setUploadState('idle');
         setHasUnsaved(false);
         editor?.commands.setContent(initialContent ?? '');
     }, [date]);
@@ -208,14 +311,27 @@ export default function DiaryEditor({
         editor?.chain().focus().insertContent(timeInsertion()).run();
     };
 
+    function handleFileChange(event: ChangeEvent<HTMLInputElement>): void {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+
+        if (file) {
+            void uploadMedia(file);
+        }
+    }
+
     const statusLabel =
-        saveState === 'pending' || saveState === 'saving'
-            ? 'Guardando…'
-            : saveState === 'saved'
-              ? 'Guardado'
-              : saveState === 'error'
-                ? 'No se pudo guardar'
-                : '';
+        uploadState === 'uploading'
+            ? t('media.uploading')
+            : uploadState === 'error'
+              ? t('media.error')
+              : saveState === 'pending' || saveState === 'saving'
+                ? t('editor.saving')
+                : saveState === 'saved'
+                  ? t('editor.saved')
+                  : saveState === 'error'
+                    ? t('editor.saveError')
+                    : '';
 
     return (
         <section className="flex flex-col gap-4">
@@ -228,7 +344,7 @@ export default function DiaryEditor({
                         setTitle(event.target.value);
                         scheduleSave();
                     }}
-                    placeholder="Título (opcional)"
+                    placeholder={t('editor.titlePlaceholder')}
                     className="w-full border-none bg-transparent px-0 text-2xl font-semibold text-zinc-900 outline-none placeholder:text-zinc-400 dark:text-zinc-50 dark:placeholder:text-zinc-600"
                 />
 
@@ -245,10 +361,10 @@ export default function DiaryEditor({
                     }}
                     className="rounded-md border border-zinc-200 bg-white px-2 py-1 text-sm text-zinc-700 outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
                 >
-                    <option value="">Ánimo</option>
-                    {MOODS.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
+                    <option value="">{t('editor.moodPlaceholder')}</option>
+                    {MOOD_VALUES.map((value) => (
+                        <option key={value} value={value}>
+                            {t(`editor.moods.${value}`)}
                         </option>
                     ))}
                 </select>
@@ -268,16 +384,33 @@ export default function DiaryEditor({
                     <button
                         type="button"
                         onClick={insertTime}
-                        title="Insertar la hora actual (Ctrl+Mayús+H)"
+                        title={t('editor.insertTimeTitle')}
                         className="rounded-md px-2 py-1 text-xs font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                     >
-                        Hora actual
+                        {t('editor.insertTime')}
                     </button>
+
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploadState === 'uploading'}
+                        title={t('media.attachTitle')}
+                        className="rounded-md px-2 py-1 text-xs font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 disabled:opacity-50 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                    >
+                        {t('media.attach')}
+                    </button>
+
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        className="hidden"
+                        onChange={handleFileChange}
+                    />
 
                     <span
                         className={cn(
                             'text-xs',
-                            saveState === 'error'
+                            uploadState === 'error' || saveState === 'error'
                                 ? 'text-red-600 dark:text-red-400'
                                 : 'text-zinc-400 dark:text-zinc-500',
                         )}

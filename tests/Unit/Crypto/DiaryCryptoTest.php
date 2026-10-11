@@ -66,3 +66,40 @@ it('rejects a malformed ciphertext', function () {
     expect(fn () => $crypto->decrypt('not-a-valid-payload', $dek))
         ->toThrow(DecryptionFailedException::class);
 });
+
+it('encrypts and decrypts raw bytes round-trip', function () {
+    $crypto = new DiaryCrypto;
+    $dek = $crypto->generateDek();
+    $bytes = random_bytes(64 * 1024);
+
+    $blob = $crypto->encryptBytes($bytes, $dek);
+
+    expect($crypto->decryptBytes($blob, $dek))->toBe($bytes);
+});
+
+it('produces different encrypted blobs for the same bytes', function () {
+    $crypto = new DiaryCrypto;
+    $dek = $crypto->generateDek();
+
+    expect($crypto->encryptBytes('mismo contenido', $dek))
+        ->not->toBe($crypto->encryptBytes('mismo contenido', $dek));
+});
+
+it('rejects a tampered encrypted blob', function () {
+    $crypto = new DiaryCrypto;
+    $dek = $crypto->generateDek();
+    $blob = $crypto->encryptBytes('secret bytes', $dek);
+
+    $blob[strlen($blob) - 1] = chr(ord($blob[strlen($blob) - 1]) ^ 0x01);
+
+    expect(fn () => $crypto->decryptBytes($blob, $dek))
+        ->toThrow(DecryptionFailedException::class);
+});
+
+it('rejects a truncated encrypted blob', function () {
+    $crypto = new DiaryCrypto;
+    $dek = $crypto->generateDek();
+
+    expect(fn () => $crypto->decryptBytes('too-short', $dek))
+        ->toThrow(DecryptionFailedException::class);
+});

@@ -55,7 +55,7 @@ it('changes the password and re-wraps the key without touching entry content', f
     $this->get(route('diary.show', $this->today))
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->where('entry.content', '<p>Contenido que debe sobrevivir.</p>')
-            ->where('flash.status', 'Contraseña actualizada. La clave del diario se ha vuelto a proteger con la nueva contraseña.')
+            ->where('flash.status', __('messages.password.updated'))
         );
 });
 

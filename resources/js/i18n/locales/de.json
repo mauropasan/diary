@@ -1,0 +1,214 @@
+{
+    "common": {
+        "brand": "Tagebuch",
+        "email": "E-Mail",
+        "password": "Passwort",
+        "name": "Name",
+        "newPassword": "Neues Passwort",
+        "confirmPassword": "Passwort wiederholen",
+        "confirmNewPassword": "Neues Passwort wiederholen",
+        "close": "Schließen",
+        "cancel": "Abbrechen",
+        "language": "Sprache",
+        "backToDiary": "Zurück zum Tagebuch",
+        "backToLogin": "Zurück zur Anmeldung"
+    },
+    "nav": {
+        "today": "Zu heute",
+        "search": "Suchen",
+        "mood": "Stimmung",
+        "notes": "Notizen",
+        "export": "Exportieren",
+        "password": "Passwort",
+        "users": "Benutzer",
+        "logout": "Abmelden",
+        "openMenu": "Menü öffnen",
+        "closeMenu": "Menü schließen",
+        "more": "Mehr"
+    },
+    "theme": {
+        "label": "Design",
+        "light": "Hell",
+        "dark": "Dunkel",
+        "system": "System"
+    },
+    "media": {
+        "attach": "Anhängen",
+        "attachTitle": "Datei anhängen",
+        "uploading": "Hochladen…",
+        "error": "Datei konnte nicht hochgeladen werden."
+    },
+    "login": {
+        "title": "Anmelden",
+        "subtitle": "Melden Sie sich an, um in Ihr Tagebuch zu schreiben.",
+        "remember": "Angemeldet bleiben",
+        "submit": "Anmelden",
+        "submitting": "Anmeldung…",
+        "forgot": "Passwort vergessen? Verwenden Sie Ihren Wiederherstellungsschlüssel"
+    },
+    "register": {
+        "title": "Tagebuch erstellen",
+        "heading": "Erstellen Sie Ihr Tagebuch",
+        "subtitle": "Es gibt noch kein Konto. Legen Sie Ihren Namen, Ihre E-Mail und ein Passwort fest, um zu beginnen. Da dies das erste Konto ist, werden Sie Administrator: Nur Sie können weitere Konten erstellen und löschen. Ihre Einträge werden mit einem aus diesem Passwort abgeleiteten Schlüssel verschlüsselt: Wenn Sie es vergessen, können sie ohne den anschließend angezeigten Wiederherstellungsschlüssel nicht wiederhergestellt werden.",
+        "submit": "Tagebuch erstellen",
+        "submitting": "Wird erstellt…"
+    },
+    "password": {
+        "title": "Passwort ändern",
+        "heading": "Passwort ändern",
+        "subtitle": "Ihr Tagebuch wird mit diesem Passwort entschlüsselt. Wenn Sie es verlieren, verlieren Sie den Zugriff auf Ihre Einträge.",
+        "current": "Aktuelles Passwort",
+        "submit": "Passwort ändern",
+        "submitting": "Speichern…"
+    },
+    "recovery": {
+        "title": "Zugriff wiederherstellen",
+        "heading": "Zugriff wiederherstellen",
+        "subtitle": "Geben Sie Ihre E-Mail, den gespeicherten Wiederherstellungsschlüssel und ein neues Passwort ein. Ohne den Wiederherstellungsschlüssel ist kein Zugriff auf Ihre Einträge möglich.",
+        "recoveryKey": "Wiederherstellungsschlüssel",
+        "submit": "Zugriff wiederherstellen",
+        "submitting": "Wiederherstellung…"
+    },
+    "unlock": {
+        "title": "Tagebuch entsperren",
+        "subtitle": "Ihr Tagebuch ist gesperrt. Geben Sie Ihr Passwort ein, um es zu entschlüsseln.",
+        "submit": "Entsperren",
+        "submitting": "Entschlüsselung…"
+    },
+    "lock": {
+        "heading": "Tagebuch gesperrt",
+        "body": "Es gab eine Weile keine Aktivität. Geben Sie Ihr Passwort ein, um weiterzuschreiben.",
+        "submit": "Entsperren",
+        "submitting": "Entschlüsselung…"
+    },
+    "show": {
+        "suggestion": "Anregung:",
+        "streakDays_one": "{{count}} Tag in Folge",
+        "streakDays_other": "{{count}} Tage in Folge",
+        "streakRecord": " · Rekord: {{count}}",
+        "lockCountdown": "Sperrung wegen Inaktivität in {{time}}",
+        "recoveryTitle": "Bewahren Sie Ihren Wiederherstellungsschlüssel auf",
+        "recoveryIntro": "Es ist die einzige Kopie und wird nicht erneut angezeigt. Damit können Sie Ihr Tagebuch wiederherstellen, wenn Sie das Passwort vergessen.",
+        "previous": "← Zurück",
+        "next": "Weiter →",
+        "onThisDay": "An diesem Tag",
+        "notesTitle": "Notizen für diesen Tag",
+        "upcomingTitle": "Anstehend"
+    },
+    "calendar": {
+        "previousMonth": "Vorheriger Monat",
+        "nextMonth": "Nächster Monat"
+    },
+    "editor": {
+        "titlePlaceholder": "Titel (optional)",
+        "moodPlaceholder": "Stimmung",
+        "placeholder": "Schreiben Sie hier über Ihren Tag…",
+        "insertTime": "Aktuelle Uhrzeit",
+        "insertTimeTitle": "Aktuelle Uhrzeit einfügen (Strg+Umschalt+H)",
+        "saving": "Speichern…",
+        "saved": "Gespeichert",
+        "saveError": "Speichern fehlgeschlagen",
+        "moods": {
+            "1": "Sehr schlecht",
+            "2": "Schlecht",
+            "3": "Mittelmäßig",
+            "4": "Gut",
+            "5": "Sehr gut"
+        }
+    },
+    "tags": {
+        "placeholder": "Schlagwörter…",
+        "remove": "{{tag}} entfernen"
+    },
+    "search": {
+        "title": "Suchen",
+        "placeholder": "Durchsuchen Sie Ihr Tagebuch…",
+        "empty": "Geben Sie etwas ein, um im Titel, im Inhalt oder in den Schlagwörtern zu suchen.",
+        "noResults": "Keine Einträge für „{{query}}“ gefunden.",
+        "untitled": "Ohne Titel"
+    },
+    "mood": {
+        "title": "Stimmung",
+        "average_one": "Durchschnitt {{average}} · {{count}} Tag",
+        "average_other": "Durchschnitt {{average}} · {{count}} Tage",
+        "noData": "Diesen Monat keine Daten",
+        "noDataRange": "Keine Daten in diesem Bereich",
+        "rangeLabel": "Sichtbare Tage",
+        "rangeOne": "1 Tag",
+        "rangeThree": "3 Tage",
+        "rangeWeek": "1 Woche",
+        "rangePrev": "Frühere Tage",
+        "rangeNext": "Spätere Tage",
+        "dayWithMood": "{{date}} · {{mood}}"
+    },
+    "export": {
+        "title": "Exportieren",
+        "download": "Markdown herunterladen",
+        "print": "Drucken / Als PDF speichern",
+        "empty": "Es gibt noch keine Einträge.",
+        "moodMeta": "Stimmung: {{mood}}",
+        "tagsMeta": "Schlagwörter: {{tags}}"
+    },
+    "admin": {
+        "title": "Benutzer",
+        "heading": "Benutzer",
+        "recoveryTitle": "Wiederherstellungsschlüssel des neuen Benutzers",
+        "recoveryIntro": "Er wird nur einmal angezeigt. Händigen Sie ihn dem Benutzer zusammen mit dem Passwort aus; damit kann er sein Tagebuch wiederherstellen, wenn er das Passwort vergisst.",
+        "createTitle": "Konto erstellen",
+        "submit": "Konto erstellen",
+        "submitting": "Wird erstellt…",
+        "accounts_one": "Konten ({{count}})",
+        "accounts_other": "Konten ({{count}})",
+        "empty": "Es gibt noch kein Konto.",
+        "badge": "Admin",
+        "entries_one": "{{count}} Eintrag",
+        "entries_other": "{{count}} Einträge",
+        "since": "seit {{date}}",
+        "delete": "Löschen",
+        "confirmDelete": "Konto von {{name}} löschen? Alle Einträge werden gelöscht und können nicht wiederhergestellt werden. Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "notes": {
+        "title": "Notizen",
+        "subtitle": "Notizen, Erinnerungen und Termine. Gib ihnen eine Farbe und verknüpfe sie bei Bedarf mit einem Tag.",
+        "titleLabel": "Titel",
+        "titlePlaceholder": "Titel (optional)",
+        "bodyLabel": "Text",
+        "bodyPlaceholder": "Schreibe hier deine Notiz…",
+        "color": "Farbe",
+        "kindLabel": "Typ",
+        "dateLabel": "Tag",
+        "save": "Speichern",
+        "saving": "Wird gespeichert…",
+        "cancel": "Abbrechen",
+        "reset": "Zurücksetzen",
+        "edit": "Bearbeiten",
+        "delete": "Löschen",
+        "confirmDelete": "Diese Notiz löschen? Das kann nicht rückgängig gemacht werden.",
+        "empty": "Du hast noch keine Notizen.",
+        "untitled": "Notiz ohne Titel",
+        "filters": {
+            "all": "Alle"
+        },
+        "noResults": "Keine Notizen dieses Typs.",
+        "colors": {
+            "yellow": "Gelb",
+            "pink": "Rosa",
+            "blue": "Blau",
+            "green": "Grün",
+            "purple": "Violett",
+            "gray": "Grau"
+        },
+        "customColor": "Eigene Farbe",
+        "backgroundImage": "Hintergrundbild",
+        "removeBackground": "Bild entfernen",
+        "kinds": {
+            "note": "Notiz",
+            "reminder": "Erinnerung",
+            "event": "Termin"
+        }
+    },
+    "localePicker": {
+        "title": "Wählen Sie Ihre Sprache",
+        "subtitle": "Wählen Sie die Sprache aus, die Sie verwenden möchten."
+    }
+}

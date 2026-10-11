@@ -1,25 +1,36 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { addDays, format, parseISO } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { addDays, format } from 'date-fns';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import DiaryCalendar from '@/components/DiaryCalendar';
 import DiaryEditor, { type DiaryEditorHandle } from '@/components/DiaryEditor';
+import DiaryNav from '@/components/DiaryNav';
 import LockScreen from '@/components/LockScreen';
+import {
+    formatLongDate,
+    formatLongDay,
+    formatMonthYear,
+    formatShortDayMonth,
+} from '@/lib/dates';
 import { lockDiary } from '@/lib/lockDiary';
+import { noteColorClass } from '@/lib/noteColors';
+import { cn } from '@/lib/utils';
 import { useInactivityLock } from '@/lib/useInactivityLock';
 import { home, logout } from '@/routes';
-import {
-    exportMethod as diaryExport,
-    lock as diaryLock,
-    mood as diaryMood,
-    password as diaryPassword,
-    search as diarySearch,
-    show as diaryShow,
-} from '@/routes/diary';
+import { lock as diaryLock, show as diaryShow } from '@/routes/diary';
 
 type Memory = {
     date: string;
     title: string | null;
+};
+
+type DayNote = {
+    id: number;
+    title: string | null;
+    body: string | null;
+    color: string;
+    kind: string;
+    date: string | null;
 };
 
 type EntryProps = {
@@ -39,6 +50,8 @@ type EntryProps = {
         current: number;
         longest: number;
     };
+    notes: DayNote[];
+    upcomingNotes: DayNote[];
 };
 
 export default function Show({
@@ -51,8 +64,12 @@ export default function Show({
     memories,
     prompt,
     streak,
+    notes,
+    upcomingNotes,
 }: EntryProps) {
     const editorRef = useRef<DiaryEditorHandle>(null);
+    const { t, i18n } = useTranslation();
+    const locale = i18n.language;
     const [locked, setLocked] = useState(false);
     const [flashDismissed, setFlashDismissed] = useState(false);
     const [recoveryKeyDismissed, setRecoveryKeyDismissed] = useState(false);
@@ -87,23 +104,36 @@ export default function Show({
         return `${minutes}:${rest.toString().padStart(2, '0')}`;
     }
 
+    const upcomingLimit = 3;
+    const [upcomingPage, setUpcomingPage] = useState(0);
+    const hasMoreUpcoming = upcomingNotes.length > upcomingLimit;
+    const visibleUpcoming = hasMoreUpcoming
+        ? upcomingNotes.slice(
+              upcomingPage * upcomingLimit,
+              (upcomingPage + 1) * upcomingLimit,
+          )
+        : upcomingNotes;
+    const totalUpcomingPages = hasMoreUpcoming
+        ? Math.ceil(upcomingNotes.length / upcomingLimit)
+        : 1;
+    const canPrevUpcoming = upcomingPage > 0;
+    const canNextUpcoming = upcomingPage < totalUpcomingPages - 1;
+
     return (
         <>
-            <Head title={format(day, 'EEEE, d', { locale: es })} />
+            <Head title={formatLongDay(day, locale)} />
 
             <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <div className="mx-auto max-w-3xl px-6 py-8">
+                <div className="w-full px-6 py-8">
                     {flash.recoveryKey && !recoveryKeyDismissed && (
                         <div className="mb-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100">
                             <div className="mb-2 flex items-start justify-between gap-4">
                                 <div>
                                     <p className="font-medium">
-                                        Guarda tu clave de recuperación
+                                        {t('show.recoveryTitle')}
                                     </p>
                                     <p className="mt-1 text-xs text-amber-800 dark:text-amber-200">
-                                        Es la única copia y no se volverá a
-                                        mostrar. Con ella puedes recuperar el
-                                        diario si olvidas la contraseña.
+                                        {t('show.recoveryIntro')}
                                     </p>
                                 </div>
                                 <button
@@ -111,7 +141,7 @@ export default function Show({
                                     onClick={() =>
                                         setRecoveryKeyDismissed(true)
                                     }
-                                    aria-label="Cerrar"
+                                    aria-label={t('common.close')}
                                     className="shrink-0 leading-none text-amber-600 transition hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-100"
                                 >
                                     ×
@@ -129,7 +159,7 @@ export default function Show({
                             <button
                                 type="button"
                                 onClick={() => setFlashDismissed(true)}
-                                aria-label="Cerrar"
+                                aria-label={t('common.close')}
                                 className="shrink-0 leading-none text-emerald-600 transition hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-100"
                             >
                                 ×
@@ -140,62 +170,37 @@ export default function Show({
                     <header className="mb-8 flex items-start justify-between gap-4">
                         <div>
                             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                                {format(day, 'LLLL yyyy', { locale: es })}
+                                {formatMonthYear(day, locale)}
                             </p>
                             <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                                {format(day, 'EEEE, d', { locale: es })}
+                                {formatLongDay(day, locale)}
                             </h1>
                             {streak.current > 0 && (
                                 <p className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">
-                                    {streak.current}{' '}
-                                    {streak.current === 1
-                                        ? 'día seguido'
-                                        : 'días seguidos'}
+                                    {t('show.streakDays', {
+                                        count: streak.current,
+                                    })}
                                     {streak.longest > streak.current &&
-                                        ` · récord: ${streak.longest}`}
+                                        t('show.streakRecord', {
+                                            count: streak.longest,
+                                        })}
                                 </p>
                             )}
                             {remaining > 0 && remaining <= 120 && (
                                 <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
-                                    Bloqueo por inactividad en{' '}
-                                    {formatCountdown(remaining)}
+                                    {t('show.lockCountdown', {
+                                        time: formatCountdown(remaining),
+                                    })}
                                 </p>
                             )}
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <Link
-                                href={diarySearch.url()}
-                                className="rounded-md px-2 py-1 text-xs text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                                Buscar
-                            </Link>
-                            <Link
-                                href={diaryMood.url()}
-                                className="rounded-md px-2 py-1 text-xs text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                                Ánimo
-                            </Link>
-                            <Link
-                                href={diaryExport.url()}
-                                className="rounded-md px-2 py-1 text-xs text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                                Exportar
-                            </Link>
-                            <Link
-                                href={diaryPassword.url()}
-                                className="rounded-md px-2 py-1 text-xs text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                                Contraseña
-                            </Link>
-                            <button
-                                type="button"
-                                onClick={logoutNow}
-                                className="rounded-md px-2 py-1 text-xs text-zinc-500 ring-1 ring-transparent transition hover:text-zinc-800 focus:outline-none focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                                Cerrar sesión
-                            </button>
-                        </div>
+                        <DiaryNav
+                            onBeforeNavigate={() =>
+                                editorRef.current?.flushSave()
+                            }
+                            onLogout={logoutNow}
+                        />
                     </header>
 
                     <div className="mb-8 flex items-center justify-between gap-3 sm:justify-start">
@@ -204,7 +209,7 @@ export default function Show({
                             onClick={() => navigateTo(previous)}
                             className="rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-900"
                         >
-                            ← Anterior
+                            {t('show.previous')}
                         </button>
 
                         {canGoNext && (
@@ -213,7 +218,7 @@ export default function Show({
                                 onClick={() => navigateTo(next)}
                                 className="rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-900"
                             >
-                                Siguiente →
+                                {t('show.next')}
                             </button>
                         )}
 
@@ -226,7 +231,7 @@ export default function Show({
                             }
                             className="rounded-md px-3 py-1.5 text-sm text-zinc-500 underline-offset-2 transition hover:underline dark:text-zinc-400"
                         >
-                            Ir a hoy
+                            {t('nav.today')}
                         </button>
                     </div>
 
@@ -235,7 +240,7 @@ export default function Show({
                             {!entry.content && prompt && (
                                 <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
                                     <span className="font-medium text-zinc-600 dark:text-zinc-300">
-                                        Sugerencia:
+                                        {t('show.suggestion')}
                                     </span>{' '}
                                     {prompt}
                                 </p>
@@ -251,18 +256,161 @@ export default function Show({
                             />
                         </div>
 
-                        <DiaryCalendar
-                            date={date}
-                            month={calendarMonth}
-                            entryDates={calendar}
-                            onNavigate={navigateTo}
-                        />
+                        <div className="flex shrink-0 flex-col gap-4 lg:w-72">
+                            <DiaryCalendar
+                                date={date}
+                                month={calendarMonth}
+                                entryDates={calendar}
+                                onNavigate={navigateTo}
+                            />
+
+                            {notes.length > 0 && (
+                                <section className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+                                    <h2 className="mb-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                                        {t('show.notesTitle')}
+                                    </h2>
+
+                                    <ul className="flex flex-col gap-3">
+                                        {notes.map((note) => (
+                                            <li
+                                                key={note.id}
+                                                className={cn(
+                                                    'rounded-lg border p-3',
+                                                    noteColorClass(note.color),
+                                                )}
+                                            >
+                                                <span className="mb-1 inline-block rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-black/30 dark:text-zinc-300">
+                                                    {t(
+                                                        `notes.kinds.${note.kind}`,
+                                                    )}
+                                                </span>
+                                                {note.title && (
+                                                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                                                        {note.title}
+                                                    </p>
+                                                )}
+                                                {note.body && (
+                                                    <p className="mt-1 text-xs whitespace-pre-wrap text-zinc-700 dark:text-zinc-200">
+                                                        {note.body}
+                                                    </p>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </section>
+                            )}
+
+                            {upcomingNotes.length > 0 && (
+                                <section className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+                                    <h2 className="mb-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                                        {t('show.upcomingTitle')}
+                                    </h2>
+
+                                    <ul className="flex flex-col gap-3">
+                                        {visibleUpcoming.map((note) => (
+                                            <li
+                                                key={note.id}
+                                                className={cn(
+                                                    'rounded-lg border p-3',
+                                                    (note as any)
+                                                        .background_image
+                                                        ? 'border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800'
+                                                        : note.color &&
+                                                            note.color.startsWith(
+                                                                '#',
+                                                            )
+                                                          ? 'border-zinc-200'
+                                                          : noteColorClass(
+                                                                note.color,
+                                                            ),
+                                                )}
+                                                style={
+                                                    (note as any)
+                                                        .background_image
+                                                        ? {
+                                                              backgroundImage: `url(${(note as any).background_image})`,
+                                                          }
+                                                        : note.color &&
+                                                            note.color.startsWith(
+                                                                '#',
+                                                            )
+                                                          ? {
+                                                                backgroundColor:
+                                                                    note.color,
+                                                            }
+                                                          : undefined
+                                                }
+                                            >
+                                                <div className="mb-1 flex items-center justify-between gap-2">
+                                                    <span className="rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-black/30 dark:text-zinc-300">
+                                                        {t(
+                                                            `notes.kinds.${note.kind}`,
+                                                        )}
+                                                    </span>
+                                                    {note.date && (
+                                                        <span className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                                                            {formatShortDayMonth(
+                                                                note.date,
+                                                                locale,
+                                                            )}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {note.title && (
+                                                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                                                        {note.title}
+                                                    </p>
+                                                )}
+                                                {note.body && (
+                                                    <p className="mt-1 text-xs whitespace-pre-wrap text-zinc-700 dark:text-zinc-200">
+                                                        {note.body}
+                                                    </p>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    {hasMoreUpcoming && (
+                                        <div className="mt-3 flex items-center justify-between">
+                                            <button
+                                                type="button"
+                                                disabled={!canPrevUpcoming}
+                                                onClick={() =>
+                                                    setUpcomingPage(
+                                                        (page) => page - 1,
+                                                    )
+                                                }
+                                                className="rounded-md px-2 py-1 text-xs text-zinc-600 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                                            >
+                                                {t('show.previous')}
+                                            </button>
+                                            <span className="text-xs text-zinc-400 dark:text-zinc-500">
+                                                {upcomingPage + 1} /{' '}
+                                                {totalUpcomingPages}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                disabled={!canNextUpcoming}
+                                                onClick={() =>
+                                                    setUpcomingPage(
+                                                        (page) => page + 1,
+                                                    )
+                                                }
+                                                className="rounded-md px-2 py-1 text-xs text-zinc-600 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                                            >
+                                                {t('show.next')}
+                                            </button>
+                                        </div>
+                                    )}
+                                </section>
+                            )}
+                        </div>
                     </main>
 
                     {memories.length > 0 && (
                         <section className="mt-8">
                             <h2 className="mb-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                                Tal día como hoy
+                                {t('show.onThisDay')}
                             </h2>
 
                             <ul className="flex flex-col gap-2">
@@ -273,10 +421,9 @@ export default function Show({
                                             className="group flex items-baseline gap-3 rounded-md border border-zinc-200 px-3 py-2 text-sm transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900"
                                         >
                                             <span className="shrink-0 text-zinc-500 dark:text-zinc-400">
-                                                {format(
-                                                    parseISO(memory.date),
-                                                    "d 'de' LLLL 'de' yyyy",
-                                                    { locale: es },
+                                                {formatLongDate(
+                                                    memory.date,
+                                                    locale,
                                                 )}
                                             </span>
                                             {memory.title && (

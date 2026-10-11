@@ -30,6 +30,7 @@ it('creates the first user, unlocks the diary and flashes the recovery key', fun
     $this->assertAuthenticatedAs($user);
 
     expect(Hash::check('super-secret-1', $user->password))->toBeTrue()
+        ->and($user->is_admin)->toBeTrue()
         ->and($user->kdf_salt)->not->toBeNull()
         ->and($user->wrapped_key)->not->toBeNull()
         ->and($user->recovery_wrapped_key)->not->toBeNull();

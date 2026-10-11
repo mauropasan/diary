@@ -40,7 +40,7 @@ class RecoveryController extends Controller
 
         if ($user === null || $user->recovery_wrapped_key === null) {
             throw ValidationException::withMessages([
-                'email' => 'No hay ninguna cuenta con clave de recuperación para ese correo.',
+                'email' => __('messages.recovery.no-account'),
             ]);
         }
 
@@ -48,7 +48,7 @@ class RecoveryController extends Controller
             $dek = $keys->unlockWithRecoveryKey($user, trim($request->string('recovery_key')->toString()));
         } catch (KeyUnwrapException) {
             throw ValidationException::withMessages([
-                'recovery_key' => 'La clave de recuperación no es válida o los datos están dañados.',
+                'recovery_key' => __('messages.recovery.invalid-key'),
             ]);
         }
 
@@ -67,6 +67,6 @@ class RecoveryController extends Controller
 
         return redirect()
             ->route('diary.show', now()->toDateString())
-            ->with('status', 'Acceso restaurado y contraseña actualizada.');
+            ->with('status', __('messages.recovery.restored'));
     }
 }

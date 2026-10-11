@@ -40,12 +40,12 @@ class PasswordController extends Controller
             });
         } catch (KeyUnwrapException) {
             throw ValidationException::withMessages([
-                'current_password' => 'No se pudo descifrar la clave del diario; los datos pueden estar dañados.',
+                'current_password' => __('messages.password.unwrap-failed'),
             ]);
         }
 
         return redirect()
             ->route('diary.show', now()->toDateString())
-            ->with('status', 'Contraseña actualizada. La clave del diario se ha vuelto a proteger con la nueva contraseña.');
+            ->with('status', __('messages.password.updated'));
     }
 }

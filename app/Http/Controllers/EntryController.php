@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Concerns\ResolvesMonth;
 use App\Http\Requests\SaveEntryRequest;
 use App\Models\Entry;
+use App\Models\Note;
 use App\Models\Tag;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -27,6 +28,7 @@ class EntryController extends Controller
 
         $entry = $user->entries()->where('date', $day->toDateString())->first();
         $month = $this->resolveMonth($request->query('mes'), $day);
+        $notes = $this->notesForDay($user, $day);
 
         return Inertia::render('diary/show', [
             'date' => $day->toDateString(),
@@ -44,6 +46,8 @@ class EntryController extends Controller
             'memories' => $this->memories($user, $day),
             'prompt' => $this->dailyPrompt($day),
             'streak' => $this->streak($user, CarbonImmutable::today()),
+            'notes' => $notes,
+            'upcomingNotes' => $this->upcomingNotes($user, array_column($notes, 'id')),
         ]);
     }
 
@@ -70,9 +74,30 @@ class EntryController extends Controller
             );
 
             $entry->syncTags($request->input('tags', []));
+            $this->reconcileAttachments($entry, $request->input('content'));
         }
 
         return redirect()->route('diary.show', $day->toDateString());
+    }
+
+    /**
+     * Delete attachments that are no longer referenced by the entry content.
+     *
+     * The media nodes embed their `data-attachment-id`, so removing a node from
+     * the editor and saving removes the corresponding file from disk.
+     */
+    private function reconcileAttachments(Entry $entry, mixed $content): void
+    {
+        $referenced = [];
+
+        if (is_string($content) && preg_match_all('/data-attachment-id="(\d+)"/', $content, $matches)) {
+            $referenced = array_map(fn (string $id): int => (int) $id, $matches[1]);
+        }
+
+        $entry->attachments()
+            ->whereNotIn('id', $referenced)
+            ->get()
+            ->each->delete();
     }
 
     /**
@@ -130,11 +155,47 @@ class EntryController extends Controller
     }
 
     /**
+     * List the notes attached to the given day, decrypting only their text.
+     *
+     * @return array<int, array{id: int, title: string|null, body: string|null, color: string, kind: string, date: string|null}>
+     */
+    private function notesForDay(User $user, CarbonImmutable $day): array
+    {
+        return $user->notes()
+            ->where('date', $day->toDateString())
+            ->orderBy('id')
+            ->get()
+            ->map(fn (Note $note): array => $note->toPayload())
+            ->all();
+    }
+
+    /**
+     * List upcoming reminders and events (today or later) for the agenda shown
+     * under the calendar. Notes already shown for the selected day are skipped.
+     *
+     * @param  array<int, int>  $excludeIds
+     * @return array<int, array{id: int, title: string|null, body: string|null, color: string, kind: string, date: string|null}>
+     */
+    private function upcomingNotes(User $user, array $excludeIds): array
+    {
+        return $user->notes()
+            ->whereIn('kind', Note::DATED_KINDS)
+            ->where('date', '>=', CarbonImmutable::today()->toDateString())
+            ->whereNotIn('id', $excludeIds)
+            ->orderBy('date')
+            ->orderBy('id')
+            ->limit(5)
+            ->get()
+            ->map(fn (Note $note): array => $note->toPayload())
+            ->all();
+    }
+
+    /**
      * Pick a deterministic writing prompt for the given day.
      */
     private function dailyPrompt(CarbonImmutable $day): string
     {
-        $prompts = config('prompts');
+        $prompts = __('prompts');
 
         if (! is_array($prompts) || $prompts === []) {
             return '';

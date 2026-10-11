@@ -35,6 +35,10 @@ class RegisterController extends Controller
         $password = $request->string('password')->toString();
         $user = new User($request->safe()->only(['name', 'email', 'password']));
 
+        // The very first account created on a fresh install becomes the
+        // administrator; the route is also gated while any user exists.
+        $user->is_admin = User::query()->doesntExist();
+
         $recoveryKey = DB::transaction(function () use ($keys, $user, $password): string {
             $user->save();
 
@@ -50,7 +54,7 @@ class RegisterController extends Controller
 
         return redirect()
             ->route('diary.show', now()->toDateString())
-            ->with('status', 'Tu diario está listo.')
+            ->with('status', __('messages.register.ready'))
             ->with('recoveryKey', $recoveryKey);
     }
 }

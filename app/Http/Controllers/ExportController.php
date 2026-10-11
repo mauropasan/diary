@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attachment;
 use App\Models\Entry;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -12,19 +13,6 @@ use League\HTMLToMarkdown\HtmlConverter;
 
 class ExportController extends Controller
 {
-    /**
-     * Mood values mapped to their Spanish labels for the export.
-     *
-     * @var array<int, string>
-     */
-    private const MOOD_LABELS = [
-        1 => 'Muy mal',
-        2 => 'Mal',
-        3 => 'Regular',
-        4 => 'Bien',
-        5 => 'Muy bien',
-    ];
-
     /**
      * Show a print-friendly page with every entry, ready to save as PDF.
      */
@@ -44,7 +32,7 @@ class ExportController extends Controller
 
         return response($markdown, 200, [
             'Content-Type' => 'text/markdown; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="diario.md"',
+            'Content-Disposition' => 'attachment; filename="diary.md"',
         ]);
     }
 
@@ -54,12 +42,12 @@ class ExportController extends Controller
      * Unlike the rest of the app, an export legitimately needs every entry, so
      * all of them are decrypted here on the user's explicit request.
      *
-     * @return array<int, array{date: string, title: string|null, content: string|null, mood: int|null, tags: array<int, string>}>
+     * @return array<int, array{date: string, title: string|null, content: string|null, mood: int|null, tags: array<int, string>, attachments: array<int, array{name: string, src: string}>}>
      */
     private function entries(User $user): array
     {
         return $user->entries()
-            ->with('tags')
+            ->with(['tags', 'attachments'])
             ->orderBy('date')
             ->get()
             ->map(fn (Entry $entry): array => [
@@ -68,6 +56,13 @@ class ExportController extends Controller
                 'content' => $entry->content,
                 'mood' => $entry->mood,
                 'tags' => $entry->tags->map(fn ($tag): string => $tag->name)->values()->all(),
+                'attachments' => $entry->attachments
+                    ->map(fn (Attachment $attachment): array => [
+                        'name' => $attachment->original_name,
+                        'src' => route('diary.attachments.show', $attachment),
+                    ])
+                    ->values()
+                    ->all(),
             ])
             ->all();
     }
@@ -75,7 +70,7 @@ class ExportController extends Controller
     /**
      * Render the given entries as a single Markdown document.
      *
-     * @param  array<int, array{date: string, title: string|null, content: string|null, mood: int|null, tags: array<int, string>}>  $entries
+     * @param  array<int, array{date: string, title: string|null, content: string|null, mood: int|null, tags: array<int, string>, attachments: array<int, array{name: string, src: string}>}>  $entries
      */
     private function toMarkdown(array $entries): string
     {
@@ -90,20 +85,29 @@ class ExportController extends Controller
 
             $meta = [$entry['date']];
 
-            if ($entry['mood'] !== null && isset(self::MOOD_LABELS[$entry['mood']])) {
-                $meta[] = 'Ánimo: '.self::MOOD_LABELS[$entry['mood']];
+            if ($entry['mood'] !== null) {
+                $meta[] = __('messages.export.mood', ['mood' => __('messages.moods.'.$entry['mood'])]);
             }
 
             if ($entry['tags'] !== []) {
-                $meta[] = 'Etiquetas: '.implode(', ', $entry['tags']);
+                $meta[] = __('messages.export.tags', ['tags' => implode(', ', $entry['tags'])]);
             }
 
             $body = trim($converter->convert((string) $entry['content']));
+
+            if ($entry['attachments'] !== []) {
+                $media = implode("\n", array_map(
+                    fn (array $attachment): string => "- [{$attachment['name']}]({$attachment['src']})",
+                    $entry['attachments'],
+                ));
+
+                $body = $body !== '' ? $body."\n\n{$media}" : $media;
+            }
 
             $sections[] = "## {$heading}\n\n_".implode(' · ', $meta).'_'
                 .($body !== '' ? "\n\n{$body}" : '');
         }
 
-        return "# Diario\n\n".implode("\n\n---\n\n", $sections)."\n";
+        return '# '.__('messages.export.title')."\n\n".implode("\n\n---\n\n", $sections)."\n";
     }
 }

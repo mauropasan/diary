@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -60,6 +61,27 @@ class Entry extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class)->withTimestamps();
+    }
+
+    /**
+     * Delete the attachment blobs alongside the entry so no encrypted file is
+     * left behind. The rows themselves are removed by the foreign key cascade.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (Entry $entry): void {
+            $entry->attachments()->get()->each(fn (Attachment $attachment): bool => $attachment->delete());
+        });
+    }
+
+    /**
+     * The media attached to the entry.
+     *
+     * @return HasMany<Attachment, $this>
+     */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(Attachment::class);
     }
 
     /**

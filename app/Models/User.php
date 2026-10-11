@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property string $email
+ * @property bool $is_admin
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $kdf_salt
@@ -25,7 +26,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key'])]
+#[Fillable(['name', 'email', 'password', 'is_admin', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key'])]
 #[Hidden(['password', 'remember_token', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key'])]
 class User extends Authenticatable
 {
@@ -42,6 +43,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 
@@ -63,5 +65,25 @@ class User extends Authenticatable
     public function tags(): HasMany
     {
         return $this->hasMany(Tag::class);
+    }
+
+    /**
+     * The media attachments owned by the user.
+     *
+     * @return HasMany<Attachment, $this>
+     */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(Attachment::class);
+    }
+
+    /**
+     * The notes owned by the user.
+     *
+     * @return HasMany<Note, $this>
+     */
+    public function notes(): HasMany
+    {
+        return $this->hasMany(Note::class);
     }
 }

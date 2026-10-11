@@ -1,0 +1,214 @@
+{
+    "common": {
+        "brand": "Diary",
+        "email": "Email",
+        "password": "Password",
+        "name": "Name",
+        "newPassword": "New password",
+        "confirmPassword": "Repeat password",
+        "confirmNewPassword": "Repeat new password",
+        "close": "Close",
+        "cancel": "Cancel",
+        "language": "Language",
+        "backToDiary": "Back to the diary",
+        "backToLogin": "Back to sign in"
+    },
+    "nav": {
+        "today": "Go to today",
+        "search": "Search",
+        "mood": "Mood",
+        "notes": "Notes",
+        "export": "Export",
+        "password": "Password",
+        "users": "Users",
+        "logout": "Sign out",
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu",
+        "more": "More"
+    },
+    "theme": {
+        "label": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+    },
+    "media": {
+        "attach": "Attach",
+        "attachTitle": "Attach a file",
+        "uploading": "Uploading…",
+        "error": "Could not upload the file."
+    },
+    "login": {
+        "title": "Sign in",
+        "subtitle": "Sign in to write in your diary.",
+        "remember": "Remember me",
+        "submit": "Sign in",
+        "submitting": "Signing in…",
+        "forgot": "Forgot your password? Use your recovery key"
+    },
+    "register": {
+        "title": "Create your diary",
+        "heading": "Create your diary",
+        "subtitle": "There is no account yet. Set your name, your email and a password to get started. As the first account you will become the administrator: only you will be able to create and delete other accounts. Your entries will be encrypted with a key derived from that password: if you forget it, they cannot be recovered without the recovery key shown next.",
+        "submit": "Create diary",
+        "submitting": "Creating…"
+    },
+    "password": {
+        "title": "Change password",
+        "heading": "Change password",
+        "subtitle": "Your diary is decrypted with this password. If you lose it, you will lose access to your entries.",
+        "current": "Current password",
+        "submit": "Change password",
+        "submitting": "Saving…"
+    },
+    "recovery": {
+        "title": "Recover access",
+        "heading": "Recover access",
+        "subtitle": "Enter your email, the recovery key you saved and a new password. Without the recovery key it is not possible to access your entries.",
+        "recoveryKey": "Recovery key",
+        "submit": "Restore access",
+        "submitting": "Restoring…"
+    },
+    "unlock": {
+        "title": "Unlock diary",
+        "subtitle": "Your diary is locked. Enter your password to decrypt it.",
+        "submit": "Unlock",
+        "submitting": "Decrypting…"
+    },
+    "lock": {
+        "heading": "Diary locked",
+        "body": "There has been no activity for a while. Enter your password to keep writing.",
+        "submit": "Unlock",
+        "submitting": "Decrypting…"
+    },
+    "show": {
+        "suggestion": "Prompt:",
+        "streakDays_one": "{{count}} day in a row",
+        "streakDays_other": "{{count}} days in a row",
+        "streakRecord": " · record: {{count}}",
+        "lockCountdown": "Locking due to inactivity in {{time}}",
+        "recoveryTitle": "Save your recovery key",
+        "recoveryIntro": "It is the only copy and it will not be shown again. With it you can recover your diary if you forget your password.",
+        "previous": "← Previous",
+        "next": "Next →",
+        "onThisDay": "On this day",
+        "notesTitle": "Notes for this day",
+        "upcomingTitle": "Upcoming"
+    },
+    "calendar": {
+        "previousMonth": "Previous month",
+        "nextMonth": "Next month"
+    },
+    "editor": {
+        "titlePlaceholder": "Title (optional)",
+        "moodPlaceholder": "Mood",
+        "placeholder": "Write about your day here…",
+        "insertTime": "Current time",
+        "insertTimeTitle": "Insert the current time (Ctrl+Shift+H)",
+        "saving": "Saving…",
+        "saved": "Saved",
+        "saveError": "Could not save",
+        "moods": {
+            "1": "Very bad",
+            "2": "Bad",
+            "3": "Okay",
+            "4": "Good",
+            "5": "Very good"
+        }
+    },
+    "tags": {
+        "placeholder": "Tags…",
+        "remove": "Remove {{tag}}"
+    },
+    "search": {
+        "title": "Search",
+        "placeholder": "Search your diary…",
+        "empty": "Type something to search the title, content or tags.",
+        "noResults": "No entries found for «{{query}}».",
+        "untitled": "Untitled"
+    },
+    "mood": {
+        "title": "Mood",
+        "average_one": "Average {{average}} · {{count}} day",
+        "average_other": "Average {{average}} · {{count}} days",
+        "noData": "No data this month",
+        "noDataRange": "No data in this range",
+        "rangeLabel": "Visible days",
+        "rangeOne": "1 day",
+        "rangeThree": "3 days",
+        "rangeWeek": "1 week",
+        "rangePrev": "Earlier days",
+        "rangeNext": "Later days",
+        "dayWithMood": "{{date}} · {{mood}}"
+    },
+    "export": {
+        "title": "Export",
+        "download": "Download Markdown",
+        "print": "Print / Save as PDF",
+        "empty": "There are no entries yet.",
+        "moodMeta": "Mood: {{mood}}",
+        "tagsMeta": "Tags: {{tags}}"
+    },
+    "admin": {
+        "title": "Users",
+        "heading": "Users",
+        "recoveryTitle": "Recovery key for the new user",
+        "recoveryIntro": "It is shown only once. Hand it to the user along with the password; with it they can recover their diary if they forget the password.",
+        "createTitle": "Create account",
+        "submit": "Create account",
+        "submitting": "Creating…",
+        "accounts_one": "Accounts ({{count}})",
+        "accounts_other": "Accounts ({{count}})",
+        "empty": "There are no accounts yet.",
+        "badge": "Admin",
+        "entries_one": "{{count}} entry",
+        "entries_other": "{{count}} entries",
+        "since": "since {{date}}",
+        "delete": "Delete",
+        "confirmDelete": "Delete the account for {{name}}? All their entries will be erased and cannot be recovered. This action cannot be undone."
+    },
+    "notes": {
+        "title": "Notes",
+        "subtitle": "Notes, reminders and events. Give them a color and, if you like, attach them to a day.",
+        "titleLabel": "Title",
+        "titlePlaceholder": "Title (optional)",
+        "bodyLabel": "Text",
+        "bodyPlaceholder": "Write your note here…",
+        "color": "Color",
+        "kindLabel": "Type",
+        "dateLabel": "Day",
+        "save": "Save",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "reset": "Reset",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Delete this note? This cannot be undone.",
+        "empty": "You have no notes yet.",
+        "untitled": "Untitled note",
+        "filters": {
+            "all": "All"
+        },
+        "noResults": "No notes of this type.",
+        "colors": {
+            "yellow": "Yellow",
+            "pink": "Pink",
+            "blue": "Blue",
+            "green": "Green",
+            "purple": "Purple",
+            "gray": "Gray"
+        },
+        "customColor": "Custom color",
+        "backgroundImage": "Background image",
+        "removeBackground": "Remove image",
+        "kinds": {
+            "note": "Note",
+            "reminder": "Reminder",
+            "event": "Event"
+        }
+    },
+    "localePicker": {
+        "title": "Choose your language",
+        "subtitle": "Select the language you want to use."
+    }
+}

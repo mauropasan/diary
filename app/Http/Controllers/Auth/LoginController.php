@@ -37,7 +37,7 @@ class LoginController extends Controller
     {
         if (! Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'email' => 'Las credenciales no coinciden con nuestros registros.',
+                'email' => __('messages.login.failed'),
             ]);
         }
 
@@ -51,7 +51,7 @@ class LoginController extends Controller
             $request->session()->regenerateToken();
 
             throw ValidationException::withMessages([
-                'password' => 'No se pudo descifrar la clave del diario; los datos pueden estar dañados.',
+                'password' => __('messages.login.unwrap-failed'),
             ]);
         }
 

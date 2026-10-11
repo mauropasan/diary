@@ -31,11 +31,11 @@ class UnlockController extends Controller
             $unlocker->unlock($request->user(), $request->string('password')->toString());
         } catch (InvalidPasswordException) {
             throw ValidationException::withMessages([
-                'password' => 'La contraseña no es correcta.',
+                'password' => __('messages.unlock.wrong-password'),
             ]);
         } catch (KeyUnwrapException) {
             throw ValidationException::withMessages([
-                'password' => 'No se pudo descifrar la clave del diario; los datos pueden estar dañados.',
+                'password' => __('messages.unlock.unwrap-failed'),
             ]);
         }
 

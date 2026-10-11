@@ -1,0 +1,214 @@
+{
+    "common": {
+        "brand": "Diario",
+        "email": "Email",
+        "password": "Contraseña",
+        "name": "Nombre",
+        "newPassword": "Nueva contraseña",
+        "confirmPassword": "Repite la contraseña",
+        "confirmNewPassword": "Repite la nueva contraseña",
+        "close": "Cerrar",
+        "cancel": "Cancelar",
+        "language": "Idioma",
+        "backToDiary": "Volver al diario",
+        "backToLogin": "Volver a iniciar sesión"
+    },
+    "nav": {
+        "today": "Ir a hoy",
+        "search": "Buscar",
+        "mood": "Ánimo",
+        "notes": "Notas",
+        "export": "Exportar",
+        "password": "Contraseña",
+        "users": "Usuarios",
+        "logout": "Cerrar sesión",
+        "openMenu": "Abrir menú",
+        "closeMenu": "Cerrar menú",
+        "more": "Más"
+    },
+    "theme": {
+        "label": "Tema",
+        "light": "Claro",
+        "dark": "Oscuro",
+        "system": "Sistema"
+    },
+    "media": {
+        "attach": "Adjuntar",
+        "attachTitle": "Adjuntar un archivo",
+        "uploading": "Subiendo…",
+        "error": "No se pudo subir el archivo."
+    },
+    "login": {
+        "title": "Iniciar sesión",
+        "subtitle": "Entra para escribir en tu diario.",
+        "remember": "Recuérdame",
+        "submit": "Iniciar sesión",
+        "submitting": "Entrando…",
+        "forgot": "¿Has olvidado la contraseña? Usa tu clave de recuperación"
+    },
+    "register": {
+        "title": "Crear tu diario",
+        "heading": "Crea tu diario",
+        "subtitle": "Todavía no existe ninguna cuenta. Define tu nombre, tu correo y una contraseña para empezar. Al ser la primera cuenta, quedarás como administrador: solo tú podrás crear y eliminar otras cuentas. Tus entradas se cifrarán con una clave derivada de esa contraseña: si la olvidas no se pueden recuperar sin la clave de recuperación que se mostrará a continuación.",
+        "submit": "Crear diario",
+        "submitting": "Creando…"
+    },
+    "password": {
+        "title": "Cambiar contraseña",
+        "heading": "Cambiar contraseña",
+        "subtitle": "Tu diario se descifra con esta contraseña. Si la pierdes, perderás el acceso a las entradas.",
+        "current": "Contraseña actual",
+        "submit": "Cambiar contraseña",
+        "submitting": "Guardando…"
+    },
+    "recovery": {
+        "title": "Recuperar acceso",
+        "heading": "Recuperar acceso",
+        "subtitle": "Introduce tu correo, la clave de recuperación que guardaste y una contraseña nueva. Sin la clave de recuperación no es posible acceder a tus entradas.",
+        "recoveryKey": "Clave de recuperación",
+        "submit": "Restaurar acceso",
+        "submitting": "Restaurando…"
+    },
+    "unlock": {
+        "title": "Desbloquear diario",
+        "subtitle": "Tu diario está bloqueado. Introduce tu contraseña para descifrarlo.",
+        "submit": "Desbloquear",
+        "submitting": "Descifrando…"
+    },
+    "lock": {
+        "heading": "Diario bloqueado",
+        "body": "Ha pasado un tiempo sin actividad. Introduce tu contraseña para seguir escribiendo.",
+        "submit": "Desbloquear",
+        "submitting": "Descifrando…"
+    },
+    "show": {
+        "suggestion": "Sugerencia:",
+        "streakDays_one": "{{count}} día seguido",
+        "streakDays_other": "{{count}} días seguidos",
+        "streakRecord": " · récord: {{count}}",
+        "lockCountdown": "Bloqueo por inactividad en {{time}}",
+        "recoveryTitle": "Guarda tu clave de recuperación",
+        "recoveryIntro": "Es la única copia y no se volverá a mostrar. Con ella puedes recuperar el diario si olvidas la contraseña.",
+        "previous": "← Anterior",
+        "next": "Siguiente →",
+        "onThisDay": "Tal día como hoy",
+        "notesTitle": "Notas de este día",
+        "upcomingTitle": "Próximos"
+    },
+    "calendar": {
+        "previousMonth": "Mes anterior",
+        "nextMonth": "Mes siguiente"
+    },
+    "editor": {
+        "titlePlaceholder": "Título (opcional)",
+        "moodPlaceholder": "Ánimo",
+        "placeholder": "Escribe aquí tu día…",
+        "insertTime": "Hora actual",
+        "insertTimeTitle": "Insertar la hora actual (Ctrl+Mayús+H)",
+        "saving": "Guardando…",
+        "saved": "Guardado",
+        "saveError": "No se pudo guardar",
+        "moods": {
+            "1": "Muy mal",
+            "2": "Mal",
+            "3": "Regular",
+            "4": "Bien",
+            "5": "Muy bien"
+        }
+    },
+    "tags": {
+        "placeholder": "Etiquetas…",
+        "remove": "Quitar {{tag}}"
+    },
+    "search": {
+        "title": "Buscar",
+        "placeholder": "Busca en tu diario…",
+        "empty": "Escribe algo para buscar en el título, el contenido o las etiquetas.",
+        "noResults": "No se han encontrado entradas para «{{query}}».",
+        "untitled": "Sin título"
+    },
+    "mood": {
+        "title": "Ánimo",
+        "average_one": "Media {{average}} · {{count}} día",
+        "average_other": "Media {{average}} · {{count}} días",
+        "noData": "Sin datos este mes",
+        "noDataRange": "Sin datos en este rango",
+        "rangeLabel": "Días visibles",
+        "rangeOne": "1 día",
+        "rangeThree": "3 días",
+        "rangeWeek": "1 semana",
+        "rangePrev": "Días anteriores",
+        "rangeNext": "Días posteriores",
+        "dayWithMood": "{{date}} · {{mood}}"
+    },
+    "export": {
+        "title": "Exportar",
+        "download": "Descargar Markdown",
+        "print": "Imprimir / Guardar como PDF",
+        "empty": "Todavía no hay entradas.",
+        "moodMeta": "Ánimo: {{mood}}",
+        "tagsMeta": "Etiquetas: {{tags}}"
+    },
+    "admin": {
+        "title": "Usuarios",
+        "heading": "Usuarios",
+        "recoveryTitle": "Clave de recuperación del nuevo usuario",
+        "recoveryIntro": "Se muestra una sola vez. Entrégasela al usuario junto con la contraseña; con ella puede recuperar su diario si olvida la contraseña.",
+        "createTitle": "Crear cuenta",
+        "submit": "Crear cuenta",
+        "submitting": "Creando…",
+        "accounts_one": "Cuentas ({{count}})",
+        "accounts_other": "Cuentas ({{count}})",
+        "empty": "Todavía no hay ninguna cuenta.",
+        "badge": "Admin",
+        "entries_one": "{{count}} entrada",
+        "entries_other": "{{count}} entradas",
+        "since": "desde {{date}}",
+        "delete": "Eliminar",
+        "confirmDelete": "¿Eliminar la cuenta de {{name}}? Se borrarán todas sus entradas y no se podrán recuperar. Esta acción no se puede deshacer."
+    },
+    "notes": {
+        "title": "Notas",
+        "subtitle": "Notas, recordatorios y eventos. Dale un color y, si quieres, asócialos a un día.",
+        "titleLabel": "Título",
+        "titlePlaceholder": "Título (opcional)",
+        "bodyLabel": "Texto",
+        "bodyPlaceholder": "Escribe tu nota aquí…",
+        "color": "Color",
+        "kindLabel": "Tipo",
+        "dateLabel": "Día",
+        "save": "Guardar",
+        "saving": "Guardando…",
+        "cancel": "Cancelar",
+        "reset": "Borrar",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "confirmDelete": "¿Eliminar esta nota? No se puede deshacer.",
+        "empty": "Todavía no tienes notas.",
+        "untitled": "Nota sin título",
+        "filters": {
+            "all": "Todos"
+        },
+        "noResults": "No hay notas de este tipo.",
+        "colors": {
+            "yellow": "Amarillo",
+            "pink": "Rosa",
+            "blue": "Azul",
+            "green": "Verde",
+            "purple": "Morado",
+            "gray": "Gris"
+        },
+        "customColor": "Color personalizado",
+        "backgroundImage": "Imagen de fondo",
+        "removeBackground": "Quitar imagen",
+        "kinds": {
+            "note": "Nota",
+            "reminder": "Recordatorio",
+            "event": "Evento"
+        }
+    },
+    "localePicker": {
+        "title": "Elige tu idioma",
+        "subtitle": "Selecciona el idioma que quieres usar."
+    }
+}

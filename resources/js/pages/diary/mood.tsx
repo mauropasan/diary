@@ -1,28 +1,22 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import {
     addMonths,
     eachDayOfInterval,
     endOfMonth,
     format,
+    max,
+    min,
     parseISO,
+    startOfDay,
     startOfMonth,
+    subDays,
 } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { useState } from 'react';
-import { home, logout } from '@/routes';
-import {
-    exportMethod as diaryExport,
-    search as diarySearch,
-} from '@/routes/diary';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import DiaryNav from '@/components/DiaryNav';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { formatDay, formatDayMonth, formatMonthYear } from '@/lib/dates';
 import { cn } from '@/lib/utils';
-
-const MOOD_LABELS: Record<number, string> = {
-    1: 'Muy mal',
-    2: 'Mal',
-    3: 'Regular',
-    4: 'Bien',
-    5: 'Muy bien',
-};
 
 const MOOD_COLORS: Record<number, string> = {
     1: 'bg-red-500',
@@ -31,6 +25,16 @@ const MOOD_COLORS: Record<number, string> = {
     4: 'bg-lime-500',
     5: 'bg-emerald-500',
 };
+
+const RANGES = [1, 3, 7] as const;
+
+const RANGE_LABELS: Record<(typeof RANGES)[number], string> = {
+    1: 'mood.rangeOne',
+    3: 'mood.rangeThree',
+    7: 'mood.rangeWeek',
+};
+
+type Range = (typeof RANGES)[number];
 
 type MoodPoint = {
     date: string;
@@ -44,20 +48,50 @@ type MoodProps = {
 };
 
 export default function Mood({ month, moods, canGoNext }: MoodProps) {
+    const { t, i18n } = useTranslation();
+    const locale = i18n.language;
     const [loading, setLoading] = useState(false);
+    const [range, setRange] = useState<Range>(7);
+    const [offset, setOffset] = useState(0);
+    const isNarrow = useMediaQuery('(max-width: 639px)');
 
     const visibleMonth = parseISO(`${month}-01`);
-    const days = eachDayOfInterval({
-        start: startOfMonth(visibleMonth),
-        end: endOfMonth(visibleMonth),
+    const monthStart = startOfMonth(visibleMonth);
+    const monthEnd = endOfMonth(visibleMonth);
+    const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+
+    /**
+     * On mobile the month is too wide for a readable bar per day, so we render
+     * a sliding window of `range` days ending at the most recent day (today for
+     * the current month, the last day for past months). The arrows move it
+     * towards the start of the month.
+     */
+    const homeEnd = min([monthEnd, startOfDay(new Date())]);
+    const windowEnd = subDays(homeEnd, offset * range);
+    const windowStart = max([subDays(windowEnd, range - 1), monthStart]);
+    const windowDays = eachDayOfInterval({
+        start: windowStart,
+        end: windowEnd,
     });
 
+    useEffect(() => {
+        setOffset(0);
+    }, [month, range]);
+
     const byDate = new Map(moods.map((point) => [point.date, point.mood]));
+
+    const visibleDays = isNarrow ? windowDays : days;
+    const visibleMoods = visibleDays
+        .map((day) => byDate.get(format(day, 'yyyy-MM-dd')))
+        .filter((mood): mood is number => mood !== undefined);
     const average =
-        moods.length > 0
-            ? moods.reduce((total, point) => total + point.mood, 0) /
-              moods.length
+        visibleMoods.length > 0
+            ? visibleMoods.reduce((total, mood) => total + mood, 0) /
+              visibleMoods.length
             : null;
+
+    const canGoEarlier = isNarrow && windowStart > monthStart;
+    const canGoLater = isNarrow && offset > 0;
 
     function loadMonth(target: Date): void {
         setLoading(true);
@@ -71,58 +105,30 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
 
     return (
         <>
-            <Head title="Ánimo" />
+            <Head title={t('mood.title')} />
 
             <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <div className="mx-auto max-w-3xl px-6 py-8">
+                <div className="w-full px-6 py-8">
                     <header className="mb-8 flex items-start justify-between gap-4">
                         <div>
                             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                                Diario
+                                {t('common.brand')}
                             </p>
                             <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                                Ánimo
+                                {t('mood.title')}
                             </h1>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <Link
-                                href={diarySearch.url()}
-                                className="rounded-md px-2 py-1 text-xs text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                                Buscar
-                            </Link>
-                            <Link
-                                href={diaryExport.url()}
-                                className="rounded-md px-2 py-1 text-xs text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                                Exportar
-                            </Link>
-                            <Link
-                                href={home.url()}
-                                className="rounded-md px-2 py-1 text-xs text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                                Ir a hoy
-                            </Link>
-                            <Link
-                                as="button"
-                                type="button"
-                                method="post"
-                                href={logout.url()}
-                                className="rounded-md px-2 py-1 text-xs text-zinc-500 ring-1 ring-transparent transition hover:text-zinc-800 focus:outline-none focus-visible:ring-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-100"
-                            >
-                                Cerrar sesión
-                            </Link>
-                        </div>
+                        <DiaryNav />
                     </header>
 
-                    <div className="mb-6 flex items-center justify-between gap-2">
+                    <div className="mb-6 flex w-full items-center justify-center gap-2">
                         <button
                             type="button"
                             onClick={() =>
                                 loadMonth(addMonths(visibleMonth, -1))
                             }
-                            aria-label="Mes anterior"
+                            aria-label={t('calendar.previousMonth')}
                             className="rounded-md px-2 py-1 text-sm text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                         >
                             ‹
@@ -130,14 +136,17 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
 
                         <div className="text-center">
                             <p className="text-sm font-medium text-zinc-700 capitalize dark:text-zinc-200">
-                                {format(visibleMonth, 'LLLL yyyy', {
-                                    locale: es,
-                                })}
+                                {formatMonthYear(visibleMonth, locale)}
                             </p>
                             <p className="text-xs text-zinc-400 dark:text-zinc-500">
                                 {average !== null
-                                    ? `Media ${average.toFixed(1)} · ${moods.length} ${moods.length === 1 ? 'día' : 'días'}`
-                                    : 'Sin datos este mes'}
+                                    ? t('mood.average', {
+                                          count: visibleMoods.length,
+                                          average: average.toFixed(1),
+                                      })
+                                    : isNarrow
+                                      ? t('mood.noDataRange')
+                                      : t('mood.noData')}
                             </p>
                         </div>
 
@@ -147,7 +156,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                             onClick={() =>
                                 loadMonth(addMonths(visibleMonth, 1))
                             }
-                            aria-label="Mes siguiente"
+                            aria-label={t('calendar.nextMonth')}
                             className={cn(
                                 'rounded-md px-2 py-1 text-sm transition',
                                 canGoNext
@@ -159,28 +168,98 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                         </button>
                     </div>
 
+                    {isNarrow && (
+                        <div className="mb-4 flex w-full items-center justify-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setOffset((value) => value + 1)}
+                                disabled={!canGoEarlier}
+                                aria-label={t('mood.rangePrev')}
+                                className={cn(
+                                    'shrink-0 rounded-md px-2 py-1 text-sm transition',
+                                    canGoEarlier
+                                        ? 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
+                                        : 'cursor-not-allowed text-zinc-300 dark:text-zinc-700',
+                                )}
+                            >
+                                ‹
+                            </button>
+
+                            <div
+                                role="group"
+                                aria-label={t('mood.rangeLabel')}
+                                className="flex overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800"
+                            >
+                                {RANGES.map((value) => (
+                                    <button
+                                        key={value}
+                                        type="button"
+                                        onClick={() => setRange(value)}
+                                        aria-pressed={range === value}
+                                        className={cn(
+                                            'px-2.5 py-1 text-xs whitespace-nowrap transition',
+                                            range === value
+                                                ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
+                                                : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
+                                        )}
+                                    >
+                                        {t(RANGE_LABELS[value])}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setOffset((value) => Math.max(0, value - 1))
+                                }
+                                disabled={!canGoLater}
+                                aria-label={t('mood.rangeNext')}
+                                className={cn(
+                                    'shrink-0 rounded-md px-2 py-1 text-sm transition',
+                                    canGoLater
+                                        ? 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
+                                        : 'cursor-not-allowed text-zinc-300 dark:text-zinc-700',
+                                )}
+                            >
+                                ›
+                            </button>
+                        </div>
+                    )}
+
                     <div
                         className={cn(
-                            'rounded-lg border border-zinc-200 p-4 transition dark:border-zinc-800',
+                            'w-full rounded-lg border border-zinc-200 p-4 transition dark:border-zinc-800',
                             loading && 'opacity-50',
                         )}
                     >
-                        <div className="flex items-end gap-1">
-                            {days.map((day) => {
+                        <div
+                            className={cn(
+                                'flex items-end gap-1',
+                                isNarrow && 'justify-center',
+                            )}
+                        >
+                            {visibleDays.map((day) => {
                                 const iso = format(day, 'yyyy-MM-dd');
                                 const mood = byDate.get(iso);
                                 const label =
                                     mood !== undefined
-                                        ? `${format(day, "d 'de' MMMM", { locale: es })} · ${MOOD_LABELS[mood]}`
-                                        : format(day, "d 'de' MMMM", {
-                                              locale: es,
-                                          });
+                                        ? t('mood.dayWithMood', {
+                                              date: formatDayMonth(day, locale),
+                                              mood: t(`editor.moods.${mood}`),
+                                          })
+                                        : formatDayMonth(day, locale);
 
                                 return (
                                     <div
                                         key={iso}
                                         title={label}
-                                        className="flex flex-1 flex-col items-center gap-1"
+                                        className={cn(
+                                            'flex flex-col items-center gap-1',
+                                            isNarrow && range === 1
+                                                ? 'w-16'
+                                                : 'flex-1',
+                                        )}
                                     >
                                         <div className="flex h-40 w-full items-end">
                                             <div
@@ -200,7 +279,9 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                             />
                                         </div>
                                         <span className="text-[10px] text-zinc-400 tabular-nums dark:text-zinc-500">
-                                            {format(day, 'd')}
+                                            {isNarrow && range === 1
+                                                ? formatDayMonth(day, locale)
+                                                : formatDay(day, locale)}
                                         </span>
                                     </div>
                                 );
@@ -208,7 +289,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                         </div>
                     </div>
 
-                    <ul className="mt-4 flex flex-wrap gap-3 text-xs text-zinc-500 dark:text-zinc-400">
+                    <ul className="mt-4 flex w-full flex-wrap gap-3 text-xs text-zinc-500 dark:text-zinc-400">
                         {[1, 2, 3, 4, 5].map((value) => (
                             <li
                                 key={value}
@@ -220,7 +301,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                         MOOD_COLORS[value],
                                     )}
                                 />
-                                {MOOD_LABELS[value]}
+                                {t(`editor.moods.${value}`)}
                             </li>
                         ))}
                     </ul>

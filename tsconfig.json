@@ -110,6 +110,7 @@
         "paths": {
             "@/*": ["./resources/js/*"]
         },
+        "resolveJsonModule": true,
         "jsx": "react-jsx"
     },
     "include": [

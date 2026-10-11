@@ -1,8 +1,19 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script>
+            (function () {
+                try {
+                    var stored = localStorage.getItem('appearance');
+                    var dark = stored === 'dark' || ((stored === null || stored === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                    document.documentElement.classList.toggle('dark', dark);
+                    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+                } catch (error) {}
+            })();
+        </script>
 
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -13,7 +24,7 @@
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            <title>{{ config('app.name', 'Diario') }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

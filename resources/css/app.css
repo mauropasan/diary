@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
@@ -76,4 +78,45 @@
     border-radius: 0.25rem;
     padding: 0.1em 0.35em;
     font-size: 0.9em;
+}
+
+.tiptap figure[data-media],
+.diary-content figure[data-media] {
+    margin: 0.75rem 0;
+    max-width: 100%;
+}
+
+.tiptap figure[data-media] img,
+.diary-content figure[data-media] img,
+.tiptap figure[data-media] video,
+.diary-content figure[data-media] video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+}
+
+.tiptap figure[data-media] audio,
+.diary-content figure[data-media] audio {
+    display: block;
+    width: 100%;
+}
+
+.tiptap figure[data-media] figcaption,
+.diary-content figure[data-media] figcaption {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: theme(--color-zinc-500);
+}
+
+.tiptap figure[data-media] a,
+.diary-content figure[data-media] a {
+    color: theme(--color-zinc-600);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.tiptap figure[data-media].ProseMirror-selectednode {
+    outline: 2px solid theme(--color-zinc-400);
+    border-radius: 0.5rem;
 }

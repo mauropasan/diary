@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'Qu\'est-ce qui t\'a fait sourire aujourd\'hui ?',
+    'Décris un moment où tu t\'es senti reconnaissant.',
+    'Qu\'as-tu appris aujourd\'hui ?',
+    'Quel a été le meilleur moment de la journée ?',
+    'Qu\'est-ce qui te préoccupe en ce moment ? Écris à ce sujet.',
+    'À qui as-tu parlé aujourd\'hui, et de quoi ?',
+    'Qu\'as-tu fait aujourd\'hui qui te rapproche de tes objectifs ?',
+    'Décris ton environnement dans les moindres détails.',
+    'Qu\'est-ce qui t\'a surpris aujourd\'hui ?',
+    'Comment te sens-tu physiquement ? Et émotionnellement ?',
+    'Qu\'as-tu évité aujourd\'hui, et pourquoi ?',
+    'Écris sur quelque chose que tu attends avec impatience.',
+    'Qu\'as-tu lu, vu ou écouté qui t\'a marqué ?',
+    'Quel a été le plus grand défi de la journée ?',
+    'Que ferais-tu aujourd\'hui si tu n\'avais pas peur ?',
+    'Décris une personne qui a marqué ta journée.',
+    'Quelle petite chose t\'a donné de l\'énergie aujourd\'hui ?',
+    'Que voudrais-tu retenir d\'aujourd\'hui dans un an ?',
+    'Qu\'as-tu remis à demain, et pourquoi ?',
+    'Écris trois bonnes choses qui se sont passées aujourd\'hui.',
+    'De quoi es-tu fier aujourd\'hui ?',
+    'Qu\'est-ce qui a été le plus difficile, et comment l\'as-tu géré ?',
+    'De quoi ton corps ou ton esprit a-t-il besoin maintenant ?',
+    'Si aujourd\'hui était une couleur, laquelle serait-ce, et pourquoi ?',
+];

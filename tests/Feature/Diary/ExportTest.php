@@ -24,16 +24,16 @@ it('downloads the diary as a markdown attachment', function () {
 
     $response->assertOk()
         ->assertHeader('Content-Type', 'text/markdown; charset=UTF-8')
-        ->assertHeader('Content-Disposition', 'attachment; filename="diario.md"');
+        ->assertHeader('Content-Disposition', 'attachment; filename="diary.md"');
 
     $markdown = $response->getContent();
 
     expect($markdown)
-        ->toContain('# Diario')
+        ->toContain('# '.__('messages.export.title'))
         ->toContain('## Mi día')
         ->toContain('**mundo**')
-        ->toContain('Ánimo: Bien')
-        ->toContain('Etiquetas: Trabajo');
+        ->toContain(__('messages.export.mood', ['mood' => __('messages.moods.4')]))
+        ->toContain(__('messages.export.tags', ['tags' => 'Trabajo']));
 });
 
 it('orders exported entries from oldest to newest', function () {
@@ -58,7 +58,7 @@ it('orders exported entries from oldest to newest', function () {
 it('exports an empty diary gracefully', function () {
     $this->get(route('diary.export.markdown'))
         ->assertOk()
-        ->assertSee('# Diario', false);
+        ->assertSee('# '.__('messages.export.title'), false);
 });
 
 it('shows the export page with decrypted entries', function () {

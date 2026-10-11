@@ -118,6 +118,52 @@ class DiaryCrypto
     }
 
     /**
+     * Encrypt raw bytes with a key using AEAD, returning `nonce || ciphertext` as
+     * raw binary (no base64 envelope), for payloads that are stored as files.
+     */
+    public function encryptBytes(string $bytes, string $key): string
+    {
+        $nonce = random_bytes(self::NONCE_BYTES);
+
+        $ciphertext = sodium_crypto_aead_xchacha20poly1305_ietf_encrypt(
+            $bytes,
+            '',
+            $nonce,
+            $key,
+        );
+
+        return $nonce.$ciphertext;
+    }
+
+    /**
+     * Decrypt a payload produced by {@see self::encryptBytes()}.
+     *
+     * @throws DecryptionFailedException When the payload is malformed or fails authentication.
+     */
+    public function decryptBytes(string $payload, string $key): string
+    {
+        if (strlen($payload) <= self::NONCE_BYTES) {
+            throw new DecryptionFailedException('The ciphertext is malformed.');
+        }
+
+        $nonce = substr($payload, 0, self::NONCE_BYTES);
+        $ciphertext = substr($payload, self::NONCE_BYTES);
+
+        $plaintext = sodium_crypto_aead_xchacha20poly1305_ietf_decrypt(
+            $ciphertext,
+            '',
+            $nonce,
+            $key,
+        );
+
+        if ($plaintext === false) {
+            throw new DecryptionFailedException('The ciphertext failed authentication.');
+        }
+
+        return $plaintext;
+    }
+
+    /**
      * Decrypt a message produced by {@see self::encrypt()}.
      *
      * @throws DecryptionFailedException When the payload is malformed or fails authentication.

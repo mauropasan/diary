@@ -1,0 +1,214 @@
+{
+    "common": {
+        "brand": "Journal",
+        "email": "E-mail",
+        "password": "Mot de passe",
+        "name": "Nom",
+        "newPassword": "Nouveau mot de passe",
+        "confirmPassword": "Répétez le mot de passe",
+        "confirmNewPassword": "Répétez le nouveau mot de passe",
+        "close": "Fermer",
+        "cancel": "Annuler",
+        "language": "Langue",
+        "backToDiary": "Retour au journal",
+        "backToLogin": "Retour à la connexion"
+    },
+    "nav": {
+        "today": "Aller à aujourd'hui",
+        "search": "Rechercher",
+        "mood": "Humeur",
+        "notes": "Notes",
+        "export": "Exporter",
+        "password": "Mot de passe",
+        "users": "Utilisateurs",
+        "logout": "Se déconnecter",
+        "openMenu": "Ouvrir le menu",
+        "closeMenu": "Fermer le menu",
+        "more": "Plus"
+    },
+    "theme": {
+        "label": "Thème",
+        "light": "Clair",
+        "dark": "Sombre",
+        "system": "Système"
+    },
+    "media": {
+        "attach": "Joindre",
+        "attachTitle": "Joindre un fichier",
+        "uploading": "Téléversement…",
+        "error": "Impossible de téléverser le fichier."
+    },
+    "login": {
+        "title": "Se connecter",
+        "subtitle": "Connectez-vous pour écrire dans votre journal.",
+        "remember": "Se souvenir de moi",
+        "submit": "Se connecter",
+        "submitting": "Connexion…",
+        "forgot": "Mot de passe oublié ? Utilisez votre clé de récupération"
+    },
+    "register": {
+        "title": "Créer votre journal",
+        "heading": "Créez votre journal",
+        "subtitle": "Il n'existe encore aucun compte. Définissez votre nom, votre e-mail et un mot de passe pour commencer. Comme il s'agit du premier compte, vous serez l'administrateur : vous seul pourrez créer et supprimer d'autres comptes. Vos entrées seront chiffrées avec une clé dérivée de ce mot de passe : si vous l'oubliez, elles ne pourront pas être récupérées sans la clé de récupération affichée ensuite.",
+        "submit": "Créer le journal",
+        "submitting": "Création…"
+    },
+    "password": {
+        "title": "Changer le mot de passe",
+        "heading": "Changer le mot de passe",
+        "subtitle": "Votre journal est déchiffré avec ce mot de passe. Si vous le perdez, vous perdrez l'accès à vos entrées.",
+        "current": "Mot de passe actuel",
+        "submit": "Changer le mot de passe",
+        "submitting": "Enregistrement…"
+    },
+    "recovery": {
+        "title": "Récupérer l'accès",
+        "heading": "Récupérer l'accès",
+        "subtitle": "Saisissez votre e-mail, la clé de récupération que vous avez conservée et un nouveau mot de passe. Sans la clé de récupération, il est impossible d'accéder à vos entrées.",
+        "recoveryKey": "Clé de récupération",
+        "submit": "Restaurer l'accès",
+        "submitting": "Restauration…"
+    },
+    "unlock": {
+        "title": "Déverrouiller le journal",
+        "subtitle": "Votre journal est verrouillé. Saisissez votre mot de passe pour le déchiffrer.",
+        "submit": "Déverrouiller",
+        "submitting": "Déchiffrement…"
+    },
+    "lock": {
+        "heading": "Journal verrouillé",
+        "body": "Un certain temps s'est écoulé sans activité. Saisissez votre mot de passe pour continuer à écrire.",
+        "submit": "Déverrouiller",
+        "submitting": "Déchiffrement…"
+    },
+    "show": {
+        "suggestion": "Suggestion :",
+        "streakDays_one": "{{count}} jour d'affilée",
+        "streakDays_other": "{{count}} jours d'affilée",
+        "streakRecord": " · record : {{count}}",
+        "lockCountdown": "Verrouillage pour inactivité dans {{time}}",
+        "recoveryTitle": "Conservez votre clé de récupération",
+        "recoveryIntro": "C'est le seul exemplaire et il ne sera plus affiché. Avec elle, vous pouvez récupérer votre journal si vous oubliez le mot de passe.",
+        "previous": "← Précédent",
+        "next": "Suivant →",
+        "onThisDay": "Ce jour-là",
+        "notesTitle": "Notes de ce jour",
+        "upcomingTitle": "À venir"
+    },
+    "calendar": {
+        "previousMonth": "Mois précédent",
+        "nextMonth": "Mois suivant"
+    },
+    "editor": {
+        "titlePlaceholder": "Titre (facultatif)",
+        "moodPlaceholder": "Humeur",
+        "placeholder": "Écrivez ici votre journée…",
+        "insertTime": "Heure actuelle",
+        "insertTimeTitle": "Insérer l'heure actuelle (Ctrl+Maj+H)",
+        "saving": "Enregistrement…",
+        "saved": "Enregistré",
+        "saveError": "Enregistrement impossible",
+        "moods": {
+            "1": "Très mal",
+            "2": "Mal",
+            "3": "Moyen",
+            "4": "Bien",
+            "5": "Très bien"
+        }
+    },
+    "tags": {
+        "placeholder": "Étiquettes…",
+        "remove": "Retirer {{tag}}"
+    },
+    "search": {
+        "title": "Rechercher",
+        "placeholder": "Recherchez dans votre journal…",
+        "empty": "Saisissez quelque chose pour rechercher dans le titre, le contenu ou les étiquettes.",
+        "noResults": "Aucune entrée trouvée pour « {{query}} ».",
+        "untitled": "Sans titre"
+    },
+    "mood": {
+        "title": "Humeur",
+        "average_one": "Moyenne {{average}} · {{count}} jour",
+        "average_other": "Moyenne {{average}} · {{count}} jours",
+        "noData": "Aucune donnée ce mois-ci",
+        "noDataRange": "Aucune donnée sur cette plage",
+        "rangeLabel": "Jours affichés",
+        "rangeOne": "1 jour",
+        "rangeThree": "3 jours",
+        "rangeWeek": "1 semaine",
+        "rangePrev": "Jours précédents",
+        "rangeNext": "Jours suivants",
+        "dayWithMood": "{{date}} · {{mood}}"
+    },
+    "export": {
+        "title": "Exporter",
+        "download": "Télécharger le Markdown",
+        "print": "Imprimer / Enregistrer en PDF",
+        "empty": "Il n'y a pas encore d'entrées.",
+        "moodMeta": "Humeur : {{mood}}",
+        "tagsMeta": "Étiquettes : {{tags}}"
+    },
+    "admin": {
+        "title": "Utilisateurs",
+        "heading": "Utilisateurs",
+        "recoveryTitle": "Clé de récupération du nouvel utilisateur",
+        "recoveryIntro": "Elle n'est affichée qu'une seule fois. Remettez-la à l'utilisateur avec le mot de passe ; avec elle, il peut récupérer son journal s'il oublie le mot de passe.",
+        "createTitle": "Créer un compte",
+        "submit": "Créer le compte",
+        "submitting": "Création…",
+        "accounts_one": "Comptes ({{count}})",
+        "accounts_other": "Comptes ({{count}})",
+        "empty": "Il n'existe encore aucun compte.",
+        "badge": "Admin",
+        "entries_one": "{{count}} entrée",
+        "entries_other": "{{count}} entrées",
+        "since": "depuis le {{date}}",
+        "delete": "Supprimer",
+        "confirmDelete": "Supprimer le compte de {{name}} ? Toutes ses entrées seront effacées et ne pourront pas être récupérées. Cette action est irréversible."
+    },
+    "notes": {
+        "title": "Notes",
+        "subtitle": "Notes, rappels et événements. Donne-leur une couleur et, si tu veux, associe-les à un jour.",
+        "titleLabel": "Titre",
+        "titlePlaceholder": "Titre (facultatif)",
+        "bodyLabel": "Texte",
+        "bodyPlaceholder": "Écris ta note ici…",
+        "color": "Couleur",
+        "kindLabel": "Type",
+        "dateLabel": "Jour",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "cancel": "Annuler",
+        "reset": "Effacer",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "confirmDelete": "Supprimer cette note ? Action irréversible.",
+        "empty": "Tu n'as encore aucune note.",
+        "untitled": "Note sans titre",
+        "filters": {
+            "all": "Tous"
+        },
+        "noResults": "Aucune note de ce type.",
+        "colors": {
+            "yellow": "Jaune",
+            "pink": "Rose",
+            "blue": "Bleu",
+            "green": "Vert",
+            "purple": "Violet",
+            "gray": "Gris"
+        },
+        "customColor": "Couleur personnalisée",
+        "backgroundImage": "Image de fond",
+        "removeBackground": "Supprimer l'image",
+        "kinds": {
+            "note": "Note",
+            "reminder": "Rappel",
+            "event": "Événement"
+        }
+    },
+    "localePicker": {
+        "title": "Choisissez votre langue",
+        "subtitle": "Sélectionnez la langue que vous souhaitez utiliser."
+    }
+}

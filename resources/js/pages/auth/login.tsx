@@ -1,8 +1,11 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { recovery } from '@/routes/diary';
 import { store as loginStore } from '@/routes/login';
 
 export default function Login() {
+    const { t } = useTranslation();
     const { data, setData, post, processing, errors } = useForm({
         email: '',
         password: '',
@@ -16,15 +19,15 @@ export default function Login() {
 
     return (
         <>
-            <Head title="Iniciar sesión" />
+            <Head title={t('login.title')} />
 
             <div className="flex min-h-screen flex-col items-center justify-center bg-[#FDFDFC] px-6 text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
                 <div className="w-full max-w-sm">
                     <h1 className="mb-1 text-2xl font-semibold tracking-tight">
-                        Diario
+                        {t('common.brand')}
                     </h1>
                     <p className="mb-6 text-sm text-zinc-500 dark:text-zinc-400">
-                        Entra para escribir en tu diario.
+                        {t('login.subtitle')}
                     </p>
 
                     <form
@@ -37,7 +40,7 @@ export default function Login() {
                                 htmlFor="email"
                                 className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
                             >
-                                Email
+                                {t('common.email')}
                             </label>
                             <input
                                 id="email"
@@ -62,7 +65,7 @@ export default function Login() {
                                 htmlFor="password"
                                 className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
                             >
-                                Contraseña
+                                {t('common.password')}
                             </label>
                             <input
                                 id="password"
@@ -90,7 +93,7 @@ export default function Login() {
                                 }
                                 className="rounded border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900"
                             />
-                            Recuérdame
+                            {t('login.remember')}
                         </label>
 
                         <button
@@ -98,7 +101,9 @@ export default function Login() {
                             disabled={processing}
                             className="mt-2 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 transition hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
                         >
-                            {processing ? 'Entrando…' : 'Iniciar sesión'}
+                            {processing
+                                ? t('login.submitting')
+                                : t('login.submit')}
                         </button>
                     </form>
 
@@ -106,9 +111,12 @@ export default function Login() {
                         href={recovery.url()}
                         className="mt-6 inline-block text-sm text-zinc-500 underline-offset-2 transition hover:underline dark:text-zinc-400"
                     >
-                        ¿Has olvidado la contraseña? Usa tu clave de
-                        recuperación
+                        {t('login.forgot')}
                     </Link>
+
+                    <div className="mt-6 flex justify-center">
+                        <LanguageSwitcher className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs text-zinc-600 transition outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300" />
+                    </div>
                 </div>
             </div>
         </>

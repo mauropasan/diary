@@ -38,6 +38,8 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'locale' => app()->getLocale(),
+            'locales' => $this->locales(),
             'auth' => [
                 'user' => $request->user(),
             ],
@@ -50,5 +52,28 @@ class HandleInertiaRequests extends Middleware
                 'recoveryKey' => $request->session()->get('recoveryKey'),
             ],
         ];
+    }
+
+    /**
+     * The supported interface languages, as code/name pairs for the picker.
+     *
+     * @return array<int, array{code: string, name: string}>
+     */
+    private function locales(): array
+    {
+        $locales = [];
+
+        foreach (config('diary.locales', []) as $code) {
+            if (! is_string($code)) {
+                continue;
+            }
+
+            $locales[] = [
+                'code' => $code,
+                'name' => (string) config("diary.locale_names.{$code}", $code),
+            ];
+        }
+
+        return $locales;
     }
 }

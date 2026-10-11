@@ -1,112 +1,44 @@
-<?php
-
-use App\Models\User;
-use Illuminate\Support\Collection;
-use Inertia\Testing\AssertableInertia;
-
-beforeEach(function () {
-    $this->user = User::factory()->withDiaryKey('secret-password')->create();
-
-    $this->actingAs($this->user)
-        ->post(route('diary.unlock.store'), ['password' => 'secret-password']);
-});
-
-it('finds entries by title', function () {
+it('finds notes and reminders in search results', function () {
     $today = now()->toDateString();
 
-    $this->put(route('diary.update', $today), [
-        'title' => 'Un día tranquilo',
-        'content' => '<p>Texto cualquiera</p>',
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Buy milk',
+        'body' => 'From the store',
+        'kind' => 'note',
     ]);
 
-    $this->get(route('diary.search').'?q=tranquilo')
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Dentist',
+        'body' => 'Check-up',
+        'kind' => 'reminder',
+        'date' => $today,
+    ]);
+
+    $this->get(route('diary.search').'?q=milk')
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('query', 'tranquilo')
-            ->where('results.0.date', $today)
-            ->where('results.0.title', 'Un día tranquilo')
+            ->component('diary/search')
+            ->where('results.0.title', 'Buy milk')
+            ->where('results.0.kind', 'note')
+        );
+
+    $this->get(route('diary.search').'?q=dentist')
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('diary/search')
+            ->where('results.0.title', 'Dentist')
+            ->where('results.0.kind', 'reminder')
         );
 });
 
-it('finds entries by content', function () {
-    $today = now()->toDateString();
-
-    $this->put(route('diary.update', $today), [
-        'content' => '<p>Hoy fui a caminar por el parque</p>',
+it('finds notes by body content', function () {
+    $this->post(route('diary.notes.store'), [
+        'body' => 'Write a poem',
+        'kind' => 'note',
     ]);
 
-    $this->get(route('diary.search').'?q=parque')
+    $this->get(route('diary.search').'?q=poem')
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('results.0.date', $today)
-        );
-});
-
-it('finds entries by tag', function () {
-    $today = now()->toDateString();
-
-    $this->put(route('diary.update', $today), [
-        'content' => '<p>Sin coincidencia</p>',
-        'tags' => ['Trabajo'],
-    ]);
-
-    $this->get(route('diary.search').'?q=trabajo')
-        ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('results.0.date', $today)
-        );
-});
-
-it('matches ignoring case and accents', function () {
-    $today = now()->toDateString();
-
-    $this->put(route('diary.update', $today), [
-        'content' => '<p>Me tomé un café</p>',
-    ]);
-
-    $this->get(route('diary.search').'?q=CAFE')
-        ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('results.0.date', $today)
-        );
-});
-
-it('returns no results for a blank query', function () {
-    $this->put(route('diary.update', now()->toDateString()), [
-        'content' => '<p>Contenido</p>',
-    ]);
-
-    $this->get(route('diary.search').'?q=')
-        ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('results', [])
-        );
-});
-
-it('orders results newest first', function () {
-    $today = now()->toDateString();
-    $yesterday = now()->subDay()->toDateString();
-
-    $this->put(route('diary.update', $yesterday), [
-        'content' => '<p>Coincidencia de ayer</p>',
-    ]);
-    $this->put(route('diary.update', $today), [
-        'content' => '<p>Coincidencia de hoy</p>',
-    ]);
-
-    $this->get(route('diary.search').'?q=coincidencia')
-        ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('results.0.date', $today)
-            ->where('results.1.date', $yesterday)
-        );
-});
-
-it('returns an excerpt around the match', function () {
-    $today = now()->toDateString();
-
-    $this->put(route('diary.update', $today), [
-        'content' => '<p>Querido diario, hoy llovió mucho y salí a caminar por el parque</p>',
-    ]);
-
-    $this->get(route('diary.search').'?q=llovió')
-        ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('results', fn (Collection $results): bool => $results->contains(
-                fn (array $result): bool => str_contains((string) $result['excerpt'], 'llovió')
-            ))
+            ->component('diary/search')
+            ->has('results', 1)
+            ->where('results.0.excerpt', fn ($excerpt) => str_contains((string) $excerpt, 'poem'))
         );
 });

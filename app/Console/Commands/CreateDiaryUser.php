@@ -56,11 +56,18 @@ class CreateDiaryUser extends Command
             'password' => $secret,
         ]);
 
+        // The very first account on a fresh install becomes the administrator.
+        $user->is_admin = User::query()->doesntExist();
+
         $user->save();
 
         $recoveryKey = $keys->provision($user, $secret);
 
         $this->components->info("Diary user [{$user->email}] created.");
+
+        if ($user->is_admin) {
+            $this->components->info('This user is the administrator: they can create and remove diary accounts.');
+        }
 
         $this->components->warn(
             'Save this recovery key now. It is shown only once and lets you restore '

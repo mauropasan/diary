@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminUsersController;
+use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\Auth\LockController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\Auth\UnlockController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\MoodController;
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,14 +21,14 @@ Route::middleware('guest')->group(function () {
         ->middleware('throttle:6,1')
         ->name('login.store');
 
-    Route::get('recuperar', [RecoveryController::class, 'create'])->name('diary.recovery');
-    Route::post('recuperar', [RecoveryController::class, 'store'])
+    Route::get('recover', [RecoveryController::class, 'create'])->name('diary.recovery');
+    Route::post('recover', [RecoveryController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('diary.recovery.store');
 
     Route::middleware('registration.open')->group(function () {
-        Route::get('registro', [RegisterController::class, 'create'])->name('register');
-        Route::post('registro', [RegisterController::class, 'store'])
+        Route::get('register', [RegisterController::class, 'create'])->name('register');
+        Route::post('register', [RegisterController::class, 'store'])
             ->middleware('throttle:6,1')
             ->name('register.store');
     });
@@ -34,31 +37,52 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 
-    Route::get('desbloquear', [UnlockController::class, 'create'])->name('diary.unlock');
-    Route::post('desbloquear', [UnlockController::class, 'store'])
+    Route::middleware('admin')->group(function () {
+        Route::get('admin/users', [AdminUsersController::class, 'index'])->name('admin.users.index');
+        Route::post('admin/users', [AdminUsersController::class, 'store'])
+            ->middleware('throttle:10,1')
+            ->name('admin.users.store');
+        Route::delete('admin/users/{user}', [AdminUsersController::class, 'destroy'])
+            ->name('admin.users.destroy');
+    });
+
+    Route::get('unlock', [UnlockController::class, 'create'])->name('diary.unlock');
+    Route::post('unlock', [UnlockController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('diary.unlock.store');
 
-    Route::post('bloquear', [LockController::class, 'store'])->name('diary.lock');
+    Route::post('lock', [LockController::class, 'store'])->name('diary.lock');
 
     Route::middleware('diary.unlocked')->group(function () {
         Route::get('/', fn () => redirect()->route('diary.show', now()->toDateString()))->name('home');
 
-        Route::get('buscar', [SearchController::class, 'index'])->name('diary.search');
+        Route::get('search', [SearchController::class, 'index'])->name('diary.search');
 
-        Route::get('animo', [MoodController::class, 'index'])->name('diary.mood');
+        Route::get('mood', [MoodController::class, 'index'])->name('diary.mood');
 
-        Route::get('clave', [PasswordController::class, 'edit'])->name('diary.password');
-        Route::put('clave', [PasswordController::class, 'update'])->name('diary.password.update');
+        Route::get('diary/notes', [NoteController::class, 'index'])->name('diary.notes');
+        Route::post('diary/notes', [NoteController::class, 'store'])->name('diary.notes.store');
+        Route::put('diary/notes/{note}', [NoteController::class, 'update'])->name('diary.notes.update');
+        Route::delete('diary/notes/{note}', [NoteController::class, 'destroy'])->name('diary.notes.destroy');
 
-        Route::get('exportar', [ExportController::class, 'index'])->name('diary.export');
-        Route::get('exportar/markdown', [ExportController::class, 'markdown'])->name('diary.export.markdown');
+        Route::get('password', [PasswordController::class, 'edit'])->name('diary.password');
+        Route::put('password', [PasswordController::class, 'update'])->name('diary.password.update');
 
-        Route::get('diario/{date}', [EntryController::class, 'show'])
+        Route::get('export', [ExportController::class, 'index'])->name('diary.export');
+        Route::get('export/markdown', [ExportController::class, 'markdown'])->name('diary.export.markdown');
+
+        Route::get('diary/attachments/{attachment}', [AttachmentController::class, 'show'])
+            ->name('diary.attachments.show');
+
+        Route::post('diary/{date}/attachments', [AttachmentController::class, 'store'])
+            ->where('date', '\d{4}-\d{2}-\d{2}')
+            ->name('diary.attachments.store');
+
+        Route::get('diary/{date}', [EntryController::class, 'show'])
             ->where('date', '\d{4}-\d{2}-\d{2}')
             ->name('diary.show');
 
-        Route::put('diario/{date}', [EntryController::class, 'update'])
+        Route::put('diary/{date}', [EntryController::class, 'update'])
             ->where('date', '\d{4}-\d{2}-\d{2}')
             ->name('diary.update');
     });

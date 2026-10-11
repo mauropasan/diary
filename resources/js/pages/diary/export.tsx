@@ -1,16 +1,8 @@
-import { Head, Link } from '@inertiajs/react';
-import { format, parseISO } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { home } from '@/routes';
+import { Head } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
+import DiaryNav from '@/components/DiaryNav';
+import { formatLongDate } from '@/lib/dates';
 import { markdown as diaryMarkdown } from '@/routes/diary/export';
-
-const MOOD_LABELS: Record<number, string> = {
-    1: 'Muy mal',
-    2: 'Mal',
-    3: 'Regular',
-    4: 'Bien',
-    5: 'Muy bien',
-};
 
 type ExportEntry = {
     date: string;
@@ -25,44 +17,42 @@ type ExportProps = {
 };
 
 export default function Export({ entries }: ExportProps) {
+    const { t, i18n } = useTranslation();
+    const locale = i18n.language;
+
     return (
         <>
-            <Head title="Exportar" />
+            <Head title={t('export.title')} />
 
             <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC] print:bg-white print:text-black">
-                <div className="mx-auto max-w-3xl px-6 py-8">
+                <div className="w-full px-6 py-8">
                     <div className="mb-8 flex items-center justify-between gap-3 print:hidden">
-                        <Link
-                            href={home.url()}
-                            className="rounded-md px-2 py-1 text-xs text-zinc-500 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100"
-                        >
-                            ← Ir a hoy
-                        </Link>
-
                         <div className="flex items-center gap-2">
                             <a
                                 href={diaryMarkdown.url()}
                                 className="rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-900"
                             >
-                                Descargar Markdown
+                                {t('export.download')}
                             </a>
                             <button
                                 type="button"
                                 onClick={() => window.print()}
                                 className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-zinc-50 transition hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
                             >
-                                Imprimir / Guardar como PDF
+                                {t('export.print')}
                             </button>
                         </div>
+
+                        <DiaryNav />
                     </div>
 
                     <h1 className="mb-8 text-2xl font-semibold tracking-tight">
-                        Diario
+                        {t('common.brand')}
                     </h1>
 
                     {entries.length === 0 && (
                         <p className="text-sm text-zinc-400 dark:text-zinc-500">
-                            Todavía no hay entradas.
+                            {t('export.empty')}
                         </p>
                     )}
 
@@ -74,11 +64,7 @@ export default function Export({ entries }: ExportProps) {
                             >
                                 <header className="mb-3 border-b border-zinc-200 pb-2 dark:border-zinc-800">
                                     <p className="text-xs text-zinc-400 capitalize dark:text-zinc-500">
-                                        {format(
-                                            parseISO(entry.date),
-                                            "EEEE, d 'de' MMMM 'de' yyyy",
-                                            { locale: es },
-                                        )}
+                                        {formatLongDate(entry.date, locale)}
                                     </p>
                                     {entry.title && (
                                         <h2 className="mt-1 text-xl font-semibold">
@@ -89,12 +75,18 @@ export default function Export({ entries }: ExportProps) {
                                         entry.tags.length > 0) && (
                                         <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                                             {entry.mood !== null &&
-                                                `Ánimo: ${MOOD_LABELS[entry.mood] ?? entry.mood}`}
+                                                t('export.moodMeta', {
+                                                    mood: t(
+                                                        `editor.moods.${entry.mood}`,
+                                                    ),
+                                                })}
                                             {entry.mood !== null &&
                                                 entry.tags.length > 0 &&
                                                 ' · '}
                                             {entry.tags.length > 0 &&
-                                                `Etiquetas: ${entry.tags.join(', ')}`}
+                                                t('export.tagsMeta', {
+                                                    tags: entry.tags.join(', '),
+                                                })}
                                         </p>
                                     )}
                                 </header>

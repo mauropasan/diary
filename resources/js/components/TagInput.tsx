@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useState, type KeyboardEvent } from 'react';
 
 type TagInputProps = {
@@ -6,6 +7,7 @@ type TagInputProps = {
 };
 
 export default function TagInput({ value, onChange }: TagInputProps) {
+    const { t } = useTranslation();
     const [draft, setDraft] = useState('');
 
     function commit(raw: string): void {
@@ -56,7 +58,7 @@ export default function TagInput({ value, onChange }: TagInputProps) {
                     <button
                         type="button"
                         onClick={() => remove(tag)}
-                        aria-label={`Quitar ${tag}`}
+                        aria-label={t('tags.remove', { tag })}
                         className="text-zinc-400 transition hover:text-zinc-700 dark:hover:text-zinc-100"
                     >
                         ×
@@ -70,7 +72,7 @@ export default function TagInput({ value, onChange }: TagInputProps) {
                 onChange={(event) => setDraft(event.target.value)}
                 onKeyDown={handleKeyDown}
                 onBlur={() => commit(draft)}
-                placeholder="Etiquetas…"
+                placeholder={t('tags.placeholder')}
                 className="min-w-[8rem] flex-1 border-none bg-transparent px-0 py-1 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 dark:text-zinc-200 dark:placeholder:text-zinc-600"
             />
         </div>

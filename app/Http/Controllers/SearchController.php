@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Entry;
+use App\Models\Note;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -65,10 +67,38 @@ class SearchController extends Controller
                 'date' => $entry->date->toDateString(),
                 'title' => $entry->title,
                 'excerpt' => $this->excerpt($entry->content, $needle),
+                'kind' => 'entry',
             ];
 
             if (count($results) >= self::RESULT_LIMIT) {
                 break;
+            }
+        }
+
+        if (count($results) < self::RESULT_LIMIT) {
+            $notes = $request->user()
+                ->notes()
+                ->orderByRaw('date is null')
+                ->orderByDesc('date')
+                ->orderByDesc('id')
+                ->get();
+
+            foreach ($notes as $note) {
+                if (! $this->matchesNote($note, $needle)) {
+                    continue;
+                }
+
+                $results[] = [
+                    'date' => $note->date?->toDateString() ?? CarbonImmutable::today()->toDateString(),
+                    'title' => $note->title,
+                    'excerpt' => $this->excerpt($note->body, $needle),
+                    'kind' => $note->kind,
+                    'color' => $note->color,
+                ];
+
+                if (count($results) >= self::RESULT_LIMIT) {
+                    break;
+                }
             }
         }
 
@@ -84,6 +114,25 @@ class SearchController extends Controller
             (string) $entry->title,
             strip_tags((string) $entry->content),
             $entry->tags->map(fn ($tag): string => $tag->name)->implode(' '),
+        ];
+
+        foreach ($haystacks as $haystack) {
+            if ($haystack !== '' && str_contains($this->normalize($haystack), $needle)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether the note's title or body contain the needle.
+     */
+    private function matchesNote(Note $note, string $needle): bool
+    {
+        $haystacks = [
+            (string) $note->title,
+            (string) $note->body,
         ];
 
         foreach ($haystacks as $haystack) {

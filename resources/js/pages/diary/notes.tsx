@@ -50,14 +50,14 @@ function NoteForm({
         color: string;
         kind: string;
         date: string;
-        image: string | null;
+        background_image: string | null;
     }>({
         title: note?.title ?? '',
         body: note?.body ?? '',
         color: note?.color ?? colors[0] ?? 'yellow',
         kind: note?.kind ?? kinds[0] ?? 'note',
         date: note?.date ?? '',
-        image: (note as any)?.image ?? null,
+        background_image: (note as any)?.background_image ?? null,
     });
 
     function submit(event: React.FormEvent<HTMLFormElement>): void {
@@ -86,18 +86,18 @@ function NoteForm({
     ): void {
         const file = event.target.files?.[0];
         if (!file) {
-            setData('image', null);
+            setData('background_image', null);
             return;
         }
 
         const reader = new FileReader();
         reader.onload = () => {
-            setData('image', reader.result as string);
+            setData('background_image', reader.result as string);
         };
         reader.readAsDataURL(file);
     }
 
-    const hasImage = !!data.image;
+    const hasImage = !!data.background_image;
 
     return (
         <form
@@ -106,14 +106,14 @@ function NoteForm({
             className={cn(
                 'flex flex-col gap-4 rounded-lg border p-4',
                 hasImage
-                    ? 'border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800'
+                    ? 'border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800 min-h-[150px]' // Added min-h to prevent container collapse
                     : data.color && data.color.startsWith('#')
                       ? 'border-zinc-200'
                       : noteColorClass(data.color),
             )}
             style={
                 hasImage
-                    ? { backgroundImage: `url(${data.image})` }
+                    ? { backgroundImage: `url(${data.background_image})` } // Keep the inline style for definitive background application
                     : data.color && data.color.startsWith('#')
                       ? { backgroundColor: data.color }
                       : undefined
@@ -174,7 +174,7 @@ function NoteForm({
                             type="button"
                             onClick={() => {
                                 setData('color', color);
-                                setData('image', null);
+                                setData('background_image', null);
                             }}
                             aria-label={t(`notes.colors.${color}`)}
                             aria-pressed={data.color === color && !hasImage}
@@ -195,7 +195,7 @@ function NoteForm({
                         }
                         onChange={(event) => {
                             setData('color', event.target.value);
-                            setData('image', null);
+                            setData('background_image', null);
                         }}
                         className="h-8 w-12 cursor-pointer rounded border border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-900"
                         aria-label={t('notes.customColor')}
@@ -212,7 +212,7 @@ function NoteForm({
                     {hasImage && (
                         <button
                             type="button"
-                            onClick={() => setData('image', null)}
+                            onClick={() => setData('background_image', null)}
                             className="rounded-md px-2 py-1 text-xs text-zinc-600 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                         >
                             {t('notes.removeBackground')}

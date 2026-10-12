@@ -306,6 +306,10 @@ export default function DiaryNav({
                     </Link>
                 ))}
 
+                <ThemeSwitcher className={iconButtonClass} />
+
+                <LanguageSwitcher compact className={globeButtonClass} />
+
                 <div className="relative">
                     <button
                         type="button"
@@ -344,10 +348,6 @@ export default function DiaryNav({
                     )}
                 </div>
 
-                <ThemeSwitcher className={iconButtonClass} />
-
-                <LanguageSwitcher compact className={globeButtonClass} />
-
                 <button
                     type="button"
                     onClick={logoutHandler}
@@ -379,7 +379,7 @@ export default function DiaryNav({
                             onClick={() => setOpen(false)}
                             className="fixed inset-0 z-10 sm:hidden"
                         />
-                        <div className="absolute top-full right-0 z-20 mt-2 w-56 rounded-md border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+                        <div className="absolute top-full right-0 z-20 mt-2 w-70 rounded-md border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
                             <ThemeSwitcher layout="list" />
                             <div className="px-3 py-2">
                                 <LanguageSwitcher

@@ -6,6 +6,7 @@ import es from '@/i18n/locales/es.json';
 import fr from '@/i18n/locales/fr.json';
 import it from '@/i18n/locales/it.json';
 import pt from '@/i18n/locales/pt.json';
+import ca from '@/i18n/locales/ca.json';
 import { isSupportedLocale, type SupportedLocale } from '@/i18n/locales';
 
 const COOKIE_NAME = 'lang';
@@ -18,6 +19,7 @@ const resources = {
     de: { translation: de },
     pt: { translation: pt },
     it: { translation: it },
+    ca: { translation: ca },
 } as const;
 
 /**

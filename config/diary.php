@@ -27,7 +27,7 @@ return [
     |
     */
 
-    'locales' => ['en', 'es', 'fr', 'de', 'pt', 'it'],
+    'locales' => ['en', 'es', 'fr', 'de', 'pt', 'it', 'ca'],
 
     'locale_names' => [
         'en' => 'English',
@@ -36,6 +36,7 @@ return [
         'de' => 'Deutsch',
         'pt' => 'Português',
         'it' => 'Italiano',
+        'ca' => 'Catalan',
     ],
 
     'default_locale' => 'en',

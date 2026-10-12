@@ -276,8 +276,34 @@ export default function Show({
                                                 key={note.id}
                                                 className={cn(
                                                     'rounded-lg border p-3',
-                                                    noteColorClass(note.color),
+                                                    (note as any)
+                                                        .background_image
+                                                        ? 'border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800'
+                                                        : note.color &&
+                                                            note.color.startsWith(
+                                                                '#',
+                                                            )
+                                                          ? 'border-zinc-200'
+                                                          : noteColorClass(
+                                                                note.color,
+                                                            ),
                                                 )}
+                                                style={
+                                                    (note as any)
+                                                        .background_image
+                                                        ? {
+                                                              backgroundImage: `url(${(note as any).background_image})`,
+                                                          }
+                                                        : note.color &&
+                                                            note.color.startsWith(
+                                                                '#',
+                                                            )
+                                                          ? {
+                                                                backgroundColor:
+                                                                    note.color,
+                                                            }
+                                                          : undefined
+                                                }
                                             >
                                                 <span className="mb-1 inline-block rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-black/30 dark:text-zinc-300">
                                                     {t(

@@ -111,7 +111,7 @@ export default function AdminUsers({ users }: AdminUsersProps) {
                         </div>
                     )}
 
-                    <section className="mb-10 w-full">
+                    <section className="max-w-3xl m-auto mb-10">
                         <h2 className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-200">
                             {t('admin.createTitle')}
                         </h2>
@@ -236,7 +236,7 @@ export default function AdminUsers({ users }: AdminUsersProps) {
                         </form>
                     </section>
 
-                    <section className="w-full">
+                    <section className="max-w-3xl m-auto">
                         <h2 className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-200">
                             {t('admin.accounts', { count: users.length })}
                         </h2>

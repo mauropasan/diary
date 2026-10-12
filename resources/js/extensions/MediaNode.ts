@@ -113,7 +113,49 @@ export const MediaNode = Node.create({
     },
 
     parseHTML() {
-        return [{ tag: 'figure[data-media]' }];
+        return [
+            {
+                tag: 'figure[data-media]',
+                getAttrs: (element) => {
+                    const figure = element as HTMLElement;
+                    const kind =
+                        (figure.getAttribute('data-kind') as MediaKind) ||
+                        'file';
+                    let src = '';
+                    const mime =
+                        figure.getAttribute('data-mime') ||
+                        '';
+
+                    if (kind === 'image') {
+                        const img = figure.querySelector('img');
+                        src = img?.getAttribute('src') || '';
+                    } else if (kind === 'audio') {
+                        const audio = figure.querySelector('audio');
+                        src = audio?.getAttribute('src') || '';
+                    } else if (kind === 'video') {
+                        const video = figure.querySelector('video');
+                        src = video?.getAttribute('src') || '';
+                    } else {
+                        const link = figure.querySelector('a');
+                        src = link?.getAttribute('href') || '';
+                    }
+
+                    return {
+                        src,
+                        kind,
+                        originalName:
+                            figure.getAttribute('data-original-name') || '',
+                        mime,
+                        size:
+                            Number(figure.getAttribute('data-size') ?? 0) || 0,
+                        attachmentId:
+                            Number(
+                                figure.getAttribute('data-attachment-id') ?? 0,
+                            ) || 0,
+                    };
+                },
+            },
+        ];
     },
 
     renderHTML({ node }) {
@@ -126,6 +168,7 @@ export const MediaNode = Node.create({
                 'data-attachment-id': attributes.attachmentId,
                 'data-original-name': attributes.originalName || null,
                 'data-size': attributes.size || null,
+                'data-mime': attributes.mime || null,
             },
         );
 

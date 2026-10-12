@@ -3,12 +3,14 @@ import {
     addMonths,
     eachDayOfInterval,
     endOfMonth,
+    endOfWeek,
     format,
     max,
     min,
     parseISO,
     startOfDay,
     startOfMonth,
+    startOfWeek,
     subDays,
 } from 'date-fns';
 import { useEffect, useState } from 'react';
@@ -26,10 +28,9 @@ const MOOD_COLORS: Record<number, string> = {
     5: 'bg-emerald-500',
 };
 
-const RANGES = [1, 3, 7] as const;
+const RANGES = [3, 7] as const;
 
 const RANGE_LABELS: Record<(typeof RANGES)[number], string> = {
-    1: 'mood.rangeOne',
     3: 'mood.rangeThree',
     7: 'mood.rangeWeek',
 };
@@ -67,8 +68,24 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
      * towards the start of the month.
      */
     const homeEnd = min([monthEnd, startOfDay(new Date())]);
-    const windowEnd = subDays(homeEnd, offset * range);
-    const windowStart = max([subDays(windowEnd, range - 1), monthStart]);
+    let windowEnd = subDays(homeEnd, offset * range);
+    let windowStart = max([subDays(windowEnd, range - 1), monthStart]);
+
+    if (range === 7) {
+        const targetEnd = subDays(homeEnd, offset * range);
+        windowStart = startOfWeek(targetEnd, { weekStartsOn: 1 });
+        windowEnd = endOfWeek(targetEnd, { weekStartsOn: 1 });
+        if (windowEnd > homeEnd) {
+            windowEnd = homeEnd;
+        }
+        if (windowStart < monthStart) {
+            windowStart = monthStart;
+        }
+        if (windowStart > windowEnd) {
+            windowEnd = windowStart;
+        }
+    }
+
     const windowDays = eachDayOfInterval({
         start: windowStart,
         end: windowEnd,
@@ -256,8 +273,8 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                         title={label}
                                         className={cn(
                                             'flex flex-col items-center gap-1',
-                                            isNarrow && range === 1
-                                                ? 'w-16'
+                                            isNarrow && range === 3
+                                                ? 'flex-1'
                                                 : 'flex-1',
                                         )}
                                     >
@@ -279,9 +296,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                             />
                                         </div>
                                         <span className="text-[10px] text-zinc-400 tabular-nums dark:text-zinc-500">
-                                            {isNarrow && range === 1
-                                                ? formatDayMonth(day, locale)
-                                                : formatDay(day, locale)}
+                                            {formatDay(day, locale)}
                                         </span>
                                     </div>
                                 );

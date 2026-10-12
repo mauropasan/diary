@@ -56,7 +56,7 @@ export default function Export({ entries }: ExportProps) {
                         </p>
                     )}
 
-                    <div className="flex flex-col gap-10">
+                    <div className="max-w-3xl m-auto flex flex-col gap-10">
                         {entries.map((entry) => (
                             <article
                                 key={entry.date}

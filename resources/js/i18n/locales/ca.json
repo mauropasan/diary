@@ -1,0 +1,214 @@
+{
+    "common": {
+        "brand": "Diari",
+        "email": "Correu electrònic",
+        "password": "Contrasenya",
+        "name": "Nom",
+        "newPassword": "Nova contrasenya",
+        "confirmPassword": "Repeteix la contrasenya",
+        "confirmNewPassword": "Repeteix la nova contrasenya",
+        "close": "Tanca",
+        "cancel": "Cancel·la",
+        "language": "Idioma",
+        "backToDiary": "Torna al diari",
+        "backToLogin": "Torna a l'inici de sessió"
+    },
+    "nav": {
+        "today": "Ves a avui",
+        "search": "Cerca",
+        "mood": "Estat d'ànim",
+        "notes": "Notes",
+        "export": "Exporta",
+        "password": "Contrasenya",
+        "users": "Usuaris",
+        "logout": "Tanca la sessió",
+        "openMenu": "Obre el menú",
+        "closeMenu": "Tanca el menú",
+        "more": "Més"
+    },
+    "theme": {
+        "label": "Tema",
+        "light": "Clar",
+        "dark": "Fosc",
+        "system": "Sistema"
+    },
+    "media": {
+        "attach": "Adjunta",
+        "attachTitle": "Adjunta un fitxer",
+        "uploading": "Pujant…",
+        "error": "No s'ha pogut pujar el fitxer."
+    },
+    "login": {
+        "title": "Inicia la sessió",
+        "subtitle": "Entra per escriure al teu diari.",
+        "remember": "Recorda'm",
+        "submit": "Inicia la sessió",
+        "submitting": "S'està iniciant la sessió…",
+        "forgot": "Has oblidat la contrasenya? Fes servir la teva clau de recuperació"
+    },
+    "register": {
+        "title": "Crea el teu diari",
+        "heading": "Crea el teu diari",
+        "subtitle": "Encara no existeix cap compte. Defineix el teu nom, el teu correu electrònic i una contrasenya per començar. Com que és el primer compte, seràs l'administrador: només tu podràs crear i eliminar altres comptes. Les teves entrades es xifraran amb una clau derivada d'aquesta contrasenya: si l'oblides, no es podran recuperar sense la clau de recuperació que es mostrarà a continuació.",
+        "submit": "Crea el diari",
+        "submitting": "S'està creant…"
+    },
+    "password": {
+        "title": "Canvia la contrasenya",
+        "heading": "Canvia la contrasenya",
+        "subtitle": "El teu diari es desxifra amb aquesta contrasenya. Si la perds, perdràs l'accés a les entrades.",
+        "current": "Contrasenya actual",
+        "submit": "Canvia la contrasenya",
+        "submitting": "S'està desant…"
+    },
+    "recovery": {
+        "title": "Recupera l'accés",
+        "heading": "Recupera l'accés",
+        "subtitle": "Introdueix el teu correu electrònic, la clau de recuperació que vas desar i una contrasenya nova. Sense la clau de recuperació no és possible accedir a les teves entrades.",
+        "recoveryKey": "Clau de recuperació",
+        "submit": "Restaura l'accés",
+        "submitting": "S'està restaurant…"
+    },
+    "unlock": {
+        "title": "Desbloqueja el diari",
+        "subtitle": "El teu diari està bloquejat. Introdueix la teva contrasenya per desxifrar-lo.",
+        "submit": "Desbloqueja",
+        "submitting": "S'està desxifrant…"
+    },
+    "lock": {
+        "heading": "Diari bloquejat",
+        "body": "Ha passat una estona sense activitat. Introdueix la teva contrasenya per continuar escrivint.",
+        "submit": "Desbloqueja",
+        "submitting": "S'està desxifrant…"
+    },
+    "show": {
+        "suggestion": "Suggeriment:",
+        "streakDays_one": "{{count}} dia seguit",
+        "streakDays_other": "{{count}} dies seguits",
+        "streakRecord": " · rècord: {{count}}",
+        "lockCountdown": "Bloqueig per inactivitat en {{time}}",
+        "recoveryTitle": "Desa la teva clau de recuperació",
+        "recoveryIntro": "És l'única còpia i no es tornarà a mostrar. Amb ella pots recuperar el diari si oblides la contrasenya.",
+        "previous": "← Anterior",
+        "next": "Següent →",
+        "onThisDay": "Tal dia com avui",
+        "notesTitle": "Notes d'aquest dia",
+        "upcomingTitle": "Propers"
+    },
+    "calendar": {
+        "previousMonth": "Mes anterior",
+        "nextMonth": "Mes següent"
+    },
+    "editor": {
+        "titlePlaceholder": "Títol (opcional)",
+        "moodPlaceholder": "Estat d'ànim",
+        "placeholder": "Escriu aquí el teu dia…",
+        "insertTime": "Hora actual",
+        "insertTimeTitle": "Insereix l'hora actual (Ctrl+Maj+H)",
+        "saving": "S'està desant…",
+        "saved": "Desat",
+        "saveError": "No s'ha pogut desar",
+        "moods": {
+            "1": "Molt malament",
+            "2": "Malament",
+            "3": "Regular",
+            "4": "Bé",
+            "5": "Molt bé"
+        }
+    },
+    "tags": {
+        "placeholder": "Etiquetes…",
+        "remove": "Treu {{tag}}"
+    },
+    "search": {
+        "title": "Cerca",
+        "placeholder": "Cerca al teu diari…",
+        "empty": "Escriu alguna cosa per cercar al títol, al contingut o a les etiquetes.",
+        "noResults": "No s'han trobat entrades per a «{{query}}».",
+        "untitled": "Sense títol"
+    },
+    "mood": {
+        "title": "Estat d'ànim",
+        "average_one": "Mitjana {{average}} · {{count}} dia",
+        "average_other": "Mitjana {{average}} · {{count}} dies",
+        "noData": "Sense dades aquest mes",
+        "noDataRange": "Sense dades en aquest interval",
+        "rangeLabel": "Dies visibles",
+        "rangeOne": "1 dia",
+        "rangeThree": "3 dies",
+        "rangeWeek": "1 setmana",
+        "rangePrev": "Dies anteriors",
+        "rangeNext": "Dies posteriors",
+        "dayWithMood": "{{date}} · {{mood}}"
+    },
+    "export": {
+        "title": "Exporta",
+        "download": "Descarrega Markdown",
+        "print": "Imprimeix / Desa com a PDF",
+        "empty": "Encara no hi ha entrades.",
+        "moodMeta": "Estat d'ànim: {{mood}}",
+        "tagsMeta": "Etiquetes: {{tags}}"
+    },
+    "admin": {
+        "title": "Usuaris",
+        "heading": "Usuaris",
+        "recoveryTitle": "Clau de recuperació del nou usuari",
+        "recoveryIntro": "Es mostra només una vegada. Lliura-la a l'usuari juntament amb la contrasenya; amb ella pot recuperar el seu diari si oblida la contrasenya.",
+        "createTitle": "Crea un compte",
+        "submit": "Crea el compte",
+        "submitting": "S'està creant…",
+        "accounts_one": "Comptes ({{count}})",
+        "accounts_other": "Comptes ({{count}})",
+        "empty": "Encara no hi ha cap compte.",
+        "badge": "Admin",
+        "entries_one": "{{count}} entrada",
+        "entries_other": "{{count}} entrades",
+        "since": "des del {{date}}",
+        "delete": "Elimina",
+        "confirmDelete": "Vols eliminar el compte de {{name}}? S'esborraran totes les seves entrades i no es podran recuperar. Aquesta acció no es pot desfer."
+    },
+    "notes": {
+        "title": "Notes",
+        "subtitle": "Notes, recordatoris i esdeveniments. Dona-hi un color i, si vols, associa'ls a un dia.",
+        "titleLabel": "Títol",
+        "titlePlaceholder": "Títol (opcional)",
+        "bodyLabel": "Text",
+        "bodyPlaceholder": "Escriu aquí la teva nota…",
+        "color": "Color",
+        "kindLabel": "Tipus",
+        "dateLabel": "Dia",
+        "save": "Desa",
+        "saving": "S'està desant…",
+        "cancel": "Cancel·la",
+        "reset": "Esborra",
+        "edit": "Edita",
+        "delete": "Elimina",
+        "confirmDelete": "Vols eliminar aquesta nota? No es pot desfer.",
+        "empty": "Encara no tens cap nota.",
+        "untitled": "Nota sense títol",
+        "filters": {
+            "all": "Tots"
+        },
+        "noResults": "No hi ha notes d'aquest tipus.",
+        "colors": {
+            "yellow": "Groc",
+            "pink": "Rosa",
+            "blue": "Blau",
+            "green": "Verd",
+            "purple": "Morat",
+            "gray": "Gris"
+        },
+        "customColor": "Color personalitzat",
+        "backgroundImage": "Imatge de fons",
+        "removeBackground": "Treu la imatge",
+        "kinds": {
+            "note": "Nota",
+            "reminder": "Recordatori",
+            "event": "Esdeveniment"
+        }
+    },
+    "localePicker": {
+        "title": "Tria el teu idioma",
+        "subtitle": "Selecciona l'idioma que vols fer servir."
+    }
+}

@@ -24,7 +24,8 @@
         "logout": "Sign out",
         "openMenu": "Open menu",
         "closeMenu": "Close menu",
-        "more": "More"
+        "more": "More",
+        "schedule": "Schedule"
     },
     "theme": {
         "label": "Theme",
@@ -114,7 +115,8 @@
             "3": "Okay",
             "4": "Good",
             "5": "Very good"
-        }
+        },
+        "wordCount": "{{count}} words"
     },
     "tags": {
         "placeholder": "Tags…",
@@ -134,12 +136,26 @@
         "noData": "No data this month",
         "noDataRange": "No data in this range",
         "rangeLabel": "Visible days",
-        "rangeOne": "1 day",
         "rangeThree": "3 days",
         "rangeWeek": "1 week",
         "rangePrev": "Earlier days",
         "rangeNext": "Later days",
-        "dayWithMood": "{{date}} · {{mood}}"
+        "dayWithMood": "{{date}} · {{mood}}",
+        "viewChart": "Chart",
+        "viewTable": "Table",
+        "table": {
+            "date": "Date",
+            "day": "Day",
+            "mood": "Mood",
+            "entry": "Entry"
+        },
+        "summary": {
+            "days": "Days logged",
+            "average": "Average",
+            "mostFrequent": "Most frequent",
+            "streak": "Streak"
+        },
+        "entryLink": "View entry"
     },
     "export": {
         "title": "Export",
@@ -147,7 +163,11 @@
         "print": "Print / Save as PDF",
         "empty": "There are no entries yet.",
         "moodMeta": "Mood: {{mood}}",
-        "tagsMeta": "Tags: {{tags}}"
+        "tagsMeta": "Tags: {{tags}}",
+        "moodSummary": "Mood summary",
+        "moodedDays": "Mooded days",
+        "averageMood": "Average mood",
+        "distribution": "Distribution"
     },
     "admin": {
         "title": "Users",
@@ -205,10 +225,32 @@
             "note": "Note",
             "reminder": "Reminder",
             "event": "Event"
-        }
+        },
+        "search": "Search",
+        "searchPlaceholder": "Search notes..."
     },
     "localePicker": {
         "title": "Choose your language",
         "subtitle": "Select the language you want to use."
+    },
+    "schedule": {
+        "title": "Schedule",
+        "subtitle": "Create and organize your timetables freely.",
+        "nameLabel": "Name",
+        "namePlaceholder": "e.g. School, Work, Gym",
+        "slotsLabel": "Schedule (free format)",
+        "slotsPlaceholder": "Write your schedule here...",
+        "active": "Active",
+        "inactive": "Inactive",
+        "addRow": "Add row",
+        "removeRow": "Remove row",
+        "time": "Time",
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
     }
 }

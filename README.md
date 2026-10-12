@@ -2,8 +2,8 @@
 
 A personal, single-user encrypted diary built with **Laravel + Inertia.js + React**.
 One entry per day, unlimited rich text, stored **encrypted at rest** with a key
-derived from your password. The UI is in Spanish; code, identifiers and commits
-are in English.
+derived from your password. The default UI language is in English if no language
+is detected; code, identifiers and commits are in English.
 
 Serious about the "personal" part: there is **no public registration** once the
 first account exists, **no password reset by email**, and the server never sees

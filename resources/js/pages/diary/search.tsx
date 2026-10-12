@@ -59,7 +59,7 @@ export default function Search({ query, results }: SearchProps) {
             <Head title={t('search.title')} />
 
             <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <div className="w-full px-6 py-8">
+                <div className="mx-auto max-w-7xl px-6 py-8">
                     <header className="mb-8 flex items-start justify-between gap-4">
                         <div>
                             <p className="text-sm text-zinc-500 dark:text-zinc-400">

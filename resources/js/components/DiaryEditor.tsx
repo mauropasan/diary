@@ -65,6 +65,7 @@ export default function DiaryEditor({
     const [saveState, setSaveState] = useState<SaveState>('idle');
     const [uploadState, setUploadState] = useState<UploadState>('idle');
     const [hasUnsaved, setHasUnsaved] = useState(false);
+    const [wordCount, setWordCount] = useState(0);
 
     const titleRef = useRef(title);
     const moodRef = useRef(mood);
@@ -197,7 +198,10 @@ export default function DiaryEditor({
                 return true;
             },
         },
-        onUpdate: () => scheduleSave(),
+        onUpdate: ({ editor: ed }) => {
+            scheduleSave();
+            setWordCount(ed.getText().trim().split(/\s+/).filter(Boolean).length);
+        },
     });
 
     const saveNow = (onFinished?: () => void): void => {
@@ -416,6 +420,9 @@ export default function DiaryEditor({
                         )}
                     >
                         {statusLabel}
+                    </span>
+                    <span className="ml-auto text-xs text-zinc-400 dark:text-zinc-500">
+                        {t('editor.wordCount', { count: wordCount })}
                     </span>
                 </div>
 

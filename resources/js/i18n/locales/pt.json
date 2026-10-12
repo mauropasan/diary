@@ -24,7 +24,8 @@
         "logout": "Terminar sessão",
         "openMenu": "Abrir menu",
         "closeMenu": "Fechar menu",
-        "more": "Mais"
+        "more": "Mais",
+        "schedule": "Horário"
     },
     "theme": {
         "label": "Tema",
@@ -114,7 +115,8 @@
             "3": "Razoável",
             "4": "Bem",
             "5": "Muito bem"
-        }
+        },
+        "wordCount": "{{count}} palavras"
     },
     "tags": {
         "placeholder": "Etiquetas…",
@@ -134,12 +136,26 @@
         "noData": "Sem dados este mês",
         "noDataRange": "Sem dados neste intervalo",
         "rangeLabel": "Dias visíveis",
-        "rangeOne": "1 dia",
         "rangeThree": "3 dias",
         "rangeWeek": "1 semana",
         "rangePrev": "Dias anteriores",
         "rangeNext": "Dias posteriores",
-        "dayWithMood": "{{date}} · {{mood}}"
+        "dayWithMood": "{{date}} · {{mood}}",
+        "viewChart": "Gráfico",
+        "viewTable": "Tabela",
+        "table": {
+            "date": "Date",
+            "day": "Day",
+            "mood": "Mood",
+            "entry": "Entry"
+        },
+        "summary": {
+            "days": "Days logged",
+            "average": "Average",
+            "mostFrequent": "Most frequent",
+            "streak": "Streak"
+        },
+        "entryLink": "View entry"
     },
     "export": {
         "title": "Exportar",
@@ -147,7 +163,11 @@
         "print": "Imprimir / Guardar como PDF",
         "empty": "Ainda não há entradas.",
         "moodMeta": "Humor: {{mood}}",
-        "tagsMeta": "Etiquetas: {{tags}}"
+        "tagsMeta": "Etiquetas: {{tags}}",
+        "moodSummary": "Resumo do humor",
+        "moodedDays": "Dias com humor",
+        "averageMood": "Humor médio",
+        "distribution": "Distribuição"
     },
     "admin": {
         "title": "Utilizadores",
@@ -205,10 +225,32 @@
             "note": "Nota",
             "reminder": "Lembrete",
             "event": "Evento"
-        }
+        },
+        "search": "Pesquisar",
+        "searchPlaceholder": "Pesquisar notas..."
     },
     "localePicker": {
         "title": "Escolha o seu idioma",
         "subtitle": "Selecione o idioma que pretende utilizar."
+    },
+    "schedule": {
+        "title": "Horário",
+        "subtitle": "Crie e organize seus horários livremente.",
+        "nameLabel": "Nome",
+        "namePlaceholder": "ex. Escola, Trabalho, Academia",
+        "slotsLabel": "Horário (formato livre)",
+        "slotsPlaceholder": "Escreva seu horário aqui...",
+        "active": "Ativo",
+        "inactive": "Inativo",
+        "addRow": "Adicionar linha",
+        "removeRow": "Remover linha",
+        "time": "Hora",
+        "mon": "Seg",
+        "tue": "Ter",
+        "wed": "Qua",
+        "thu": "Qui",
+        "fri": "Sex",
+        "sat": "Sáb",
+        "sun": "Dom"
     }
 }

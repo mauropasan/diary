@@ -12,6 +12,7 @@ use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\MoodController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -70,6 +71,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('export', [ExportController::class, 'index'])->name('diary.export');
         Route::get('export/markdown', [ExportController::class, 'markdown'])->name('diary.export.markdown');
+
+        Route::get('diary/schedule', [ScheduleController::class, 'index'])->name('diary.schedule');
+        Route::post('diary/schedule', [ScheduleController::class, 'store'])->name('diary.schedule.store');
+        Route::put('diary/schedule/{schedule}', [ScheduleController::class, 'update'])->name('diary.schedule.update');
+        Route::delete('diary/schedule/{schedule}', [ScheduleController::class, 'destroy'])->name('diary.schedule.destroy');
 
         Route::get('diary/attachments/{attachment}', [AttachmentController::class, 'show'])
             ->name('diary.attachments.show');

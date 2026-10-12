@@ -11,6 +11,7 @@ import {
     mood as diaryMood,
     notes as diaryNotes,
     password as diaryPassword,
+    schedule as diarySchedule,
     search as diarySearch,
 } from '@/routes/diary';
 
@@ -233,6 +234,12 @@ export default function DiaryNav({
             key: 'notes',
             label: t('nav.notes'),
             href: diaryNotes.url(),
+            icon: <NotesIcon />,
+        },
+        {
+            key: 'schedule',
+            label: t('nav.schedule'),
+            href: diarySchedule.url(),
             icon: <NotesIcon />,
         },
     ];

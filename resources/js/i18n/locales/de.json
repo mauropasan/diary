@@ -24,7 +24,8 @@
         "logout": "Abmelden",
         "openMenu": "Menü öffnen",
         "closeMenu": "Menü schließen",
-        "more": "Mehr"
+        "more": "Mehr",
+        "schedule": "Stundenplan"
     },
     "theme": {
         "label": "Design",
@@ -114,7 +115,8 @@
             "3": "Mittelmäßig",
             "4": "Gut",
             "5": "Sehr gut"
-        }
+        },
+        "wordCount": "{{count}} Wörter"
     },
     "tags": {
         "placeholder": "Schlagwörter…",
@@ -134,12 +136,26 @@
         "noData": "Diesen Monat keine Daten",
         "noDataRange": "Keine Daten in diesem Bereich",
         "rangeLabel": "Sichtbare Tage",
-        "rangeOne": "1 Tag",
         "rangeThree": "3 Tage",
         "rangeWeek": "1 Woche",
         "rangePrev": "Frühere Tage",
         "rangeNext": "Spätere Tage",
-        "dayWithMood": "{{date}} · {{mood}}"
+        "dayWithMood": "{{date}} · {{mood}}",
+        "viewChart": "Diagramm",
+        "viewTable": "Tabelle",
+        "table": {
+            "date": "Date",
+            "day": "Day",
+            "mood": "Mood",
+            "entry": "Entry"
+        },
+        "summary": {
+            "days": "Days logged",
+            "average": "Average",
+            "mostFrequent": "Most frequent",
+            "streak": "Streak"
+        },
+        "entryLink": "View entry"
     },
     "export": {
         "title": "Exportieren",
@@ -147,7 +163,11 @@
         "print": "Drucken / Als PDF speichern",
         "empty": "Es gibt noch keine Einträge.",
         "moodMeta": "Stimmung: {{mood}}",
-        "tagsMeta": "Schlagwörter: {{tags}}"
+        "tagsMeta": "Schlagwörter: {{tags}}",
+        "moodSummary": "Stimmungszusammenfassung",
+        "moodedDays": "Tage mit Stimmung",
+        "averageMood": "Durchschnittliche Stimmung",
+        "distribution": "Verteilung"
     },
     "admin": {
         "title": "Benutzer",
@@ -205,10 +225,32 @@
             "note": "Notiz",
             "reminder": "Erinnerung",
             "event": "Termin"
-        }
+        },
+        "search": "Suchen",
+        "searchPlaceholder": "Notizen durchsuchen..."
     },
     "localePicker": {
         "title": "Wählen Sie Ihre Sprache",
         "subtitle": "Wählen Sie die Sprache aus, die Sie verwenden möchten."
+    },
+    "schedule": {
+        "title": "Stundenplan",
+        "subtitle": "Erstellen und organisieren Sie Ihren Stundenplan frei.",
+        "nameLabel": "Name",
+        "namePlaceholder": "z. B. Schule, Arbeit, Fitness",
+        "slotsLabel": "Stundenplan (Freiformat)",
+        "slotsPlaceholder": "Schreiben Sie Ihren Stundenplan hier...",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "addRow": "Zeile hinzufügen",
+        "removeRow": "Zeile entfernen",
+        "time": "Zeit",
+        "mon": "Mo",
+        "tue": "Di",
+        "wed": "Mi",
+        "thu": "Do",
+        "fri": "Fr",
+        "sat": "Sa",
+        "sun": "So"
     }
 }

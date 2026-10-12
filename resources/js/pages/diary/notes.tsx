@@ -309,15 +309,23 @@ export default function Notes({
     const [editingId, setEditingId] = useState<number | null>(null);
     const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
     const [filter, setFilter] = useState<string>('all');
+    const [query, setQuery] = useState<string>('');
 
     const editing = notes.find((note) => note.id === editingId) ?? null;
 
     const filteredNotes = notes.filter((note) => {
-        if (filter === 'all') {
-            return true;
+        if (filter !== 'all' && note.kind !== filter) {
+            return false;
         }
-
-        return note.kind === filter;
+        if (query.trim()) {
+            const q = query.toLowerCase();
+            const title = (note.title ?? '').toLowerCase();
+            const body = (note.body ?? '').toLowerCase();
+            if (!title.includes(q) && !body.includes(q)) {
+                return false;
+            }
+        }
+        return true;
     });
 
     function confirmRemove(): void {
@@ -336,7 +344,7 @@ export default function Notes({
             <Head title={t('notes.title')} />
 
             <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <div className="w-full px-6 py-8">
+                <div className="mx-auto max-w-7xl px-6 py-8">
                     <header className="mb-8 flex items-start justify-between gap-4">
                         <div>
                             <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -365,6 +373,13 @@ export default function Notes({
 
                     {notes.length > 0 && (
                         <div className="mb-4 flex flex-wrap items-center gap-2">
+                            <input
+                                type="text"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder={t('notes.searchPlaceholder')}
+                                className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+                            />
                             <button
                                 type="button"
                                 onClick={() => setFilter('all')}

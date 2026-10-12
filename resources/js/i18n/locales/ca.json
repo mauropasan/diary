@@ -24,7 +24,8 @@
         "logout": "Tanca la sessió",
         "openMenu": "Obre el menú",
         "closeMenu": "Tanca el menú",
-        "more": "Més"
+        "more": "Més",
+        "schedule": "Horari"
     },
     "theme": {
         "label": "Tema",
@@ -114,7 +115,8 @@
             "3": "Regular",
             "4": "Bé",
             "5": "Molt bé"
-        }
+        },
+        "wordCount": "{{count}} paraules"
     },
     "tags": {
         "placeholder": "Etiquetes…",
@@ -128,26 +130,44 @@
         "untitled": "Sense títol"
     },
     "mood": {
-        "title": "Estat d'ànim",
+        "title": "Ànim",
         "average_one": "Mitjana {{average}} · {{count}} dia",
         "average_other": "Mitjana {{average}} · {{count}} dies",
         "noData": "Sense dades aquest mes",
         "noDataRange": "Sense dades en aquest interval",
         "rangeLabel": "Dies visibles",
-        "rangeOne": "1 dia",
         "rangeThree": "3 dies",
         "rangeWeek": "1 setmana",
         "rangePrev": "Dies anteriors",
         "rangeNext": "Dies posteriors",
-        "dayWithMood": "{{date}} · {{mood}}"
+        "dayWithMood": "{{date}} · {{mood}}",
+        "viewChart": "Gràfic",
+        "viewTable": "Taula",
+        "table": {
+            "date": "Data",
+            "day": "Dia",
+            "mood": "Ànim",
+            "entry": "Entrada"
+        },
+        "summary": {
+            "days": "Dies registrats",
+            "average": "Mitjana",
+            "mostFrequent": "Més freqüent",
+            "streak": "Ratxa"
+        },
+        "entryLink": "Veure entrada"
     },
     "export": {
-        "title": "Exporta",
-        "download": "Descarrega Markdown",
-        "print": "Imprimeix / Desa com a PDF",
+        "title": "Exportar",
+        "download": "Baixar en Markdown",
+        "print": "Imprimir / Guardar en PDF",
         "empty": "Encara no hi ha entrades.",
-        "moodMeta": "Estat d'ànim: {{mood}}",
-        "tagsMeta": "Etiquetes: {{tags}}"
+        "moodMeta": "Ànim: {{mood}}",
+        "tagsMeta": "Etiquetes: {{tags}}",
+        "moodSummary": "Resum d'ànim",
+        "moodedDays": "Dies amb ànim",
+        "averageMood": "Mitjana d'ànim",
+        "distribution": "Distribució"
     },
     "admin": {
         "title": "Usuaris",
@@ -205,10 +225,32 @@
             "note": "Nota",
             "reminder": "Recordatori",
             "event": "Esdeveniment"
-        }
+        },
+        "search": "Cerca",
+        "searchPlaceholder": "Cerca notes..."
     },
     "localePicker": {
         "title": "Tria el teu idioma",
         "subtitle": "Selecciona l'idioma que vols fer servir."
+    },
+    "schedule": {
+        "title": "Horari",
+        "subtitle": "Crea i organitza els teus horaris lliurement.",
+        "nameLabel": "Nom",
+        "namePlaceholder": "ex. Escola, Feina, Gimnàs",
+        "slotsLabel": "Horari (format lliure)",
+        "slotsPlaceholder": "Escriu el teu horari aquí...",
+        "active": "Actiu",
+        "inactive": "Inactiu",
+        "addRow": "Afegir fila",
+        "removeRow": "Eliminar fila",
+        "time": "Hora",
+        "mon": "Dl",
+        "tue": "Dm",
+        "wed": "Dc",
+        "thu": "Dj",
+        "fri": "Dv",
+        "sat": "Ds",
+        "sun": "Dg"
     }
 }

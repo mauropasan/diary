@@ -24,7 +24,8 @@
         "logout": "Esci",
         "openMenu": "Apri menu",
         "closeMenu": "Chiudi menu",
-        "more": "Altro"
+        "more": "Altro",
+        "schedule": "Orario"
     },
     "theme": {
         "label": "Tema",
@@ -114,7 +115,8 @@
             "3": "Così così",
             "4": "Bene",
             "5": "Molto bene"
-        }
+        },
+        "wordCount": "{{count}} parole"
     },
     "tags": {
         "placeholder": "Etichette…",
@@ -134,12 +136,26 @@
         "noData": "Nessun dato questo mese",
         "noDataRange": "Nessun dato in questo intervallo",
         "rangeLabel": "Giorni visibili",
-        "rangeOne": "1 giorno",
         "rangeThree": "3 giorni",
         "rangeWeek": "1 settimana",
         "rangePrev": "Giorni precedenti",
         "rangeNext": "Giorni successivi",
-        "dayWithMood": "{{date}} · {{mood}}"
+        "dayWithMood": "{{date}} · {{mood}}",
+        "viewChart": "Grafico",
+        "viewTable": "Tabella",
+        "table": {
+            "date": "Date",
+            "day": "Day",
+            "mood": "Mood",
+            "entry": "Entry"
+        },
+        "summary": {
+            "days": "Days logged",
+            "average": "Average",
+            "mostFrequent": "Most frequent",
+            "streak": "Streak"
+        },
+        "entryLink": "View entry"
     },
     "export": {
         "title": "Esporta",
@@ -147,7 +163,11 @@
         "print": "Stampa / Salva come PDF",
         "empty": "Non ci sono ancora voci.",
         "moodMeta": "Umore: {{mood}}",
-        "tagsMeta": "Etichette: {{tags}}"
+        "tagsMeta": "Etichette: {{tags}}",
+        "moodSummary": "Riepilogo umore",
+        "moodedDays": "Giorni con umore",
+        "averageMood": "Umore medio",
+        "distribution": "Distribuzione"
     },
     "admin": {
         "title": "Utenti",
@@ -205,10 +225,32 @@
             "note": "Nota",
             "reminder": "Promemoria",
             "event": "Evento"
-        }
+        },
+        "search": "Cerca",
+        "searchPlaceholder": "Cerca note..."
     },
     "localePicker": {
         "title": "Scegli la tua lingua",
         "subtitle": "Seleziona la lingua che vuoi usare."
+    },
+    "schedule": {
+        "title": "Orario",
+        "subtitle": "Crea e organizza i tuoi orari liberamente.",
+        "nameLabel": "Nome",
+        "namePlaceholder": "es. Scuola, Lavoro, Palestra",
+        "slotsLabel": "Orario (formato libero)",
+        "slotsPlaceholder": "Scrivi il tuo orario qui...",
+        "active": "Attivo",
+        "inactive": "Inattivo",
+        "addRow": "Aggiungi riga",
+        "removeRow": "Rimuovi riga",
+        "time": "Ora",
+        "mon": "Lun",
+        "tue": "Mar",
+        "wed": "Mer",
+        "thu": "Gio",
+        "fri": "Ven",
+        "sat": "Sab",
+        "sun": "Dom"
     }
 }

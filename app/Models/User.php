@@ -86,4 +86,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Note::class);
     }
+
+    /**
+     * The schedules owned by the user.
+     *
+     * @return HasMany<Schedule, $this>
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }

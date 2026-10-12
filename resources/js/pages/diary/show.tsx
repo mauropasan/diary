@@ -124,7 +124,7 @@ export default function Show({
             <Head title={formatLongDay(day, locale)} />
 
             <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <div className="w-full px-6 py-8">
+                <div className="mx-auto max-w-7xl px-6 py-8">
                     {flash.recoveryKey && !recoveryKeyDismissed && (
                         <div className="mb-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100">
                             <div className="mb-2 flex items-start justify-between gap-4">
@@ -256,7 +256,7 @@ export default function Show({
                             />
                         </div>
 
-                        <div className="flex shrink-0 flex-col gap-4 lg:w-72">
+                        <div className="max-w-60 flex shrink-0 flex-col gap-4 lg:w-72">
                             <DiaryCalendar
                                 date={date}
                                 month={calendarMonth}

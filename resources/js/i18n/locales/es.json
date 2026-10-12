@@ -24,7 +24,8 @@
         "logout": "Cerrar sesión",
         "openMenu": "Abrir menú",
         "closeMenu": "Cerrar menú",
-        "more": "Más"
+        "more": "Más",
+        "schedule": "Horario"
     },
     "theme": {
         "label": "Tema",
@@ -114,7 +115,8 @@
             "3": "Regular",
             "4": "Bien",
             "5": "Muy bien"
-        }
+        },
+        "wordCount": "{{count}} palabras"
     },
     "tags": {
         "placeholder": "Etiquetas…",
@@ -134,12 +136,26 @@
         "noData": "Sin datos este mes",
         "noDataRange": "Sin datos en este rango",
         "rangeLabel": "Días visibles",
-        "rangeOne": "1 día",
         "rangeThree": "3 días",
         "rangeWeek": "1 semana",
         "rangePrev": "Días anteriores",
         "rangeNext": "Días posteriores",
-        "dayWithMood": "{{date}} · {{mood}}"
+        "dayWithMood": "{{date}} · {{mood}}",
+        "viewChart": "Gráfico",
+        "viewTable": "Tabla",
+        "table": {
+            "date": "Date",
+            "day": "Day",
+            "mood": "Mood",
+            "entry": "Entry"
+        },
+        "summary": {
+            "days": "Days logged",
+            "average": "Average",
+            "mostFrequent": "Most frequent",
+            "streak": "Streak"
+        },
+        "entryLink": "View entry"
     },
     "export": {
         "title": "Exportar",
@@ -147,7 +163,11 @@
         "print": "Imprimir / Guardar como PDF",
         "empty": "Todavía no hay entradas.",
         "moodMeta": "Ánimo: {{mood}}",
-        "tagsMeta": "Etiquetas: {{tags}}"
+        "tagsMeta": "Etiquetas: {{tags}}",
+        "moodSummary": "Resumen de estado de ánimo",
+        "moodedDays": "Días con estado de ánimo",
+        "averageMood": "Media de estado de ánimo",
+        "distribution": "Distribución"
     },
     "admin": {
         "title": "Usuarios",
@@ -205,10 +225,32 @@
             "note": "Nota",
             "reminder": "Recordatorio",
             "event": "Evento"
-        }
+        },
+        "search": "Buscar",
+        "searchPlaceholder": "Buscar notas..."
     },
     "localePicker": {
         "title": "Elige tu idioma",
         "subtitle": "Selecciona el idioma que quieres usar."
+    },
+    "schedule": {
+        "title": "Horario",
+        "subtitle": "Crea y organiza tus horarios libremente.",
+        "nameLabel": "Nombre",
+        "namePlaceholder": "ej. Escuela, Trabajo, Gimnasio",
+        "slotsLabel": "Horario (formato libre)",
+        "slotsPlaceholder": "Escribe tu horario aquí...",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "addRow": "Añadir fila",
+        "removeRow": "Eliminar fila",
+        "time": "Hora",
+        "mon": "L",
+        "tue": "M",
+        "wed": "X",
+        "thu": "J",
+        "fri": "V",
+        "sat": "S",
+        "sun": "D"
     }
 }

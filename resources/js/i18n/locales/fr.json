@@ -24,7 +24,8 @@
         "logout": "Se déconnecter",
         "openMenu": "Ouvrir le menu",
         "closeMenu": "Fermer le menu",
-        "more": "Plus"
+        "more": "Plus",
+        "schedule": "Emploi du temps"
     },
     "theme": {
         "label": "Thème",
@@ -114,7 +115,8 @@
             "3": "Moyen",
             "4": "Bien",
             "5": "Très bien"
-        }
+        },
+        "wordCount": "{{count}} mots"
     },
     "tags": {
         "placeholder": "Étiquettes…",
@@ -134,12 +136,26 @@
         "noData": "Aucune donnée ce mois-ci",
         "noDataRange": "Aucune donnée sur cette plage",
         "rangeLabel": "Jours affichés",
-        "rangeOne": "1 jour",
         "rangeThree": "3 jours",
         "rangeWeek": "1 semaine",
         "rangePrev": "Jours précédents",
         "rangeNext": "Jours suivants",
-        "dayWithMood": "{{date}} · {{mood}}"
+        "dayWithMood": "{{date}} · {{mood}}",
+        "viewChart": "Graphique",
+        "viewTable": "Tableau",
+        "table": {
+            "date": "Date",
+            "day": "Day",
+            "mood": "Mood",
+            "entry": "Entry"
+        },
+        "summary": {
+            "days": "Days logged",
+            "average": "Average",
+            "mostFrequent": "Most frequent",
+            "streak": "Streak"
+        },
+        "entryLink": "View entry"
     },
     "export": {
         "title": "Exporter",
@@ -147,7 +163,11 @@
         "print": "Imprimer / Enregistrer en PDF",
         "empty": "Il n'y a pas encore d'entrées.",
         "moodMeta": "Humeur : {{mood}}",
-        "tagsMeta": "Étiquettes : {{tags}}"
+        "tagsMeta": "Étiquettes : {{tags}}",
+        "moodSummary": "Résumé de l'humeur",
+        "moodedDays": "Jours avec humeur",
+        "averageMood": "Humeur moyenne",
+        "distribution": "Répartition"
     },
     "admin": {
         "title": "Utilisateurs",
@@ -205,10 +225,32 @@
             "note": "Note",
             "reminder": "Rappel",
             "event": "Événement"
-        }
+        },
+        "search": "Rechercher",
+        "searchPlaceholder": "Rechercher des notes..."
     },
     "localePicker": {
         "title": "Choisissez votre langue",
         "subtitle": "Sélectionnez la langue que vous souhaitez utiliser."
+    },
+    "schedule": {
+        "title": "Emploi du temps",
+        "subtitle": "Créez et organisez vos emplois du temps librement.",
+        "nameLabel": "Nom",
+        "namePlaceholder": "ex. École, Travail, Sport",
+        "slotsLabel": "Emploi du temps (format libre)",
+        "slotsPlaceholder": "Écrivez votre emploi du temps ici...",
+        "active": "Actif",
+        "inactive": "Inactif",
+        "addRow": "Ajouter une ligne",
+        "removeRow": "Supprimer une ligne",
+        "time": "Heure",
+        "mon": "Lun",
+        "tue": "Mar",
+        "wed": "Mer",
+        "thu": "Jeu",
+        "fri": "Ven",
+        "sat": "Sam",
+        "sun": "Dim"
     }
 }

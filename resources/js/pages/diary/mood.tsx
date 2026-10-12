@@ -19,6 +19,7 @@ import DiaryNav from '@/components/DiaryNav';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { formatDay, formatDayMonth, formatMonthYear } from '@/lib/dates';
 import { cn } from '@/lib/utils';
+import { show as diaryShow } from '@/routes/diary';
 
 const MOOD_COLORS: Record<number, string> = {
     1: 'bg-red-500',
@@ -54,6 +55,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
     const [loading, setLoading] = useState(false);
     const [range, setRange] = useState<Range>(7);
     const [offset, setOffset] = useState(0);
+    const [view, setView] = useState<'chart' | 'table'>('chart');
     const isNarrow = useMediaQuery('(max-width: 639px)');
 
     const visibleMonth = parseISO(`${month}-01`);
@@ -110,6 +112,32 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
     const canGoEarlier = isNarrow && windowStart > monthStart;
     const canGoLater = isNarrow && offset > 0;
 
+    const frequency = new Map<number, number>();
+    for (const m of visibleMoods) {
+        frequency.set(m, (frequency.get(m) ?? 0) + 1);
+    }
+    let mostFrequent: number | null = null;
+    let maxFreq = 0;
+    for (const [m, f] of frequency.entries()) {
+        if (f > maxFreq || (f === maxFreq && mostFrequent === null)) {
+            maxFreq = f;
+            mostFrequent = m;
+        }
+    }
+
+    let streak = 0;
+    const endDay = isNarrow ? windowEnd : monthEnd;
+    for (let i = 0; i <= 365; i++) {
+        const d = subDays(endDay, i);
+        if (d < (isNarrow ? windowStart : monthStart)) break;
+        const iso = format(d, 'yyyy-MM-dd');
+        if (byDate.has(iso)) {
+            streak++;
+        } else {
+            break;
+        }
+    }
+
     function loadMonth(target: Date): void {
         setLoading(true);
 
@@ -125,7 +153,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
             <Head title={t('mood.title')} />
 
             <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <div className="w-full px-6 py-8">
+                <div className="mx-auto max-w-7xl px-6 py-8">
                     <header className="mb-8 flex items-start justify-between gap-4">
                         <div>
                             <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -183,6 +211,78 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                         >
                             ›
                         </button>
+                    </div>
+
+                    <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                        <div className="rounded-lg border border-zinc-200 p-2 text-center dark:border-zinc-800">
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                {t('mood.summary.days')}
+                            </p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                                {visibleMoods.length}
+                            </p>
+                        </div>
+                        <div className="rounded-lg border border-zinc-200 p-2 text-center dark:border-zinc-800">
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                {t('mood.summary.average')}
+                            </p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                                {average !== null ? average.toFixed(1) : '—'}
+                            </p>
+                        </div>
+                        <div className="rounded-lg border border-zinc-200 p-2 text-center dark:border-zinc-800">
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                {t('mood.summary.mostFrequent')}
+                            </p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                                {mostFrequent !== null
+                                    ? t(`editor.moods.${mostFrequent}`)
+                                    : '—'}
+                            </p>
+                        </div>
+                        <div className="rounded-lg border border-zinc-200 p-2 text-center dark:border-zinc-800">
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                {t('mood.summary.streak')}
+                            </p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                                {streak}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="mb-4 flex items-center justify-center gap-2">
+                        <div
+                            role="group"
+                            aria-label={t('mood.rangeLabel')}
+                            className="flex overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800"
+                        >
+                            <button
+                                type="button"
+                                onClick={() => setView('chart')}
+                                aria-pressed={view === 'chart'}
+                                className={cn(
+                                    'px-2.5 py-1 text-xs whitespace-nowrap transition',
+                                    view === 'chart'
+                                        ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
+                                        : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
+                                )}
+                            >
+                                {t('mood.viewChart')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setView('table')}
+                                aria-pressed={view === 'table'}
+                                className={cn(
+                                    'px-2.5 py-1 text-xs whitespace-nowrap transition',
+                                    view === 'table'
+                                        ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
+                                        : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
+                                )}
+                            >
+                                {t('mood.viewTable')}
+                            </button>
+                        </div>
                     </div>
 
                     {isNarrow && (
@@ -250,58 +350,120 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                             loading && 'opacity-50',
                         )}
                     >
-                        <div
-                            className={cn(
-                                'flex items-end gap-1',
-                                isNarrow && 'justify-center',
-                            )}
-                        >
-                            {visibleDays.map((day) => {
-                                const iso = format(day, 'yyyy-MM-dd');
-                                const mood = byDate.get(iso);
-                                const label =
-                                    mood !== undefined
-                                        ? t('mood.dayWithMood', {
-                                              date: formatDayMonth(day, locale),
-                                              mood: t(`editor.moods.${mood}`),
-                                          })
-                                        : formatDayMonth(day, locale);
+                        {view === 'chart' ? (
+                            <div
+                                className={cn(
+                                    'flex items-end gap-1',
+                                    isNarrow && 'justify-center',
+                                )}
+                            >
+                                {visibleDays.map((day) => {
+                                    const iso = format(day, 'yyyy-MM-dd');
+                                    const mood = byDate.get(iso);
+                                    const label =
+                                        mood !== undefined
+                                            ? t('mood.dayWithMood', {
+                                                  date: formatDayMonth(day, locale),
+                                                  mood: t(`editor.moods.${mood}`),
+                                              })
+                                            : formatDayMonth(day, locale);
 
-                                return (
-                                    <div
-                                        key={iso}
-                                        title={label}
-                                        className={cn(
-                                            'flex flex-col items-center gap-1',
-                                            isNarrow && range === 3
-                                                ? 'flex-1'
-                                                : 'flex-1',
-                                        )}
-                                    >
-                                        <div className="flex h-40 w-full items-end">
-                                            <div
-                                                className={cn(
-                                                    'w-full rounded-t',
-                                                    mood !== undefined
-                                                        ? (MOOD_COLORS[mood] ??
-                                                              'bg-zinc-400')
-                                                        : 'bg-zinc-100 dark:bg-zinc-800',
-                                                )}
-                                                style={{
-                                                    height:
+                                    return (
+                                        <div
+                                            key={iso}
+                                            title={label}
+                                            className="flex flex-1 flex-col items-center gap-1"
+                                        >
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    router.visit(diaryShow.url(iso))
+                                                }
+                                                className="flex h-40 w-full items-end"
+                                                aria-label={label}
+                                            >
+                                                <div
+                                                    className={cn(
+                                                        'w-full rounded-t',
                                                         mood !== undefined
-                                                            ? `${(mood / 5) * 100}%`
-                                                            : '4px',
-                                                }}
-                                            />
+                                                            ? (MOOD_COLORS[mood] ??
+                                                                  'bg-zinc-400')
+                                                            : 'bg-zinc-100 dark:bg-zinc-800',
+                                                    )}
+                                                    style={{
+                                                        height:
+                                                            mood !== undefined
+                                                                ? `${(mood / 5) * 100}%`
+                                                                : '4px',
+                                                    }}
+                                                />
+                                            </button>
+                                            <span className="text-[10px] text-zinc-400 tabular-nums dark:text-zinc-500">
+                                                {formatDay(day, locale)}
+                                            </span>
                                         </div>
-                                        <span className="text-[10px] text-zinc-400 tabular-nums dark:text-zinc-500">
-                                            {formatDay(day, locale)}
-                                        </span>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="text-left text-xs text-zinc-500 dark:text-zinc-400">
+                                            <th className="pb-2 font-normal">
+                                                {t('mood.table.date')}
+                                            </th>
+                                            <th className="pb-2 font-normal">
+                                                {t('mood.table.day')}
+                                            </th>
+                                            <th className="pb-2 font-normal">
+                                                {t('mood.table.mood')}
+                                            </th>
+                                            <th className="pb-2 font-normal">
+                                                {t('mood.table.entry')}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {visibleDays.map((day) => {
+                                            const iso = format(day, 'yyyy-MM-dd');
+                                            const mood = byDate.get(iso);
+                                            return (
+                                                <tr
+                                                    key={iso}
+                                                    className="border-t border-zinc-200 dark:border-zinc-800"
+                                                >
+                                                    <td className="py-1.5 text-zinc-700 dark:text-zinc-300">
+                                                        {formatDayMonth(day, locale)}
+                                                    </td>
+                                                    <td className="py-1.5 text-zinc-500 dark:text-zinc-400">
+                                                        {new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(day)}
+                                                    </td>
+                                                    <td className="py-1.5 text-zinc-700 dark:text-zinc-300">
+                                                        {mood !== undefined
+                                                            ? t(`editor.moods.${mood}`)
+                                                            : '—'}
+                                                    </td>
+                                                    <td className="py-1.5">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                router.visit(
+                                                                    diaryShow.url(iso),
+                                                                )
+                                                            }
+                                                            className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
+                                                        >
+                                                            {t('mood.entryLink')}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
 
                     <ul className="mt-4 flex w-full flex-wrap gap-3 text-xs text-zinc-500 dark:text-zinc-400">

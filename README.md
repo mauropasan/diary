@@ -163,10 +163,6 @@ php artisan diary:create-user
 | `npm run check`                              | Frontend lint + format check (`npm run check:fix` to fix)   |
 | `php artisan migrate`                        | Run database migrations                                     |
 | `php artisan wayfinder:generate --with-form` | Regenerate typed TS route/action helpers                    |
-| `npm run cap:sync`                           | Copy assets/config into the Android project                 |
-| `npm run cap:open`                           | Open the Android project in Android Studio                  |
-| `npm run apk:debug`                          | Build a debug APK (`android/app/build/outputs/apk/debug/`)  |
-| `npm run apk:release`                        | Build a release APK (needs signing, see below)              |
 
 Keep `diary:backup` scheduled in production (e.g. a cron entry or the scheduler)
 so snapshots are taken regularly.

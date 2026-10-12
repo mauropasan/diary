@@ -115,10 +115,10 @@ To make the diary reachable from other devices on your network, set
 `APP_URL` to your LAN address, e.g.:
 
 ```dotenv
-APP_URL=http://192.168.1.4:8000
+APP_URL=http://localhost:8000
 ```
 
-then start `composer run dev` and open `http://192.168.1.4:8000` from any device
+then start `composer run dev` and open `http://localhost:8000` from any device
 on the same network (firewall permitting).
 
 > In the default `.env.example`, `APP_URL=http://localhost:8000`, which keeps

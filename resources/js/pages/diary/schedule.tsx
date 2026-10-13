@@ -240,6 +240,8 @@ export default function Schedule({
     );
 
     const editing = schedules.find((s) => s.id === editingId) ?? null;
+    const activeSchedule = schedules.find((s) => s.active);
+    const otherSchedules = schedules.filter((s) => !s.active);
 
     function confirmRemove(): void {
         if (!scheduleToDelete) {
@@ -250,6 +252,79 @@ export default function Schedule({
             preserveScroll: true,
             onFinish: () => setScheduleToDelete(null),
         });
+    }
+
+    function renderScheduleCard(schedule: Schedule): React.JSX.Element {
+        const grid = parseGrid(schedule.slots);
+        return (
+            <li
+                key={schedule.id}
+                className="flex flex-col gap-2 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
+            >
+                <div className="flex items-start justify-between gap-2">
+                    <p className="font-medium text-zinc-900 dark:text-zinc-50">
+                        {schedule.name}
+                    </p>
+                    {!schedule.active && (
+                        <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                            {t('schedule.inactive')}
+                        </span>
+                    )}
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full text-xs">
+                        <thead>
+                            <tr>
+                                {DAYS.map((d) => (
+                                    <th
+                                        key={d}
+                                        className="border border-zinc-200 px-1 py-0.5 text-left font-normal text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
+                                    >
+                                        {t(DAY_LABELS[d])}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {grid.map((row, i) => (
+                                <tr key={i}>
+                                    {row.map(
+                                        (cell, j) => (
+                                            <td
+                                                key={j}
+                                                className="border border-zinc-200 px-1 py-0.5 text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
+                                            >
+                                                {cell}
+                                            </td>
+                                        ),
+                                    )}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="mt-auto flex items-center gap-3 pt-2">
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setEditingId(schedule.id)
+                        }
+                        className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
+                    >
+                        {t('notes.edit')}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setScheduleToDelete(schedule)
+                        }
+                        className="text-xs text-red-600 underline-offset-2 transition hover:underline dark:text-red-400"
+                    >
+                        {t('notes.delete')}
+                    </button>
+                </div>
+            </li>
+        );
     }
 
     return (
@@ -274,6 +349,58 @@ export default function Schedule({
                         <DiaryNav />
                     </header>
 
+                    {activeSchedule && (
+                        <div className="mb-8">
+                            <div className="mb-4 flex items-center gap-2 rounded-lg bg-green-50 p-4 dark:bg-green-900/20">
+                                <span className="rounded-full bg-green-500 px-2 py-0.5 text-xs font-medium text-white">
+                                    {t('schedule.active')}
+                                </span>
+                                <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                                    {activeSchedule.name}
+                                </p>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full text-sm">
+                                    <thead>
+                                        <tr>
+                                            {DAYS.map((d) => (
+                                                <th
+                                                    key={d}
+                                                    className="border border-zinc-200 px-2 py-1 text-left font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
+                                                >
+                                                    {t(DAY_LABELS[d])}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {parseGrid(activeSchedule.slots).map((row, i) => (
+                                            <tr key={i}>
+                                                {row.map((cell, j) => (
+                                                    <td
+                                                        key={j}
+                                                        className="border border-zinc-200 px-2 py-1 text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
+                                                    >
+                                                        {cell}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="mt-4 flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditingId(activeSchedule.id)}
+                                    className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
+                                >
+                                    {t('notes.edit')}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="mb-8">
                         <ScheduleForm
                             key={editing?.id ?? 'new'}
@@ -282,86 +409,9 @@ export default function Schedule({
                         />
                     </div>
 
-                    {schedules.length > 0 && (
+                    {otherSchedules.length > 0 && (
                         <ul className="grid gap-4 lg:grid-cols-2">
-                            {schedules.map((schedule) => {
-                                const grid = parseGrid(schedule.slots);
-                                return (
-                                    <li
-                                        key={schedule.id}
-                                        className="flex flex-col gap-2 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
-                                    >
-                                        <div className="flex items-start justify-between gap-2">
-                                            <p className="font-medium text-zinc-900 dark:text-zinc-50">
-                                                {schedule.name}
-                                            </p>
-                                            {!schedule.active && (
-                                                <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
-                                                    {t('schedule.inactive')}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="overflow-x-auto">
-                                            <table className="min-w-full text-xs">
-                                                <thead>
-                                                    <tr>
-                                                        {DAYS.map((d) => (
-                                                            <th
-                                                                key={d}
-                                                                className="border border-zinc-200 px-1 py-0.5 text-left font-normal text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
-                                                            >
-                                                                {t(
-                                                                    DAY_LABELS[
-                                                                        d
-                                                                    ],
-                                                                )}
-                                                            </th>
-                                                        ))}
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {grid.map((row, i) => (
-                                                        <tr key={i}>
-                                                            {row.map(
-                                                                (cell, j) => (
-                                                                    <td
-                                                                        key={j}
-                                                                        className="border border-zinc-200 px-1 py-0.5 text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
-                                                                    >
-                                                                        {cell}
-                                                                    </td>
-                                                                ),
-                                                            )}
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div className="mt-auto flex items-center gap-3 pt-2">
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    setEditingId(schedule.id)
-                                                }
-                                                className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
-                                            >
-                                                {t('notes.edit')}
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    setScheduleToDelete(
-                                                        schedule,
-                                                    )
-                                                }
-                                                className="text-xs text-red-600 underline-offset-2 transition hover:underline dark:text-red-400"
-                                            >
-                                                {t('notes.delete')}
-                                            </button>
-                                        </div>
-                                    </li>
-                                );
-                            })}
+                            {otherSchedules.map(renderScheduleCard)}
                         </ul>
                     )}
                 </div>

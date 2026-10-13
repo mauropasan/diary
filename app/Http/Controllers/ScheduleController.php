@@ -14,6 +14,7 @@ class ScheduleController extends Controller
     {
         $schedules = $request->user()
             ->schedules()
+            ->orderByDesc('active')
             ->orderByDesc('updated_at')
             ->get();
 

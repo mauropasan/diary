@@ -19,6 +19,33 @@ import { useInactivityLock } from '@/lib/useInactivityLock';
 import { home, logout } from '@/routes';
 import { lock as diaryLock, show as diaryShow } from '@/routes/diary';
 
+const DAYS = ['time', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
+const DAY_LABELS = {
+    time: 'schedule.time',
+    mon: 'schedule.mon',
+    tue: 'schedule.tue',
+    wed: 'schedule.wed',
+    thu: 'schedule.thu',
+    fri: 'schedule.fri',
+    sat: 'schedule.sat',
+    sun: 'schedule.sun',
+} as const;
+
+function parseGrid(slots: string | null): string[][] {
+    if (!slots) {
+        return Array.from({ length: 1 }, () => Array.from({ length: 8 }, () => ''));
+    }
+    try {
+        const parsed = JSON.parse(slots);
+        if (Array.isArray(parsed)) {
+            return parsed;
+        }
+    } catch {
+        // ignore
+    }
+    return Array.from({ length: 1 }, () => Array.from({ length: 8 }, () => ''));
+}
+
 type Memory = {
     date: string;
     title: string | null;
@@ -31,6 +58,12 @@ type DayNote = {
     color: string;
     kind: string;
     date: string | null;
+};
+
+type Schedule = {
+    id: number;
+    name: string;
+    slots: string | null;
 };
 
 type EntryProps = {
@@ -52,6 +85,7 @@ type EntryProps = {
     };
     notes: DayNote[];
     upcomingNotes: DayNote[];
+    activeSchedule: Schedule | null;
 };
 
 export default function Show({
@@ -66,6 +100,7 @@ export default function Show({
     streak,
     notes,
     upcomingNotes,
+    activeSchedule,
 }: EntryProps) {
     const editorRef = useRef<DiaryEditorHandle>(null);
     const { t, i18n } = useTranslation();
@@ -236,7 +271,7 @@ export default function Show({
                     </div>
 
                     <main className="flex flex-col gap-8 lg:flex-row">
-                        <div className="flex-1">
+                        <div className="flex-1 flex flex-col gap-8">
                             {!entry.content && prompt && (
                                 <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
                                     <span className="font-medium text-zinc-600 dark:text-zinc-300">
@@ -244,6 +279,51 @@ export default function Show({
                                     </span>{' '}
                                     {prompt}
                                 </p>
+                            )}
+
+                            {activeSchedule && (
+                                <section
+                                    className="rounded-lg border border-zinc-200 bg-green-50 p-4 dark:border-zinc-800 dark:bg-green-900/20">
+                                    <div className="mb-3 flex items-center gap-2">
+                                        <span
+                                            className="rounded-full bg-green-500 px-2 py-0.5 text-xs font-medium text-white">
+                                            {t('schedule.active')}
+                                        </span>
+                                        <h2 className="text-sm font-medium text-green-800 dark:text-green-200">
+                                            {activeSchedule.name}
+                                        </h2>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full text-sm">
+                                            <thead>
+                                            <tr>
+                                                {DAYS.map((d) => (
+                                                    <th
+                                                        key={d}
+                                                        className="border border-zinc-200 px-2 py-1 text-left font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
+                                                    >
+                                                        {t(DAY_LABELS[d])}
+                                                    </th>
+                                                ))}
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {parseGrid(activeSchedule.slots).map((row, i) => (
+                                                <tr key={i}>
+                                                    {row.map((cell, j) => (
+                                                        <td
+                                                            key={j}
+                                                            className="border border-zinc-200 px-2 py-1 text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
+                                                        >
+                                                            {cell}
+                                                        </td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </section>
                             )}
 
                             <DiaryEditor
@@ -254,6 +334,7 @@ export default function Show({
                                 initialTags={tags}
                                 handleRef={editorRef}
                             />
+
                         </div>
 
                         <div className="max-w-60 flex shrink-0 flex-col gap-4 lg:w-72">

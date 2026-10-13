@@ -22,7 +22,8 @@ your entries in plaintext once they are saved.
 - **Mood tracking** with chart/table views and summary stats.
 - **Schedules** (editable weekly grid per schedule, stored as JSON).
 - **Daily prompts**, **streaks** and **"on this day"** memories.
-- **Export** to Markdown (with mood summary) and **SQLite backups** (`VACUUM INTO` snapshots).
+- **Export** to Markdown (with mood summary) and **database backups** (SQLite
+  `VACUUM INTO` or MySQL `mysqldump`, depending on the configured driver).
 - **One-time registration** for the very first user, then a locked login screen.
 - **Inactivity lock**: the encryption key is dropped from the session after
   `DIARY_LOCK_AFTER_MINUTES` (default 15) of inactivity; re-unlock asking only
@@ -57,19 +58,22 @@ no way around this by design.
 | Crypto   | libsodium (`sodium_crypto_pwhash`, `crypto_aead_xchacha20poly1305`) |
 | Frontend | React 19, TypeScript, Tailwind CSS 4, TipTap 3, `date-fns`          |
 | Build    | Vite 8 (`vite-plus`), Laravel Vite plugin                           |
-| Database | SQLite                                                              |
+| Database | SQLite (default) or MySQL / MariaDB                                 |
 
 ## Requirements
 
-- **PHP 8.3+** with the `sodium` and `pdo_sqlite` extensions enabled.
+- **PHP 8.3+** with the `sodium` extension enabled.
 - **Composer 2**.
 - **Node.js 20.19+** (or 22.12+) and **npm**.
-- **SQLite** (bundled with PHP via `pdo_sqlite`).
+- **Database** — one of the following:
+  - **SQLite** (default): requires the `pdo_sqlite` extension (bundled with PHP).
+  - **MySQL / MariaDB**: requires the `pdo_mysql` extension and a running server.
+    The `mysqldump` binary must be in `PATH` for the backup command.
 
 Verify the PHP extensions:
 
 ```bash
-php -m | grep -E 'sodium|pdo_sqlite'
+php -m | grep -E 'sodium|pdo_sqlite|pdo_mysql'
 ```
 
 ## Installation
@@ -84,13 +88,40 @@ That script: installs PHP dependencies, copies `.env.example` to `.env`,
 generates the app key, runs migrations, installs npm dependencies and builds
 the frontend.
 
-### Manual steps
+By default this uses **SQLite**. To use **MySQL** instead, edit `.env` before
+running `php artisan migrate`:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=diary
+DB_USERNAME=root
+DB_PASSWORD=secret
+```
+
+### Manual steps (SQLite)
 
 ```bash
 composer install
 cp .env.example .env
 php artisan key:generate
 touch database/database.sqlite      # only if it does not exist yet
+php artisan migrate
+npm install
+npm run build
+```
+
+### Manual steps (MySQL)
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+# Edit .env: set DB_CONNECTION=mysql and fill in DB_HOST, DB_PORT,
+# DB_DATABASE, DB_USERNAME and DB_PASSWORD.
+# Create the database first if it does not exist:
+#   mysql -u root -e "CREATE DATABASE diary CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 php artisan migrate
 npm install
 npm run build
@@ -155,7 +186,7 @@ php artisan diary:create-user
 | `php artisan serve`                          | Serve the app only                                          |
 | `npm run dev`                                | Vite dev server with HMR                                    |
 | `npm run build`                              | Production frontend build                                   |
-| `php artisan diary:backup`                   | Write a consistent SQLite snapshot to `storage/app/backups` |
+| `php artisan diary:backup`                   | Write a consistent DB snapshot to `storage/app/backups`     |
 | `php artisan test`                           | Run the Pest test suite                                     |
 | `composer run test`                          | Clear config, lint, static analysis and run tests           |
 | `vendor/bin/pint`                            | Format PHP code (use `composer run lint`)                   |
@@ -175,7 +206,7 @@ Key environment variables (see `.env.example`):
 | -------------------------- | --------------- | --------------------------------------------- |
 | `APP_TIMEZONE`             | `Europe/Madrid` | Defines what "today" means; not UTC.          |
 | `APP_LOCALE`               | `es`            | UI language.                                  |
-| `DB_CONNECTION`            | `sqlite`        | The diary targets SQLite.                     |
+| `DB_CONNECTION`            | `sqlite`        | `sqlite` (default), `mysql` or `mariadb`.    |
 | `SESSION_DRIVER`           | `database`      | Session storage.                              |
 | `SESSION_ENCRYPT`          | `true`          | Encrypts session data (the DEK lives here).   |
 | `SESSION_SECURE_COOKIE`    | `false`         | **Set to `true` in production (HTTPS).**      |
@@ -187,9 +218,9 @@ Key environment variables (see `.env.example`):
 - Never log passwords, the DEK/KEK or entry content. Errors intentionally
   distinguish "wrong password" from "failed to unwrap the key (corrupted data)".
 - Set `SESSION_SECURE_COOKIE=true` and serve over HTTPS in production.
-- The database file and session storage contain only ciphertext for entry text;
-  back them up, but remember the recovery key is the only way back in if the
-  password is lost.
+- The database (SQLite file or MySQL tables) and session storage contain only
+  ciphertext for entry text; back them up, but remember the recovery key is the
+  only way back in if the password is lost.
 
 ## Project structure
 

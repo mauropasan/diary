@@ -30,6 +30,8 @@ class EntryController extends Controller
         $month = $this->resolveMonth($request->query('mes'), $day);
         $notes = $this->notesForDay($user, $day);
 
+        $activeSchedule = $user->schedules()->where('active', true)->first();
+
         return Inertia::render('diary/show', [
             'date' => $day->toDateString(),
             'entry' => [
@@ -48,6 +50,11 @@ class EntryController extends Controller
             'streak' => $this->streak($user, CarbonImmutable::today()),
             'notes' => $notes,
             'upcomingNotes' => $this->upcomingNotes($user, array_column($notes, 'id')),
+            'activeSchedule' => $activeSchedule ? [
+                'id' => $activeSchedule->id,
+                'name' => $activeSchedule->name,
+                'slots' => $activeSchedule->slots,
+            ] : null,
         ]);
     }
 

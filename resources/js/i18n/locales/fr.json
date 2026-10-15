@@ -241,6 +241,8 @@
         "moveDown": "Descendre",
         "addRow": "Ajouter une ligne",
         "removeRow": "Supprimer une ligne",
+        "prevDay": "Jour précédent",
+        "nextDay": "Jour suivant",
         "time": "Heure",
         "mon": "Lun",
         "tue": "Mar",

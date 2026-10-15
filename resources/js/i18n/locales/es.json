@@ -241,6 +241,8 @@
         "moveDown": "Bajar",
         "addRow": "Añadir fila",
         "removeRow": "Eliminar fila",
+        "prevDay": "Día anterior",
+        "nextDay": "Día siguiente",
         "time": "Hora",
         "mon": "L",
         "tue": "M",

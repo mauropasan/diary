@@ -55,7 +55,7 @@ function CloseIcon(): React.JSX.Element {
     );
 }
 
-function CalendarIcon(): React.JSX.Element {
+function CalendarIcon({ day }: { day?: number }): React.JSX.Element {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -72,6 +72,20 @@ function CalendarIcon(): React.JSX.Element {
             <line x1="3" y1="10" x2="21" y2="10" />
             <line x1="8" y1="2" x2="8" y2="6" />
             <line x1="16" y1="2" x2="16" y2="6" />
+            {day !== undefined && (
+                <text
+                    x="12"
+                    y="17"
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fontSize="10"
+                    fontWeight="600"
+                    fill="currentColor"
+                    stroke="none"
+                >
+                    {day}
+                </text>
+            )}
         </svg>
     );
 }
@@ -200,13 +214,14 @@ export default function DiaryNav({
 }: DiaryNavProps) {
     const [open, setOpen] = useState(false);
     const { t } = useTranslation();
+    const todayNumber = new Date().getDate();
 
     const primary: NavLink[] = [
         {
             key: 'home',
-            label: t('nav.today'),
+            label: `${t('nav.today')} (${todayNumber})`,
             href: home.url(),
-            icon: <CalendarIcon />,
+            icon: <CalendarIcon day={todayNumber} />,
         },
         {
             key: 'mood',
@@ -224,7 +239,7 @@ export default function DiaryNav({
             key: 'schedule',
             label: t('nav.schedule'),
             href: diarySchedule.url(),
-            icon: <NotesIcon />,
+            icon: <CalendarIcon />,
         },
         {
             key: 'settings',

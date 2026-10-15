@@ -291,7 +291,7 @@ export default function Show({
                             />
                         </div>
 
-                        <div className="flex max-w-60 shrink-0 flex-col gap-4 lg:w-72">
+                        <div className="flex shrink-0 flex-col gap-4 lg:w-72">
                             <DiaryCalendar
                                 date={date}
                                 month={calendarMonth}

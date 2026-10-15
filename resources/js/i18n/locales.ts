@@ -5,7 +5,15 @@
  * drives `SetLocale` and the `locales` shared prop.
  */
 
-export const SUPPORTED_LOCALES = ['ca','de', 'en', 'es', 'fr', 'it', 'pt'] as const;
+export const SUPPORTED_LOCALES = [
+    'ca',
+    'de',
+    'en',
+    'es',
+    'fr',
+    'it',
+    'pt',
+] as const;
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 

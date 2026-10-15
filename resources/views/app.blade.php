@@ -34,13 +34,14 @@
      * Only the CSS declaration is built here; the attribute quotes stay
      * literal HTML so Blade escaping cannot mangle them.
      */
-    $background = auth()->user()?->backgroundChoice();
+    $user = auth()->user();
+    $background = $user?->backgroundChoice();
     $backgroundClass = '';
     $backgroundStyle = '';
 
     if ($background === 'image') {
         $backgroundClass = ' app-background-image';
-        $backgroundStyle = "--app-background-image: url('".route('diary.background')."')";
+        $backgroundStyle = "--app-background-image: url('".route('diary.background', ['v' => $user->updated_at->getTimestamp()])."')";
     } elseif (is_string($background)) {
         $backgroundClass = ' bg-'.$background;
     }

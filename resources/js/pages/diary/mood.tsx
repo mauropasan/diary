@@ -47,9 +47,17 @@ type MoodProps = {
     month: string;
     moods: MoodPoint[];
     canGoNext: boolean;
+    days: number;
+    streak: number;
 };
 
-export default function Mood({ month, moods, canGoNext }: MoodProps) {
+export default function Mood({
+    month,
+    moods,
+    canGoNext,
+    days: loggedDays,
+    streak,
+}: MoodProps) {
     const { t, i18n } = useTranslation();
     const locale = i18n.language;
     const [loading, setLoading] = useState(false);
@@ -122,19 +130,6 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
         if (f > maxFreq || (f === maxFreq && mostFrequent === null)) {
             maxFreq = f;
             mostFrequent = m;
-        }
-    }
-
-    let streak = 0;
-    const endDay = isNarrow ? windowEnd : monthEnd;
-    for (let i = 0; i <= 365; i++) {
-        const d = subDays(endDay, i);
-        if (d < (isNarrow ? windowStart : monthStart)) break;
-        const iso = format(d, 'yyyy-MM-dd');
-        if (byDate.has(iso)) {
-            streak++;
-        } else {
-            break;
         }
     }
 
@@ -219,7 +214,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                 {t('mood.summary.days')}
                             </p>
                             <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                                {visibleMoods.length}
+                                {loggedDays}
                             </p>
                         </div>
                         <div className="rounded-lg border border-zinc-200 bg-white p-2 text-center dark:border-zinc-800 dark:bg-zinc-900">

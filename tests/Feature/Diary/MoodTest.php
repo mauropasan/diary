@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Entry;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia;
 
@@ -85,5 +86,110 @@ it('blocks navigation to future months', function () {
     $this->get(route('diary.mood').'?mes='.now()->subMonthNoOverflow()->format('Y-m'))
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->where('canGoNext', true)
+        );
+});
+
+it('reports a zero streak without any mood', function () {
+    $this->get(route('diary.mood'))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('streak', 0)
+            ->where('days', 0)
+        );
+});
+
+it('counts every logged day across months regardless of the visible month', function () {
+    $this->travelTo('2026-03-02 18:00');
+
+    foreach (['2026-03-02', '2026-03-01', '2026-01-15'] as $date) {
+        $this->put(route('diary.update', $date), [
+            'content' => '<p>Día</p>',
+            'mood' => 4,
+        ]);
+    }
+
+    $this->get(route('diary.mood'))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('days', 3)
+            ->where('streak', 2)
+        );
+});
+
+it('does not reset logged days when a day was missed', function () {
+    $this->travelTo('2026-03-02 18:00');
+
+    foreach (['2026-03-02', '2026-02-27'] as $date) {
+        $this->put(route('diary.update', $date), [
+            'content' => '<p>Día</p>',
+            'mood' => 5,
+        ]);
+    }
+
+    $this->get(route('diary.mood'))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('days', 2)
+            ->where('streak', 1)
+        );
+});
+
+it('counts consecutive days ending today as the streak', function () {
+    $this->travelTo('2026-03-02 18:00');
+
+    foreach (['2026-03-02', '2026-03-01', '2026-02-28'] as $date) {
+        $this->put(route('diary.update', $date), [
+            'content' => '<p>Día</p>',
+            'mood' => 4,
+        ]);
+    }
+
+    $this->get(route('diary.mood'))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('streak', 3)
+        );
+});
+
+it('keeps the streak when today has no mood yet', function () {
+    $this->travelTo('2026-03-02 18:00');
+
+    foreach (['2026-03-01', '2026-02-28', '2026-02-27'] as $date) {
+        $this->put(route('diary.update', $date), [
+            'content' => '<p>Día</p>',
+            'mood' => 3,
+        ]);
+    }
+
+    $this->get(route('diary.mood'))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('streak', 3)
+        );
+});
+
+it('resets the streak when a day was missed', function () {
+    $this->travelTo('2026-03-02 18:00');
+
+    foreach (['2026-03-02', '2026-02-27'] as $date) {
+        $this->put(route('diary.update', $date), [
+            'content' => '<p>Día</p>',
+            'mood' => 5,
+        ]);
+    }
+
+    $this->get(route('diary.mood'))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('streak', 1)
+        );
+});
+
+it('ignores future entries for the streak', function () {
+    $this->travelTo('2026-03-02 18:00');
+
+    Entry::factory()->for($this->user)->create([
+        'date' => '2026-03-03',
+        'mood' => 5,
+    ]);
+
+    $this->get(route('diary.mood'))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('streak', 0)
+            ->where('days', 0)
         );
 });

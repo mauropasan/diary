@@ -50,7 +50,7 @@ export default function AdminUsersSection({
     }
 
     const fieldClass =
-        'rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm transition outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:focus:border-zinc-400';
+        'rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm transition outline-none placeholder:text-zinc-600 focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:placeholder:text-zinc-400 dark:focus:border-zinc-400';
 
     return (
         <>

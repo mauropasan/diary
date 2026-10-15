@@ -122,9 +122,7 @@ export const MediaNode = Node.create({
                         (figure.getAttribute('data-kind') as MediaKind) ||
                         'file';
                     let src = '';
-                    const mime =
-                        figure.getAttribute('data-mime') ||
-                        '';
+                    const mime = figure.getAttribute('data-mime') || '';
 
                     if (kind === 'image') {
                         const img = figure.querySelector('img');

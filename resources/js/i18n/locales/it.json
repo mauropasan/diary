@@ -241,6 +241,8 @@
         "moveDown": "Scendi",
         "addRow": "Aggiungi riga",
         "removeRow": "Rimuovi riga",
+        "prevDay": "Giorno precedente",
+        "nextDay": "Giorno successivo",
         "time": "Ora",
         "mon": "Lun",
         "tue": "Mar",

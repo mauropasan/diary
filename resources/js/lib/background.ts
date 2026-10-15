@@ -4,26 +4,48 @@ import { background as backgroundImage } from '@/routes/diary';
 const IMAGE_CLASS = 'app-background-image';
 const IMAGE_PROPERTY = '--app-background-image';
 
+type AppliedBackground = {
+    choice: string | null;
+    version: string | null;
+};
+
 /**
  * The background the server put on `<body>`, or undefined before the first
  * Inertia visit. The body class list is written exclusively by
  * `resources/views/app.blade.php`, so anything shaped like `bg-*` or the
  * image class belongs to the background.
  */
-let applied: string | null | undefined;
+let applied: AppliedBackground | undefined;
 
-function currentFromBody(): string | null {
+function currentFromBody(): AppliedBackground {
     if (document.body.classList.contains(IMAGE_CLASS)) {
-        return 'image';
+        const value = document.body.style.getPropertyValue(IMAGE_PROPERTY);
+        const match = /[?&]v=([^&'")]+)/.exec(value);
+
+        return {
+            choice: 'image',
+            version: match === null ? null : decodeURIComponent(match[1]),
+        };
     }
 
     for (const name of document.body.classList) {
         if (name.startsWith('bg-')) {
-            return name.slice('bg-'.length);
+            return {
+                choice: name.slice('bg-'.length),
+                version: null,
+            };
         }
     }
 
-    return null;
+    return { choice: null, version: null };
+}
+
+function imageUrl(version: string | null): string {
+    if (version === null) {
+        return backgroundImage.url();
+    }
+
+    return `${backgroundImage.url()}?v=${encodeURIComponent(version)}`;
 }
 
 /**
@@ -33,8 +55,16 @@ function currentFromBody(): string | null {
  * `--app-background-image` property are refreshed from here instead. The
  * value follows the same contract as the server: null for the default, a
  * preset key, or `image` for a custom picture served by the background route.
+ *
+ * The version (a timestamp from the server) is what tells an unchanged
+ * `image` marker apart from a freshly uploaded picture: the image route has a
+ * stable URL, so replacing the picture only shows up once the query string
+ * changes and the browser fetches it again.
  */
-export function applyBodyBackground(background: string | null): void {
+export function applyBodyBackground(
+    background: string | null,
+    version: string | null = null,
+): void {
     if (typeof document === 'undefined') {
         return;
     }
@@ -43,7 +73,12 @@ export function applyBodyBackground(background: string | null): void {
         applied = currentFromBody();
     }
 
-    if (applied === background) {
+    const key: AppliedBackground =
+        background !== null && background !== 'image'
+            ? { choice: background, version: null }
+            : { choice: background, version };
+
+    if (applied.choice === key.choice && applied.version === key.version) {
         return;
     }
 
@@ -55,17 +90,17 @@ export function applyBodyBackground(background: string | null): void {
 
     document.body.style.removeProperty(IMAGE_PROPERTY);
 
-    if (background === 'image') {
+    if (key.choice === 'image') {
         document.body.classList.add(IMAGE_CLASS);
         document.body.style.setProperty(
             IMAGE_PROPERTY,
-            `url('${backgroundImage.url()}')`,
+            `url('${imageUrl(key.version)}')`,
         );
-    } else if (background !== null) {
-        document.body.classList.add(`bg-${background}`);
+    } else if (key.choice !== null) {
+        document.body.classList.add(`bg-${key.choice}`);
     }
 
-    applied = background;
+    applied = key;
 }
 
 /**
@@ -88,6 +123,6 @@ export function registerBodyBackgroundSync(): void {
             return;
         }
 
-        applyBodyBackground(props.background);
+        applyBodyBackground(props.background, props.backgroundVersion ?? null);
     });
 }

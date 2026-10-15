@@ -241,6 +241,8 @@
         "moveDown": "Move down",
         "addRow": "Add row",
         "removeRow": "Remove row",
+        "prevDay": "Previous day",
+        "nextDay": "Next day",
         "time": "Time",
         "mon": "Mon",
         "tue": "Tue",

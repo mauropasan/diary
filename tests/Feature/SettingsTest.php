@@ -216,8 +216,40 @@ it('renders a well formed image style on the body', function () {
 
     expect($html)
         ->toContain('<body class="font-sans antialiased app-background-image" style="--app-background-image: url(')
-        ->toContain(route('diary.background'))
+        ->toContain(route('diary.background', ['v' => $this->user->refresh()->updated_at->getTimestamp()]))
         ->not->toContain('style=&quot;');
+});
+
+it('shares a background version so the client can tell image replacements apart', function () {
+    ($this->unlock)();
+
+    $this->put(route('diary.settings.update'), [
+        'background' => 'data:image/png;base64,'.base64_encode('first-image'),
+    ]);
+
+    $version = (string) $this->user->refresh()->updated_at->getTimestamp();
+
+    $this->get(route('diary.show', now()->toDateString()))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('background', 'image')
+            ->where('backgroundVersion', $version)
+        );
+
+    $this->travel(1)->seconds();
+
+    $this->put(route('diary.settings.update'), [
+        'background' => 'data:image/png;base64,'.base64_encode('second-image'),
+    ]);
+
+    $newVersion = (string) $this->user->refresh()->updated_at->getTimestamp();
+
+    expect($newVersion)->not->toBe($version);
+
+    $this->get(route('diary.show', now()->toDateString()))
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('background', 'image')
+            ->where('backgroundVersion', $newVersion)
+        );
 });
 
 it('serves the custom background image from a short url', function () {

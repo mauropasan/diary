@@ -241,6 +241,8 @@
         "moveDown": "Nach unten",
         "addRow": "Zeile hinzufügen",
         "removeRow": "Zeile entfernen",
+        "prevDay": "Vorheriger Tag",
+        "nextDay": "Nächster Tag",
         "time": "Zeit",
         "mon": "Mo",
         "tue": "Di",

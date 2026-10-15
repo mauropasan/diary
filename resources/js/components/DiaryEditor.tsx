@@ -349,7 +349,7 @@ export default function DiaryEditor({
 
     return (
         <section className="flex flex-col gap-4">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:gap-4">
                 <input
                     type="text"
                     value={title}
@@ -359,13 +359,13 @@ export default function DiaryEditor({
                         scheduleSave();
                     }}
                     placeholder={t('editor.titlePlaceholder')}
-                    className="w-full border-none bg-transparent px-0 text-2xl font-semibold text-zinc-900 outline-none placeholder:text-zinc-600 dark:text-zinc-50 dark:placeholder:text-zinc-600"
+                    className="order-2 w-full border-none bg-transparent px-0 text-2xl font-semibold text-zinc-900 outline-none placeholder:text-zinc-600 sm:order-none dark:text-zinc-50 dark:placeholder:text-zinc-400"
                 />
 
                 <div
                     role="group"
                     aria-label={t('editor.moodPlaceholder')}
-                    className="flex shrink-0 items-center gap-0.5"
+                    className="order-1 flex shrink-0 items-center gap-0.5 sm:order-none"
                 >
                     {MOOD_VALUES.map((value) => {
                         const selected = mood === value;

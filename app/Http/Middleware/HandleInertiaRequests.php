@@ -44,6 +44,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'background' => $request->user()?->backgroundChoice(),
+            'backgroundVersion' => ($timestamp = $request->user()?->updated_at?->getTimestamp()) !== null
+                ? (string) $timestamp
+                : null,
             'diary' => [
                 'lockAfterMinutes' => (int) config('diary.lock_after_minutes'),
                 'timezone' => config('app.timezone'),

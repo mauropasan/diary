@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { cn } from '@/lib/utils';
 
 export const DAYS = [
@@ -59,6 +60,31 @@ export function visibleDayIndexes(onlyWeekdays: boolean): number[] {
     }, []);
 }
 
+/**
+ * Monday-first column index of today's weekday inside DAYS (1..7).
+ */
+export function todayDayIndex(): number {
+    return ((new Date().getDay() + 6) % 7) + 1;
+}
+
+/**
+ * The columns for a phone-sized screen: the time column plus a single day.
+ *
+ * A weekend day is not part of a weekdays-only schedule, so in that case the
+ * whole weekday set is shown instead of a lone time column.
+ */
+export function singleDayColumnIndexes(
+    onlyWeekdays: boolean,
+    dayIndex: number,
+): number[] {
+    const visible = visibleDayIndexes(onlyWeekdays);
+    const filtered = visible.filter(
+        (index) => index === 0 || index === dayIndex,
+    );
+
+    return filtered.length > 1 ? filtered : visible;
+}
+
 type ScheduleGridProps = {
     slots: string | null;
     onlyWeekdays: boolean;
@@ -71,7 +97,10 @@ export default function ScheduleGrid({
     size = 'md',
 }: ScheduleGridProps): React.JSX.Element {
     const { t } = useTranslation();
-    const columnIndexes = visibleDayIndexes(onlyWeekdays);
+    const isNarrow = useMediaQuery('(max-width: 639px)');
+    const columnIndexes = isNarrow
+        ? singleDayColumnIndexes(onlyWeekdays, todayDayIndex())
+        : visibleDayIndexes(onlyWeekdays);
     const grid = parseGrid(slots);
 
     return (

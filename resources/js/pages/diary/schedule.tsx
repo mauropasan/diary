@@ -8,14 +8,18 @@ import ScheduleGrid, {
     DAY_LABELS,
     parseGrid,
     serializeGrid,
+    singleDayColumnIndexes,
+    todayDayIndex,
     visibleDayIndexes,
 } from '@/components/ScheduleGrid';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import {
     destroy as scheduleDestroy,
     reorder as scheduleReorder,
     store as scheduleStore,
     update as scheduleUpdate,
 } from '@/routes/diary/schedule';
+import { cn } from '@/lib/utils';
 
 type Schedule = {
     id: number;
@@ -31,7 +35,7 @@ type SchedulePageProps = {
 };
 
 const fieldClass =
-    'rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 transition outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-400';
+    'rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 transition outline-none placeholder:text-zinc-600 focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-400 dark:focus:border-zinc-400';
 
 type ScheduleFormProps = {
     schedule: Schedule | null;
@@ -43,8 +47,15 @@ function ScheduleForm({
     onDone,
 }: ScheduleFormProps): React.JSX.Element {
     const { t } = useTranslation();
+    const isNarrow = useMediaQuery('(max-width: 639px)');
     const initialGrid = parseGrid(schedule?.slots ?? null);
     const [grid, setGrid] = useState<string[][]>(initialGrid);
+    const [editDayIndex, setEditDayIndex] = useState<number>(() => {
+        const today = todayDayIndex();
+
+        // A weekdays-only schedule has no weekend column to open on.
+        return schedule?.only_weekdays === true && today > 5 ? 5 : today;
+    });
     const { data, setData, processing, errors } = useForm<{
         name: string;
         active: boolean;
@@ -55,7 +66,30 @@ function ScheduleForm({
         onlyWeekdays: schedule?.only_weekdays ?? false,
     });
 
-    const columnIndexes = visibleDayIndexes(data.onlyWeekdays);
+    const editableDays = visibleDayIndexes(data.onlyWeekdays).filter(
+        (index) => index !== 0,
+    );
+    const dayPosition = editableDays.indexOf(editDayIndex);
+    const columnIndexes = isNarrow
+        ? singleDayColumnIndexes(data.onlyWeekdays, editDayIndex)
+        : visibleDayIndexes(data.onlyWeekdays);
+
+    function moveDay(direction: -1 | 1): void {
+        const next = dayPosition + direction;
+
+        if (dayPosition === -1) {
+            setEditDayIndex(
+                direction === 1 ? editableDays[0] : (editableDays.at(-1) ?? 1),
+            );
+            return;
+        }
+
+        if (next < 0 || next >= editableDays.length) {
+            return;
+        }
+
+        setEditDayIndex(editableDays[next]);
+    }
 
     function updateCell(row: number, col: number, value: string): void {
         const copy = grid.map((r) => r.slice());
@@ -126,6 +160,48 @@ function ScheduleForm({
             </div>
 
             <div className="flex flex-col gap-2 overflow-x-auto">
+                {isNarrow && (
+                    <div className="flex items-center justify-center gap-2">
+                        <button
+                            type="button"
+                            onClick={() => moveDay(-1)}
+                            disabled={dayPosition <= 0}
+                            aria-label={t('schedule.prevDay')}
+                            className={cn(
+                                'shrink-0 rounded-md px-2 py-1 text-sm transition',
+                                dayPosition > 0
+                                    ? 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
+                                    : 'cursor-not-allowed text-zinc-300 dark:text-zinc-700',
+                            )}
+                        >
+                            ‹
+                        </button>
+
+                        <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                            {t(DAY_LABELS[DAYS[editDayIndex]])}
+                        </span>
+
+                        <button
+                            type="button"
+                            onClick={() => moveDay(1)}
+                            disabled={
+                                dayPosition === -1 ||
+                                dayPosition >= editableDays.length - 1
+                            }
+                            aria-label={t('schedule.nextDay')}
+                            className={cn(
+                                'shrink-0 rounded-md px-2 py-1 text-sm transition',
+                                dayPosition !== -1 &&
+                                    dayPosition < editableDays.length - 1
+                                    ? 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
+                                    : 'cursor-not-allowed text-zinc-300 dark:text-zinc-700',
+                            )}
+                        >
+                            ›
+                        </button>
+                    </div>
+                )}
+
                 <table className="min-w-full bg-white text-sm dark:bg-zinc-900">
                     <thead>
                         <tr>
@@ -198,9 +274,15 @@ function ScheduleForm({
                     <input
                         type="checkbox"
                         checked={data.onlyWeekdays}
-                        onChange={(event) =>
-                            setData('onlyWeekdays', event.target.checked)
-                        }
+                        onChange={(event) => {
+                            setData('onlyWeekdays', event.target.checked);
+
+                            // A weekend column no longer exists, so move the
+                            // phone day switcher back onto the weekdays.
+                            if (event.target.checked && editDayIndex > 5) {
+                                setEditDayIndex(5);
+                            }
+                        }}
                     />
                     {t('schedule.onlyWeekdays')}
                 </label>

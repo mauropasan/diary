@@ -13,6 +13,7 @@ declare module '@inertiajs/core' {
             name: string;
             auth: Auth;
             background: string | null;
+            backgroundVersion: string | null;
             diary: DiarySettings;
             flash: {
                 status: string | null;

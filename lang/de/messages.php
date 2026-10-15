@@ -52,4 +52,8 @@ return [
         'dated-kind-needs-date' => 'Eine Erinnerung oder ein Termin braucht einen Tag.',
     ],
 
+    'settings' => [
+        'background-updated' => 'Hintergrund aktualisiert.',
+    ],
+
 ];

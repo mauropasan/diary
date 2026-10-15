@@ -15,17 +15,18 @@
     },
     "nav": {
         "today": "Go to today",
-        "search": "Search",
         "mood": "Mood",
         "notes": "Notes",
         "export": "Export",
         "password": "Password",
         "users": "Users",
+        "lock": "Lock diary",
         "logout": "Sign out",
         "openMenu": "Open menu",
         "closeMenu": "Close menu",
         "more": "More",
-        "schedule": "Schedule"
+        "schedule": "Schedule",
+        "settings": "Settings"
     },
     "theme": {
         "label": "Theme",
@@ -121,13 +122,6 @@
     "tags": {
         "placeholder": "Tags…",
         "remove": "Remove {{tag}}"
-    },
-    "search": {
-        "title": "Search",
-        "placeholder": "Search your diary…",
-        "empty": "Type something to search the title, content or tags.",
-        "noResults": "No entries found for «{{query}}».",
-        "untitled": "Untitled"
     },
     "mood": {
         "title": "Mood",
@@ -242,6 +236,9 @@
         "slotsPlaceholder": "Write your schedule here...",
         "active": "Active",
         "inactive": "Inactive",
+        "onlyWeekdays": "Weekdays only",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
         "addRow": "Add row",
         "removeRow": "Remove row",
         "time": "Time",
@@ -252,5 +249,31 @@
         "fri": "Fri",
         "sat": "Sat",
         "sun": "Sun"
+    },
+    "settings": {
+        "title": "Settings",
+        "subtitle": "Personalize your diary.",
+        "appearance": "Appearance",
+        "appearanceSubtitle": "Theme, language and diary background.",
+        "background": "Background",
+        "backgrounds": {
+            "default": "Default",
+            "paper": "Paper",
+            "sky": "Sky",
+            "sage": "Sage",
+            "peach": "Peach",
+            "slate": "Slate"
+        },
+        "backgroundUpload": "Upload image",
+        "backgroundHint": "JPEG, PNG or WebP · max 2 MB",
+        "backgroundClear": "Remove image",
+        "backgroundTooLarge": "The image exceeds the 2 MB limit.",
+        "backgroundError": "The image could not be read.",
+        "export": "Export",
+        "exportSubtitle": "Download or print your diary.",
+        "password": "Change password",
+        "passwordSubtitle": "The diary key will be re-protected with the new password.",
+        "users": "Users",
+        "usersSubtitle": "Create and delete diary accounts."
     }
 }

@@ -152,11 +152,11 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
         <>
             <Head title={t('mood.title')} />
 
-            <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
+            <div className="min-h-screen text-[#1b1b18] dark:text-[#EDEDEC]">
                 <div className="mx-auto max-w-7xl px-6 py-8">
                     <header className="mb-8 flex items-start justify-between gap-4">
                         <div>
-                            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                            <p className="text-sm text-zinc-700 dark:text-zinc-300">
                                 {t('common.brand')}
                             </p>
                             <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
@@ -174,7 +174,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                 loadMonth(addMonths(visibleMonth, -1))
                             }
                             aria-label={t('calendar.previousMonth')}
-                            className="rounded-md px-2 py-1 text-sm text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                            className="rounded-md px-2 py-1 text-sm text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                         >
                             ‹
                         </button>
@@ -183,7 +183,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                             <p className="text-sm font-medium text-zinc-700 capitalize dark:text-zinc-200">
                                 {formatMonthYear(visibleMonth, locale)}
                             </p>
-                            <p className="text-xs text-zinc-400 dark:text-zinc-500">
+                            <p className="text-xs text-zinc-600 dark:text-zinc-400">
                                 {average !== null
                                     ? t('mood.average', {
                                           count: visibleMoods.length,
@@ -205,7 +205,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                             className={cn(
                                 'rounded-md px-2 py-1 text-sm transition',
                                 canGoNext
-                                    ? 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
+                                    ? 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
                                     : 'cursor-not-allowed text-zinc-300 dark:text-zinc-700',
                             )}
                         >
@@ -214,24 +214,24 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                     </div>
 
                     <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                        <div className="rounded-lg border border-zinc-200 p-2 text-center dark:border-zinc-800">
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                        <div className="rounded-lg border border-zinc-200 bg-white p-2 text-center dark:border-zinc-800 dark:bg-zinc-900">
+                            <p className="text-xs text-zinc-700 dark:text-zinc-300">
                                 {t('mood.summary.days')}
                             </p>
                             <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
                                 {visibleMoods.length}
                             </p>
                         </div>
-                        <div className="rounded-lg border border-zinc-200 p-2 text-center dark:border-zinc-800">
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                        <div className="rounded-lg border border-zinc-200 bg-white p-2 text-center dark:border-zinc-800 dark:bg-zinc-900">
+                            <p className="text-xs text-zinc-700 dark:text-zinc-300">
                                 {t('mood.summary.average')}
                             </p>
                             <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
                                 {average !== null ? average.toFixed(1) : '—'}
                             </p>
                         </div>
-                        <div className="rounded-lg border border-zinc-200 p-2 text-center dark:border-zinc-800">
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                        <div className="rounded-lg border border-zinc-200 bg-white p-2 text-center dark:border-zinc-800 dark:bg-zinc-900">
+                            <p className="text-xs text-zinc-700 dark:text-zinc-300">
                                 {t('mood.summary.mostFrequent')}
                             </p>
                             <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
@@ -240,8 +240,8 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                     : '—'}
                             </p>
                         </div>
-                        <div className="rounded-lg border border-zinc-200 p-2 text-center dark:border-zinc-800">
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                        <div className="rounded-lg border border-zinc-200 bg-white p-2 text-center dark:border-zinc-800 dark:bg-zinc-900">
+                            <p className="text-xs text-zinc-700 dark:text-zinc-300">
                                 {t('mood.summary.streak')}
                             </p>
                             <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
@@ -254,7 +254,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                         <div
                             role="group"
                             aria-label={t('mood.rangeLabel')}
-                            className="flex overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800"
+                            className="flex overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
                         >
                             <button
                                 type="button"
@@ -264,7 +264,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                     'px-2.5 py-1 text-xs whitespace-nowrap transition',
                                     view === 'chart'
                                         ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
-                                        : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
+                                        : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
                                 )}
                             >
                                 {t('mood.viewChart')}
@@ -277,7 +277,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                     'px-2.5 py-1 text-xs whitespace-nowrap transition',
                                     view === 'table'
                                         ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
-                                        : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
+                                        : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
                                 )}
                             >
                                 {t('mood.viewTable')}
@@ -295,7 +295,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                 className={cn(
                                     'shrink-0 rounded-md px-2 py-1 text-sm transition',
                                     canGoEarlier
-                                        ? 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
+                                        ? 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
                                         : 'cursor-not-allowed text-zinc-300 dark:text-zinc-700',
                                 )}
                             >
@@ -305,7 +305,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                             <div
                                 role="group"
                                 aria-label={t('mood.rangeLabel')}
-                                className="flex overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800"
+                                className="flex overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
                             >
                                 {RANGES.map((value) => (
                                     <button
@@ -317,7 +317,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                             'px-2.5 py-1 text-xs whitespace-nowrap transition',
                                             range === value
                                                 ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
-                                                : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
+                                                : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
                                         )}
                                     >
                                         {t(RANGE_LABELS[value])}
@@ -335,7 +335,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                 className={cn(
                                     'shrink-0 rounded-md px-2 py-1 text-sm transition',
                                     canGoLater
-                                        ? 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
+                                        ? 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100'
                                         : 'cursor-not-allowed text-zinc-300 dark:text-zinc-700',
                                 )}
                             >
@@ -346,7 +346,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
 
                     <div
                         className={cn(
-                            'w-full rounded-lg border border-zinc-200 p-4 transition dark:border-zinc-800',
+                            'w-full rounded-lg border border-zinc-200 bg-white p-4 transition dark:border-zinc-800 dark:bg-zinc-900',
                             loading && 'opacity-50',
                         )}
                     >
@@ -363,8 +363,13 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                     const label =
                                         mood !== undefined
                                             ? t('mood.dayWithMood', {
-                                                  date: formatDayMonth(day, locale),
-                                                  mood: t(`editor.moods.${mood}`),
+                                                  date: formatDayMonth(
+                                                      day,
+                                                      locale,
+                                                  ),
+                                                  mood: t(
+                                                      `editor.moods.${mood}`,
+                                                  ),
                                               })
                                             : formatDayMonth(day, locale);
 
@@ -377,7 +382,9 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                             <button
                                                 type="button"
                                                 onClick={() =>
-                                                    router.visit(diaryShow.url(iso))
+                                                    router.visit(
+                                                        diaryShow.url(iso),
+                                                    )
                                                 }
                                                 className="flex h-40 w-full items-end"
                                                 aria-label={label}
@@ -386,7 +393,9 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                                     className={cn(
                                                         'w-full rounded-t',
                                                         mood !== undefined
-                                                            ? (MOOD_COLORS[mood] ??
+                                                            ? (MOOD_COLORS[
+                                                                  mood
+                                                              ] ??
                                                                   'bg-zinc-400')
                                                             : 'bg-zinc-100 dark:bg-zinc-800',
                                                     )}
@@ -398,7 +407,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                                     }}
                                                 />
                                             </button>
-                                            <span className="text-[10px] text-zinc-400 tabular-nums dark:text-zinc-500">
+                                            <span className="text-[10px] text-zinc-600 tabular-nums dark:text-zinc-400">
                                                 {formatDay(day, locale)}
                                             </span>
                                         </div>
@@ -409,7 +418,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
-                                        <tr className="text-left text-xs text-zinc-500 dark:text-zinc-400">
+                                        <tr className="text-left text-xs text-zinc-700 dark:text-zinc-300">
                                             <th className="pb-2 font-normal">
                                                 {t('mood.table.date')}
                                             </th>
@@ -426,7 +435,10 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                     </thead>
                                     <tbody>
                                         {visibleDays.map((day) => {
-                                            const iso = format(day, 'yyyy-MM-dd');
+                                            const iso = format(
+                                                day,
+                                                'yyyy-MM-dd',
+                                            );
                                             const mood = byDate.get(iso);
                                             return (
                                                 <tr
@@ -434,14 +446,22 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                                     className="border-t border-zinc-200 dark:border-zinc-800"
                                                 >
                                                     <td className="py-1.5 text-zinc-700 dark:text-zinc-300">
-                                                        {formatDayMonth(day, locale)}
+                                                        {formatDayMonth(
+                                                            day,
+                                                            locale,
+                                                        )}
                                                     </td>
-                                                    <td className="py-1.5 text-zinc-500 dark:text-zinc-400">
-                                                        {new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(day)}
+                                                    <td className="py-1.5 text-zinc-700 dark:text-zinc-300">
+                                                        {new Intl.DateTimeFormat(
+                                                            locale,
+                                                            { weekday: 'long' },
+                                                        ).format(day)}
                                                     </td>
                                                     <td className="py-1.5 text-zinc-700 dark:text-zinc-300">
                                                         {mood !== undefined
-                                                            ? t(`editor.moods.${mood}`)
+                                                            ? t(
+                                                                  `editor.moods.${mood}`,
+                                                              )
                                                             : '—'}
                                                     </td>
                                                     <td className="py-1.5">
@@ -449,12 +469,16 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                                                             type="button"
                                                             onClick={() =>
                                                                 router.visit(
-                                                                    diaryShow.url(iso),
+                                                                    diaryShow.url(
+                                                                        iso,
+                                                                    ),
                                                                 )
                                                             }
                                                             className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
                                                         >
-                                                            {t('mood.entryLink')}
+                                                            {t(
+                                                                'mood.entryLink',
+                                                            )}
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -466,7 +490,7 @@ export default function Mood({ month, moods, canGoNext }: MoodProps) {
                         )}
                     </div>
 
-                    <ul className="mt-4 flex w-full flex-wrap gap-3 text-xs text-zinc-500 dark:text-zinc-400">
+                    <ul className="mt-4 flex w-full flex-wrap gap-3 text-xs text-zinc-700 dark:text-zinc-300">
                         {[1, 2, 3, 4, 5].map((value) => (
                             <li
                                 key={value}

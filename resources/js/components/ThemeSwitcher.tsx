@@ -135,7 +135,7 @@ export default function ThemeSwitcher({
     if (layout === 'list') {
         return (
             <div className="px-3 py-2">
-                <p className="mb-2 text-xs text-zinc-400 dark:text-zinc-500">
+                <p className="mb-2 text-xs text-zinc-600 dark:text-zinc-400">
                     {t('theme.label')}
                 </p>
                 <div className="flex gap-1">

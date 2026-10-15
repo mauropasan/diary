@@ -12,6 +12,7 @@ declare module '@inertiajs/core' {
         sharedPageProps: {
             name: string;
             auth: Auth;
+            background: string | null;
             diary: DiarySettings;
             flash: {
                 status: string | null;

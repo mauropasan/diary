@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Casts\EncryptedEntryText;
+use App\Exceptions\DiaryLockedException;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -17,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property string $email
  * @property bool $is_admin
+ * @property string|null $background
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $kdf_salt
@@ -26,8 +29,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'is_admin', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key'])]
-#[Hidden(['password', 'remember_token', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key'])]
+#[Fillable(['name', 'email', 'password', 'is_admin', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background'])]
+#[Hidden(['password', 'remember_token', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -44,7 +47,39 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'background' => EncryptedEntryText::class,
         ];
+    }
+
+    /**
+     * The background as the interface needs it: a preset key from the config,
+     * the `image` marker for a custom `data:` URI, or null for the default.
+     *
+     * The background is encrypted with the diary key like entry content, so a
+     * locked diary simply falls back to the default background: it is not
+     * readable until the user unlocks.
+     */
+    public function backgroundChoice(): ?string
+    {
+        try {
+            $background = $this->background;
+        } catch (DiaryLockedException) { // @phpstan-ignore catch.neverThrown (thrown by the encrypted cast's magic get)
+            return null;
+        }
+
+        if (! is_string($background) || $background === '') {
+            return null;
+        }
+
+        if (str_starts_with($background, 'data:image/')) {
+            return 'image';
+        }
+
+        if ($background === 'default' || ! in_array($background, config('diary.backgrounds', []), true)) {
+            return null;
+        }
+
+        return $background;
     }
 
     /**

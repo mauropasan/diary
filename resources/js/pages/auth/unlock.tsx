@@ -18,12 +18,12 @@ export default function Unlock() {
         <>
             <Head title={t('unlock.title')} />
 
-            <div className="flex min-h-screen flex-col items-center justify-center bg-[#FDFDFC] px-6 text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
+            <div className="flex min-h-screen flex-col items-center justify-center px-6 text-[#1b1b18] dark:text-[#EDEDEC]">
                 <div className="w-full max-w-sm">
                     <h1 className="mb-1 text-2xl font-semibold tracking-tight">
                         {t('common.brand')}
                     </h1>
-                    <p className="mb-6 text-sm text-zinc-500 dark:text-zinc-400">
+                    <p className="mb-6 text-sm text-zinc-700 dark:text-zinc-300">
                         {t('unlock.subtitle')}
                     </p>
 

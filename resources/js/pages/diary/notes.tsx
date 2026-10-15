@@ -106,7 +106,7 @@ function NoteForm({
             className={cn(
                 'flex flex-col gap-4 rounded-lg border p-4',
                 hasImage
-                    ? 'border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800 min-h-[150px]' // Added min-h to prevent container collapse
+                    ? 'min-h-[150px] border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800' // Added min-h to prevent container collapse
                     : data.color && data.color.startsWith('#')
                       ? 'border-zinc-200'
                       : noteColorClass(data.color),
@@ -343,17 +343,17 @@ export default function Notes({
         <>
             <Head title={t('notes.title')} />
 
-            <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
+            <div className="min-h-screen text-[#1b1b18] dark:text-[#EDEDEC]">
                 <div className="mx-auto max-w-7xl px-6 py-8">
                     <header className="mb-8 flex items-start justify-between gap-4">
                         <div>
-                            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                            <p className="text-sm text-zinc-700 dark:text-zinc-300">
                                 {t('common.brand')}
                             </p>
                             <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
                                 {t('notes.title')}
                             </h1>
-                            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                            <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
                                 {t('notes.subtitle')}
                             </p>
                         </div>
@@ -411,7 +411,7 @@ export default function Notes({
                     )}
 
                     {filteredNotes.length === 0 && notes.length > 0 && (
-                        <p className="mb-4 text-sm text-zinc-400 dark:text-zinc-500">
+                        <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
                             {t('notes.noResults')}
                         </p>
                     )}
@@ -444,11 +444,11 @@ export default function Notes({
                                     }
                                 >
                                     <div className="flex items-start justify-between gap-2">
-                                        <span className="rounded-full bg-white/60 px-2 py-0.5 text-xs font-medium text-zinc-600 dark:bg-black/30 dark:text-zinc-300">
+                                        <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
                                             {t(`notes.kinds.${note.kind}`)}
                                         </span>
                                         {note.date && (
-                                            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                            <span className="text-xs text-zinc-700 dark:text-zinc-300">
                                                 {formatLongDate(
                                                     note.date,
                                                     locale,

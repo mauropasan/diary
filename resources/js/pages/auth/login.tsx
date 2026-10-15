@@ -21,12 +21,12 @@ export default function Login() {
         <>
             <Head title={t('login.title')} />
 
-            <div className="flex min-h-screen flex-col items-center justify-center bg-[#FDFDFC] px-6 text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
+            <div className="flex min-h-screen flex-col items-center justify-center px-6 text-[#1b1b18] dark:text-[#EDEDEC]">
                 <div className="w-full max-w-sm">
                     <h1 className="mb-1 text-2xl font-semibold tracking-tight">
                         {t('common.brand')}
                     </h1>
-                    <p className="mb-6 text-sm text-zinc-500 dark:text-zinc-400">
+                    <p className="mb-6 text-sm text-zinc-700 dark:text-zinc-300">
                         {t('login.subtitle')}
                     </p>
 
@@ -84,7 +84,7 @@ export default function Login() {
                             )}
                         </div>
 
-                        <label className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                        <label className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-300">
                             <input
                                 type="checkbox"
                                 checked={data.remember}
@@ -109,7 +109,7 @@ export default function Login() {
 
                     <Link
                         href={recovery.url()}
-                        className="mt-6 inline-block text-sm text-zinc-500 underline-offset-2 transition hover:underline dark:text-zinc-400"
+                        className="mt-6 inline-block text-sm text-zinc-700 underline-offset-2 transition hover:underline dark:text-zinc-300"
                     >
                         {t('login.forgot')}
                     </Link>

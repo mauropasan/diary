@@ -12,6 +12,67 @@
         'Noto Color Emoji';
 }
 
+/*
+| Custom diary backgrounds. Each `bg-{key}` class sets the light-mode color
+| and, under `.dark`, the dark-mode color. Keys must stay in sync with
+| `config('diary.backgrounds')`. A custom image is applied through the
+| `--app-background-image` custom property on the body, pointing at the
+| background route so the page never carries a multi-megabyte `data:` URI.
+| The default (no class) uses the plain page background.
+|
+| An arbitrary picture can easily swallow the text on top of it, so a
+| translucent scrim is layered over it: white in light mode, black in dark
+| mode, following the `.dark` class on <html> so it flips with the theme.
+| The preset colors are already low-contrast pastels and are left alone.
+*/
+
+body.app-background-image {
+    --background-scrim: rgb(255 255 255 / 0.5);
+
+    background-image:
+        linear-gradient(var(--background-scrim), var(--background-scrim)),
+        var(--app-background-image);
+    background-size: cover, cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    background-attachment: fixed, fixed;
+}
+
+.dark body.app-background-image {
+    --background-scrim: rgb(0 0 0 / 0.5);
+}
+
+.bg-paper {
+    background-color: #f6f1e7;
+}
+.dark .bg-paper {
+    background-color: #1c1812;
+}
+.bg-sky {
+    background-color: #e8f1f8;
+}
+.dark .bg-sky {
+    background-color: #0e1721;
+}
+.bg-sage {
+    background-color: #eaf2ea;
+}
+.dark .bg-sage {
+    background-color: #121a12;
+}
+.bg-peach {
+    background-color: #fbeee6;
+}
+.dark .bg-peach {
+    background-color: #1e140e;
+}
+.bg-slate {
+    background-color: #eceff3;
+}
+.dark .bg-slate {
+    background-color: #14171c;
+}
+
 .tiptap {
     min-height: 24rem;
 }

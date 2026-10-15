@@ -17,15 +17,27 @@ it('blocks non-admin users from the admin panel', function () {
         ->assertForbidden();
 });
 
-it('allows an admin to view the list of users', function () {
-    $admin = User::factory()->asAdmin()->create();
+it('redirects the old admin users page to settings', function () {
+    $admin = User::factory()->asAdmin()->withDiaryKey('secret')->create();
+
+    $this->actingAs($admin)
+        ->post(route('diary.unlock.store'), ['password' => 'secret'])
+        ->assertRedirect(route('diary.show', now()->toDateString()));
+
+    $this->get(route('admin.users.index'))->assertRedirect(route('diary.settings'));
+});
+
+it('shows the list of users in the settings page for an admin', function () {
+    $admin = User::factory()->asAdmin()->withDiaryKey('secret')->create();
     User::factory()->count(2)->create();
 
     $this->actingAs($admin)
-        ->get(route('admin.users.index'))
+        ->post(route('diary.unlock.store'), ['password' => 'secret']);
+
+    $this->get(route('diary.settings'))
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->component('admin/users')
+            ->component('settings/index')
             ->has('users', 3)
         );
 });
@@ -40,7 +52,7 @@ it('lets an admin create a user without giving up their own session', function (
             'password' => 'super-secret-1',
             'password_confirmation' => 'super-secret-1',
         ])
-        ->assertRedirect(route('admin.users.index'))
+        ->assertRedirect(route('diary.settings'))
         ->assertSessionHas('recoveryKey');
 
     $bob = User::query()->where('email', 'bob@example.com')->firstOrFail();
@@ -143,7 +155,7 @@ it('lets an admin remove a user and all of their encrypted data', function () {
 
     $this->actingAs($admin)
         ->delete(route('admin.users.destroy', $victim))
-        ->assertRedirect(route('admin.users.index'))
+        ->assertRedirect(route('diary.settings'))
         ->assertSessionHas('status');
 
     expect(User::query()->whereKey($victim->id)->exists())->toBeFalse()
@@ -157,7 +169,7 @@ it('prevents an admin from deleting their own account', function () {
 
     $this->actingAs($admin)
         ->delete(route('admin.users.destroy', $admin))
-        ->assertRedirect(route('admin.users.index'));
+        ->assertRedirect(route('diary.settings'));
 
     expect(User::query()->whereKey($admin->id)->exists())->toBeTrue();
 });

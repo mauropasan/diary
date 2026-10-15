@@ -52,4 +52,8 @@ return [
         'dated-kind-needs-date' => 'Un recordatorio o un evento necesita un día.',
     ],
 
+    'settings' => [
+        'background-updated' => 'Fondo actualizado.',
+    ],
+
 ];

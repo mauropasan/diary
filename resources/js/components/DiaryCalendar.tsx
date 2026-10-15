@@ -82,13 +82,13 @@ export default function DiaryCalendar({
     }
 
     return (
-        <aside className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+        <aside className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
             <div className="mb-3 flex items-center justify-between gap-2">
                 <button
                     type="button"
                     onClick={() => loadMonth(addMonths(visibleMonth, -1))}
                     aria-label={t('calendar.previousMonth')}
-                    className="rounded-md px-2 py-1 text-sm text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                    className="rounded-md px-2 py-1 text-sm text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                 >
                     ‹
                 </button>
@@ -106,7 +106,7 @@ export default function DiaryCalendar({
                     disabled={!canGoNextMonth}
                     onClick={() => loadMonth(addMonths(visibleMonth, 1))}
                     aria-label={t('calendar.nextMonth')}
-                    className="rounded-md px-2 py-1 text-sm text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                    className="rounded-md px-2 py-1 text-sm text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-800 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                 >
                     ›
                 </button>
@@ -121,7 +121,7 @@ export default function DiaryCalendar({
                 {weekdayLabels(locale).map((weekday, index) => (
                     <div
                         key={index}
-                        className="py-1 text-zinc-400 dark:text-zinc-500"
+                        className="py-1 text-zinc-600 dark:text-zinc-400"
                     >
                         {weekday}
                     </div>

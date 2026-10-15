@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\ResolvesMonth;
 use App\Http\Requests\SaveEntryRequest;
 use App\Models\Entry;
 use App\Models\Note;
+use App\Models\Schedule;
 use App\Models\Tag;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -30,7 +31,11 @@ class EntryController extends Controller
         $month = $this->resolveMonth($request->query('mes'), $day);
         $notes = $this->notesForDay($user, $day);
 
-        $activeSchedule = $user->schedules()->where('active', true)->first();
+        $activeSchedules = $user->schedules()
+            ->where('active', true)
+            ->orderBy('position')
+            ->orderBy('id')
+            ->get();
 
         return Inertia::render('diary/show', [
             'date' => $day->toDateString(),
@@ -50,11 +55,12 @@ class EntryController extends Controller
             'streak' => $this->streak($user, CarbonImmutable::today()),
             'notes' => $notes,
             'upcomingNotes' => $this->upcomingNotes($user, array_column($notes, 'id')),
-            'activeSchedule' => $activeSchedule ? [
-                'id' => $activeSchedule->id,
-                'name' => $activeSchedule->name,
-                'slots' => $activeSchedule->slots,
-            ] : null,
+            'schedules' => $activeSchedules->map(fn (Schedule $schedule): array => [
+                'id' => $schedule->id,
+                'name' => $schedule->name,
+                'slots' => $schedule->slots,
+                'only_weekdays' => $schedule->only_weekdays,
+            ])->all(),
         ]);
     }
 

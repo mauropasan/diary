@@ -21,10 +21,9 @@ beforeEach(function () {
     ]);
 });
 
-it('shows the change password screen', function () {
+it('redirects the old change password screen to settings', function () {
     $this->get(route('diary.password'))
-        ->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('auth/password'));
+        ->assertRedirect(route('diary.settings'));
 });
 
 it('changes the password and re-wraps the key without touching entry content', function () {
@@ -34,7 +33,7 @@ it('changes the password and re-wraps the key without touching entry content', f
         'current_password' => 'secret-password',
         'password' => 'brand-new-password',
         'password_confirmation' => 'brand-new-password',
-    ])->assertRedirect(route('diary.show', $this->today))
+    ])->assertRedirect(route('diary.settings'))
         ->assertSessionHas('status');
 
     $this->user->refresh();
@@ -52,28 +51,27 @@ it('changes the password and re-wraps the key without touching entry content', f
     expect(fn () => $manager->unlock($this->user, 'secret-password'))
         ->toThrow(KeyUnwrapException::class);
 
-    $this->get(route('diary.show', $this->today))
+    $this->get(route('diary.settings'))
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('entry.content', '<p>Contenido que debe sobrevivir.</p>')
             ->where('flash.status', __('messages.password.updated'))
         );
 });
 
 it('rejects a wrong current password', function () {
-    $this->from(route('diary.password'))
+    $this->from(route('diary.settings'))
         ->put(route('diary.password.update'), [
             'current_password' => 'not-the-password',
             'password' => 'brand-new-password',
             'password_confirmation' => 'brand-new-password',
         ])
-        ->assertRedirect(route('diary.password'))
+        ->assertRedirect(route('diary.settings'))
         ->assertSessionHasErrors('current_password');
 
     expect(Hash::check('secret-password', $this->user->fresh()->password))->toBeTrue();
 });
 
 it('requires the new password to be confirmed', function () {
-    $this->from(route('diary.password'))
+    $this->from(route('diary.settings'))
         ->put(route('diary.password.update'), [
             'current_password' => 'secret-password',
             'password' => 'brand-new-password',

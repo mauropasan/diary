@@ -7,12 +7,12 @@
  */
 
 export const noteColorClasses: Record<string, string> = {
-    yellow: 'border-amber-200 bg-amber-100 dark:border-amber-900 dark:bg-amber-950/50',
-    pink: 'border-rose-200 bg-rose-100 dark:border-rose-900 dark:bg-rose-950/50',
-    blue: 'border-sky-200 bg-sky-100 dark:border-sky-900 dark:bg-sky-950/50',
-    green: 'border-emerald-200 bg-emerald-100 dark:border-emerald-900 dark:bg-emerald-950/50',
-    purple: 'border-violet-200 bg-violet-100 dark:border-violet-900 dark:bg-violet-950/50',
-    gray: 'border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800/60',
+    yellow: 'border-amber-200 bg-amber-100 dark:border-amber-900 dark:bg-amber-950',
+    pink: 'border-rose-200 bg-rose-100 dark:border-rose-900 dark:bg-rose-950',
+    blue: 'border-sky-200 bg-sky-100 dark:border-sky-900 dark:bg-sky-950',
+    green: 'border-emerald-200 bg-emerald-100 dark:border-emerald-900 dark:bg-emerald-950',
+    purple: 'border-violet-200 bg-violet-100 dark:border-violet-900 dark:bg-violet-950',
+    gray: 'border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800',
 };
 
 export const noteSwatchClasses: Record<string, string> = {

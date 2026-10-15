@@ -3,9 +3,16 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import DiaryNav from '@/components/DiaryNav';
-import { cn } from '@/lib/utils';
+import ScheduleGrid, {
+    DAYS,
+    DAY_LABELS,
+    parseGrid,
+    serializeGrid,
+    visibleDayIndexes,
+} from '@/components/ScheduleGrid';
 import {
     destroy as scheduleDestroy,
+    reorder as scheduleReorder,
     store as scheduleStore,
     update as scheduleUpdate,
 } from '@/routes/diary/schedule';
@@ -14,7 +21,9 @@ type Schedule = {
     id: number;
     name: string;
     slots: string | null;
+    only_weekdays: boolean;
     active: boolean;
+    position: number;
 };
 
 type SchedulePageProps = {
@@ -23,40 +32,6 @@ type SchedulePageProps = {
 
 const fieldClass =
     'rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 transition outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-400';
-
-const DAYS = ['time', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
-const DAY_LABELS = {
-    time: 'schedule.time',
-    mon: 'schedule.mon',
-    tue: 'schedule.tue',
-    wed: 'schedule.wed',
-    thu: 'schedule.thu',
-    fri: 'schedule.fri',
-    sat: 'schedule.sat',
-    sun: 'schedule.sun',
-} as const;
-
-function parseGrid(slots: string | null): string[][] {
-    if (!slots) {
-        const empty = Array.from({ length: 1 }, () =>
-            Array.from({ length: 8 }, () => ''),
-        );
-        return empty;
-    }
-    try {
-        const parsed = JSON.parse(slots);
-        if (Array.isArray(parsed)) {
-            return parsed;
-        }
-    } catch {
-        // ignore
-    }
-    return Array.from({ length: 1 }, () => Array.from({ length: 8 }, () => ''));
-}
-
-function serializeGrid(grid: string[][]): string {
-    return JSON.stringify(grid);
-}
 
 type ScheduleFormProps = {
     schedule: Schedule | null;
@@ -70,13 +45,17 @@ function ScheduleForm({
     const { t } = useTranslation();
     const initialGrid = parseGrid(schedule?.slots ?? null);
     const [grid, setGrid] = useState<string[][]>(initialGrid);
-    const { data, setData, post, put, processing, errors } = useForm<{
+    const { data, setData, processing, errors } = useForm<{
         name: string;
         active: boolean;
+        onlyWeekdays: boolean;
     }>({
         name: schedule?.name ?? '',
         active: schedule?.active ?? true,
+        onlyWeekdays: schedule?.only_weekdays ?? false,
     });
+
+    const columnIndexes = visibleDayIndexes(data.onlyWeekdays);
 
     function updateCell(row: number, col: number, value: string): void {
         const copy = grid.map((r) => r.slice());
@@ -85,7 +64,7 @@ function ScheduleForm({
     }
 
     function addRow(): void {
-        setGrid([...grid, Array.from({ length: 8 }, () => '')]);
+        setGrid([...grid, Array.from({ length: DAYS.length }, () => '')]);
     }
 
     function removeRow(): void {
@@ -97,23 +76,22 @@ function ScheduleForm({
     function submit(event: React.FormEvent<HTMLFormElement>): void {
         event.preventDefault();
 
+        const payload = {
+            name: data.name,
+            slots: serializeGrid(grid),
+            only_weekdays: data.onlyWeekdays,
+            active: data.active,
+        };
+
         if (schedule) {
-            router.put(scheduleUpdate.url(schedule.id), {
-                name: data.name,
-                slots: serializeGrid(grid),
-                active: data.active,
-            }, {
+            router.put(scheduleUpdate.url(schedule.id), payload, {
                 preserveScroll: true,
                 onSuccess: () => onDone(),
             });
             return;
         }
 
-        router.post(scheduleStore.url(), {
-            name: data.name,
-            slots: serializeGrid(grid),
-            active: data.active,
-        }, {
+        router.post(scheduleStore.url(), payload, {
             preserveScroll: true,
             onSuccess: () => onDone(),
         });
@@ -148,15 +126,15 @@ function ScheduleForm({
             </div>
 
             <div className="flex flex-col gap-2 overflow-x-auto">
-                <table className="min-w-full text-sm">
+                <table className="min-w-full bg-white text-sm dark:bg-zinc-900">
                     <thead>
                         <tr>
-                            {DAYS.map((d) => (
+                            {columnIndexes.map((index) => (
                                 <th
-                                    key={d}
-                                    className="border border-zinc-200 px-2 py-1 text-left font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
+                                    key={DAYS[index]}
+                                    className="border border-zinc-200 px-2 py-1 text-left font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-300"
                                 >
-                                    {t(DAY_LABELS[d])}
+                                    {t(DAY_LABELS[DAYS[index]])}
                                 </th>
                             ))}
                         </tr>
@@ -164,16 +142,20 @@ function ScheduleForm({
                     <tbody>
                         {grid.map((row, i) => (
                             <tr key={i}>
-                                {row.map((cell, j) => (
+                                {columnIndexes.map((index) => (
                                     <td
-                                        key={j}
+                                        key={index}
                                         className="border border-zinc-200 p-0 dark:border-zinc-700"
                                     >
                                         <input
                                             type="text"
-                                            value={cell}
+                                            value={row[index]}
                                             onChange={(e) =>
-                                                updateCell(i, j, e.target.value)
+                                                updateCell(
+                                                    i,
+                                                    index,
+                                                    e.target.value,
+                                                )
                                             }
                                             className="w-full bg-transparent px-2 py-1 text-sm text-zinc-900 outline-none dark:text-zinc-100"
                                         />
@@ -187,28 +169,42 @@ function ScheduleForm({
                     <button
                         type="button"
                         onClick={addRow}
-                        className="rounded-md border border-zinc-300 px-2 py-1 text-xs hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+                        className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
                     >
                         {t('schedule.addRow')}
                     </button>
                     <button
                         type="button"
                         onClick={removeRow}
-                        className="rounded-md border border-zinc-300 px-2 py-1 text-xs hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+                        className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-xs hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
                     >
                         {t('schedule.removeRow')}
                     </button>
                 </div>
             </div>
 
-            <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-200">
-                <input
-                    type="checkbox"
-                    checked={data.active}
-                    onChange={(event) => setData('active', event.target.checked)}
-                />
-                {t('schedule.active')}
-            </label>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-200">
+                    <input
+                        type="checkbox"
+                        checked={data.active}
+                        onChange={(event) =>
+                            setData('active', event.target.checked)
+                        }
+                    />
+                    {t('schedule.active')}
+                </label>
+                <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-200">
+                    <input
+                        type="checkbox"
+                        checked={data.onlyWeekdays}
+                        onChange={(event) =>
+                            setData('onlyWeekdays', event.target.checked)
+                        }
+                    />
+                    {t('schedule.onlyWeekdays')}
+                </label>
+            </div>
 
             <div className="flex items-center gap-3">
                 <button
@@ -240,8 +236,6 @@ export default function Schedule({
     );
 
     const editing = schedules.find((s) => s.id === editingId) ?? null;
-    const activeSchedule = schedules.find((s) => s.active);
-    const otherSchedules = schedules.filter((s) => !s.active);
 
     function confirmRemove(): void {
         if (!scheduleToDelete) {
@@ -254,70 +248,81 @@ export default function Schedule({
         });
     }
 
+    function move(schedule: Schedule, direction: -1 | 1): void {
+        const ids = schedules.map((s) => s.id);
+        const index = ids.indexOf(schedule.id);
+        const target = index + direction;
+
+        if (index < 0 || target < 0 || target >= ids.length) {
+            return;
+        }
+
+        [ids[index], ids[target]] = [ids[target], ids[index]];
+
+        router.patch(scheduleReorder.url(), { ids }, { preserveScroll: true });
+    }
+
     function renderScheduleCard(schedule: Schedule): React.JSX.Element {
-        const grid = parseGrid(schedule.slots);
+        const index = schedules.findIndex((s) => s.id === schedule.id);
+
         return (
             <li
                 key={schedule.id}
                 className="flex flex-col gap-2 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
             >
                 <div className="flex items-start justify-between gap-2">
-                    <p className="font-medium text-zinc-900 dark:text-zinc-50">
-                        {schedule.name}
-                    </p>
-                    {!schedule.active && (
-                        <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
-                            {t('schedule.inactive')}
-                        </span>
-                    )}
+                    <div className="flex items-center gap-2">
+                        <p className="font-medium text-zinc-900 dark:text-zinc-50">
+                            {schedule.name}
+                        </p>
+                        {schedule.active && (
+                            <span className="rounded-full bg-green-500 px-2 py-0.5 text-xs font-medium text-white">
+                                {t('schedule.active')}
+                            </span>
+                        )}
+                        {!schedule.active && (
+                            <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                                {t('schedule.inactive')}
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <button
+                            type="button"
+                            onClick={() => move(schedule, -1)}
+                            disabled={index === 0}
+                            aria-label={t('schedule.moveUp')}
+                            className="rounded-md border border-zinc-300 bg-white px-2 py-0.5 text-xs text-zinc-600 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                        >
+                            ↑
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => move(schedule, 1)}
+                            disabled={index === schedules.length - 1}
+                            aria-label={t('schedule.moveDown')}
+                            className="rounded-md border border-zinc-300 bg-white px-2 py-0.5 text-xs text-zinc-600 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                        >
+                            ↓
+                        </button>
+                    </div>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full text-xs">
-                        <thead>
-                            <tr>
-                                {DAYS.map((d) => (
-                                    <th
-                                        key={d}
-                                        className="border border-zinc-200 px-1 py-0.5 text-left font-normal text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
-                                    >
-                                        {t(DAY_LABELS[d])}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {grid.map((row, i) => (
-                                <tr key={i}>
-                                    {row.map(
-                                        (cell, j) => (
-                                            <td
-                                                key={j}
-                                                className="border border-zinc-200 px-1 py-0.5 text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
-                                            >
-                                                {cell}
-                                            </td>
-                                        ),
-                                    )}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <ScheduleGrid
+                    slots={schedule.slots}
+                    onlyWeekdays={schedule.only_weekdays}
+                    size="sm"
+                />
                 <div className="mt-auto flex items-center gap-3 pt-2">
                     <button
                         type="button"
-                        onClick={() =>
-                            setEditingId(schedule.id)
-                        }
+                        onClick={() => setEditingId(schedule.id)}
                         className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
                     >
                         {t('notes.edit')}
                     </button>
                     <button
                         type="button"
-                        onClick={() =>
-                            setScheduleToDelete(schedule)
-                        }
+                        onClick={() => setScheduleToDelete(schedule)}
                         className="text-xs text-red-600 underline-offset-2 transition hover:underline dark:text-red-400"
                     >
                         {t('notes.delete')}
@@ -331,75 +336,23 @@ export default function Schedule({
         <>
             <Head title={t('schedule.title')} />
 
-            <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
+            <div className="min-h-screen text-[#1b1b18] dark:text-[#EDEDEC]">
                 <div className="mx-auto max-w-7xl px-6 py-8">
                     <header className="mb-8 flex items-start justify-between gap-4">
                         <div>
-                            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                            <p className="text-sm text-zinc-700 dark:text-zinc-300">
                                 {t('common.brand')}
                             </p>
                             <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
                                 {t('schedule.title')}
                             </h1>
-                            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                            <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
                                 {t('schedule.subtitle')}
                             </p>
                         </div>
 
                         <DiaryNav />
                     </header>
-
-                    {activeSchedule && (
-                        <div className="mb-8">
-                            <div className="mb-4 flex items-center gap-2 rounded-lg bg-green-50 p-4 dark:bg-green-900/20">
-                                <span className="rounded-full bg-green-500 px-2 py-0.5 text-xs font-medium text-white">
-                                    {t('schedule.active')}
-                                </span>
-                                <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                                    {activeSchedule.name}
-                                </p>
-                            </div>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full text-sm">
-                                    <thead>
-                                        <tr>
-                                            {DAYS.map((d) => (
-                                                <th
-                                                    key={d}
-                                                    className="border border-zinc-200 px-2 py-1 text-left font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
-                                                >
-                                                    {t(DAY_LABELS[d])}
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {parseGrid(activeSchedule.slots).map((row, i) => (
-                                            <tr key={i}>
-                                                {row.map((cell, j) => (
-                                                    <td
-                                                        key={j}
-                                                        className="border border-zinc-200 px-2 py-1 text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
-                                                    >
-                                                        {cell}
-                                                    </td>
-                                                ))}
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className="mt-4 flex items-center gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setEditingId(activeSchedule.id)}
-                                    className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
-                                >
-                                    {t('notes.edit')}
-                                </button>
-                            </div>
-                        </div>
-                    )}
 
                     <div className="mb-8">
                         <ScheduleForm
@@ -409,9 +362,9 @@ export default function Schedule({
                         />
                     </div>
 
-                    {otherSchedules.length > 0 && (
+                    {schedules.length > 0 && (
                         <ul className="grid gap-4 lg:grid-cols-2">
-                            {otherSchedules.map(renderScheduleCard)}
+                            {schedules.map(renderScheduleCard)}
                         </ul>
                     )}
                 </div>

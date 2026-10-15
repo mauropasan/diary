@@ -1,31 +1,20 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
-import ThemeSwitcher from '@/components/ThemeSwitcher';
-import { cn } from '@/lib/utils';
-import { index as adminUsers } from '@/routes/admin/users';
 import { home, logout } from '@/routes';
 import {
-    exportMethod as diaryExport,
+    lock as diaryLock,
     mood as diaryMood,
     notes as diaryNotes,
-    password as diaryPassword,
     schedule as diarySchedule,
-    search as diarySearch,
+    settings as diarySettings,
 } from '@/routes/diary';
 
 const iconButtonClass =
-    'flex h-9 w-9 items-center justify-center rounded-md text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100';
-
-const globeButtonClass =
-    'flex h-9 items-center gap-1 rounded-md px-2 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100';
+    'flex h-9 w-9 items-center justify-center rounded-md text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100';
 
 const mobileLinkClass =
     'block w-full rounded-md px-3 py-2 text-left text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-50';
-
-const switcherClass =
-    'rounded-md border border-zinc-200 bg-white px-1.5 py-1 text-xs text-zinc-600 outline-none transition dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300';
 
 function MenuIcon(): React.JSX.Element {
     return (
@@ -87,25 +76,6 @@ function CalendarIcon(): React.JSX.Element {
     );
 }
 
-function SearchIcon(): React.JSX.Element {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-4 w-4"
-            aria-hidden="true"
-        >
-            <circle cx="11" cy="11" r="7" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-    );
-}
-
 function MoodIcon(): React.JSX.Element {
     return (
         <svg
@@ -148,18 +118,40 @@ function NotesIcon(): React.JSX.Element {
     );
 }
 
-function MoreIcon(): React.JSX.Element {
+function SettingsIcon(): React.JSX.Element {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
-            fill="currentColor"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="h-4 w-4"
             aria-hidden="true"
         >
-            <circle cx="5" cy="12" r="1.5" />
-            <circle cx="12" cy="12" r="1.5" />
-            <circle cx="19" cy="12" r="1.5" />
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+        </svg>
+    );
+}
+
+function LockIcon(): React.JSX.Element {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4"
+            aria-hidden="true"
+        >
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
     );
 }
@@ -187,6 +179,7 @@ function LogoutIcon(): React.JSX.Element {
 type DiaryNavProps = {
     onBeforeNavigate?: () => void;
     onLogout?: () => void;
+    onLock?: () => void;
 };
 
 type NavLink = {
@@ -198,18 +191,15 @@ type NavLink = {
 
 /**
  * Shared navigation for the diary pages. On wider screens the primary links
- * are icon-only and the extras live behind an overflow menu. On phones the
- * whole thing collapses into a hamburger button.
+ * are icon-only. On phones the whole thing collapses into a hamburger button.
  */
 export default function DiaryNav({
     onBeforeNavigate,
     onLogout,
+    onLock,
 }: DiaryNavProps) {
     const [open, setOpen] = useState(false);
-    const [moreOpen, setMoreOpen] = useState(false);
     const { t } = useTranslation();
-
-    const isAdmin = usePage().props.auth.user.is_admin === true;
 
     const primary: NavLink[] = [
         {
@@ -217,12 +207,6 @@ export default function DiaryNav({
             label: t('nav.today'),
             href: home.url(),
             icon: <CalendarIcon />,
-        },
-        {
-            key: 'search',
-            label: t('nav.search'),
-            href: diarySearch.url(),
-            icon: <SearchIcon />,
         },
         {
             key: 'mood',
@@ -242,28 +226,16 @@ export default function DiaryNav({
             href: diarySchedule.url(),
             icon: <NotesIcon />,
         },
-    ];
-
-    const secondary: NavLink[] = [
-        { key: 'export', label: t('nav.export'), href: diaryExport.url() },
         {
-            key: 'password',
-            label: t('nav.password'),
-            href: diaryPassword.url(),
+            key: 'settings',
+            label: t('nav.settings'),
+            href: diarySettings.url(),
+            icon: <SettingsIcon />,
         },
     ];
 
-    if (isAdmin) {
-        secondary.push({
-            key: 'users',
-            label: t('nav.users'),
-            href: adminUsers.url(),
-        });
-    }
-
-    const links = [...primary, ...secondary];
-
     const logoutHandler = onLogout ?? (() => router.post(logout.url()));
+    const lockHandler = onLock ?? (() => router.post(diaryLock.url()));
 
     useEffect(() => {
         if (!open) {
@@ -281,22 +253,6 @@ export default function DiaryNav({
         return () => window.removeEventListener('keydown', closeOnEscape);
     }, [open]);
 
-    useEffect(() => {
-        if (!moreOpen) {
-            return;
-        }
-
-        function closeOnEscape(event: KeyboardEvent): void {
-            if (event.key === 'Escape') {
-                setMoreOpen(false);
-            }
-        }
-
-        window.addEventListener('keydown', closeOnEscape);
-
-        return () => window.removeEventListener('keydown', closeOnEscape);
-    }, [moreOpen]);
-
     return (
         <nav className="flex items-center">
             <div className="hidden items-center gap-1 sm:flex">
@@ -313,47 +269,15 @@ export default function DiaryNav({
                     </Link>
                 ))}
 
-                <ThemeSwitcher className={iconButtonClass} />
-
-                <LanguageSwitcher compact className={globeButtonClass} />
-
-                <div className="relative">
-                    <button
-                        type="button"
-                        onClick={() => setMoreOpen((value) => !value)}
-                        aria-expanded={moreOpen}
-                        aria-label={t('nav.more')}
-                        title={t('nav.more')}
-                        className={iconButtonClass}
-                    >
-                        <MoreIcon />
-                    </button>
-
-                    {moreOpen && (
-                        <>
-                            <button
-                                type="button"
-                                tabIndex={-1}
-                                aria-hidden="true"
-                                onClick={() => setMoreOpen(false)}
-                                className="fixed inset-0 z-10"
-                            />
-                            <div className="absolute top-full right-0 z-20 mt-2 w-40 rounded-md border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-                                {secondary.map((link) => (
-                                    <Link
-                                        key={link.key}
-                                        href={link.href}
-                                        onBefore={onBeforeNavigate}
-                                        onClick={() => setMoreOpen(false)}
-                                        className={mobileLinkClass}
-                                    >
-                                        {link.label}
-                                    </Link>
-                                ))}
-                            </div>
-                        </>
-                    )}
-                </div>
+                <button
+                    type="button"
+                    onClick={lockHandler}
+                    aria-label={t('nav.lock')}
+                    title={t('nav.lock')}
+                    className={iconButtonClass}
+                >
+                    <LockIcon />
+                </button>
 
                 <button
                     type="button"
@@ -387,13 +311,7 @@ export default function DiaryNav({
                             className="fixed inset-0 z-10 sm:hidden"
                         />
                         <div className="absolute top-full right-0 z-20 mt-2 w-70 rounded-md border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-                            <ThemeSwitcher layout="list" />
-                            <div className="px-3 py-2">
-                                <LanguageSwitcher
-                                    className={cn('w-full', switcherClass)}
-                                />
-                            </div>
-                            {links.map((link) => (
+                            {primary.map((link) => (
                                 <Link
                                     key={link.key}
                                     href={link.href}
@@ -404,6 +322,16 @@ export default function DiaryNav({
                                     {link.label}
                                 </Link>
                             ))}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setOpen(false);
+                                    lockHandler();
+                                }}
+                                className={mobileLinkClass}
+                            >
+                                {t('nav.lock')}
+                            </button>
                             <button
                                 type="button"
                                 onClick={() => {

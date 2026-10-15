@@ -13,7 +13,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\MoodController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -39,7 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::middleware('admin')->group(function () {
-        Route::get('admin/users', [AdminUsersController::class, 'index'])->name('admin.users.index');
+        Route::get('admin/users', function () {
+            return redirect()->route('diary.settings');
+        })->name('admin.users.index');
         Route::post('admin/users', [AdminUsersController::class, 'store'])
             ->middleware('throttle:10,1')
             ->name('admin.users.store');
@@ -57,7 +59,10 @@ Route::middleware('auth')->group(function () {
     Route::middleware('diary.unlocked')->group(function () {
         Route::get('/', fn () => redirect()->route('diary.show', now()->toDateString()))->name('home');
 
-        Route::get('search', [SearchController::class, 'index'])->name('diary.search');
+        // The background image is encrypted with the diary key, so it is only
+        // served once the diary is unlocked.
+        Route::get('diary/background', [SettingsController::class, 'image'])
+            ->name('diary.background');
 
         Route::get('mood', [MoodController::class, 'index'])->name('diary.mood');
 
@@ -66,14 +71,20 @@ Route::middleware('auth')->group(function () {
         Route::put('diary/notes/{note}', [NoteController::class, 'update'])->name('diary.notes.update');
         Route::delete('diary/notes/{note}', [NoteController::class, 'destroy'])->name('diary.notes.destroy');
 
-        Route::get('password', [PasswordController::class, 'edit'])->name('diary.password');
+        Route::get('password', function () {
+            return redirect()->route('diary.settings');
+        })->name('diary.password');
         Route::put('password', [PasswordController::class, 'update'])->name('diary.password.update');
+
+        Route::get('settings', [SettingsController::class, 'index'])->name('diary.settings');
+        Route::put('settings', [SettingsController::class, 'update'])->name('diary.settings.update');
 
         Route::get('export', [ExportController::class, 'index'])->name('diary.export');
         Route::get('export/markdown', [ExportController::class, 'markdown'])->name('diary.export.markdown');
 
         Route::get('diary/schedule', [ScheduleController::class, 'index'])->name('diary.schedule');
         Route::post('diary/schedule', [ScheduleController::class, 'store'])->name('diary.schedule.store');
+        Route::patch('diary/schedule/reorder', [ScheduleController::class, 'reorder'])->name('diary.schedule.reorder');
         Route::put('diary/schedule/{schedule}', [ScheduleController::class, 'update'])->name('diary.schedule.update');
         Route::delete('diary/schedule/{schedule}', [ScheduleController::class, 'destroy'])->name('diary.schedule.destroy');
 

@@ -24,13 +24,13 @@ export default function Export({ entries }: ExportProps) {
         <>
             <Head title={t('export.title')} />
 
-            <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC] print:bg-white print:text-black">
+            <div className="min-h-screen text-[#1b1b18] dark:text-[#EDEDEC] print:bg-white print:text-black">
                 <div className="mx-auto max-w-7xl px-6 py-8">
                     <div className="mb-8 flex items-center justify-between gap-3 print:hidden">
                         <div className="flex items-center gap-2">
                             <a
                                 href={diaryMarkdown.url()}
-                                className="rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-900"
+                                className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
                             >
                                 {t('export.download')}
                             </a>
@@ -50,29 +50,58 @@ export default function Export({ entries }: ExportProps) {
                         {t('common.brand')}
                     </h1>
 
-{(() => {
-                        const moodedEntries = entries.filter(e => e.mood !== null);
+                    {(() => {
+                        const moodedEntries = entries.filter(
+                            (e) => e.mood !== null,
+                        );
                         const total = moodedEntries.length;
-                        const avg = total > 0 ? moodedEntries.reduce((s,e)=>s+(e.mood||0),0)/total : null;
-                        const dist = [1,2,3,4,5].map(m => moodedEntries.filter(e=>e.mood===m).length);
+                        const avg =
+                            total > 0
+                                ? moodedEntries.reduce(
+                                      (s, e) => s + (e.mood || 0),
+                                      0,
+                                  ) / total
+                                : null;
+                        const dist = [1, 2, 3, 4, 5].map(
+                            (m) =>
+                                moodedEntries.filter((e) => e.mood === m)
+                                    .length,
+                        );
                         return total > 0 ? (
-                            <div className="mb-6 rounded-lg border border-zinc-200 p-4 text-sm dark:border-zinc-800 print:border-zinc-300">
-                                <h2 className="mb-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                            <div className="mb-6 rounded-lg border border-zinc-200 bg-white p-4 text-sm dark:border-zinc-800 dark:bg-zinc-900 print:border-zinc-300 print:bg-white">
+                                <h2 className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
                                     {t('export.moodSummary')}
                                 </h2>
                                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                                     <div>
-                                        <p className="text-xs text-zinc-400 dark:text-zinc-500">{t('export.moodedDays')}</p>
-                                        <p className="text-zinc-800 dark:text-zinc-200">{total}</p>
+                                        <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                                            {t('export.moodedDays')}
+                                        </p>
+                                        <p className="text-zinc-800 dark:text-zinc-200">
+                                            {total}
+                                        </p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-zinc-400 dark:text-zinc-500">{t('export.averageMood')}</p>
-                                        <p className="text-zinc-800 dark:text-zinc-200">{avg !== null ? avg.toFixed(1) : '—'}</p>
+                                        <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                                            {t('export.averageMood')}
+                                        </p>
+                                        <p className="text-zinc-800 dark:text-zinc-200">
+                                            {avg !== null
+                                                ? avg.toFixed(1)
+                                                : '—'}
+                                        </p>
                                     </div>
                                     <div className="col-span-2">
-                                        <p className="text-xs text-zinc-400 dark:text-zinc-500">{t('export.distribution')}</p>
+                                        <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                                            {t('export.distribution')}
+                                        </p>
                                         <p className="text-zinc-800 dark:text-zinc-200">
-                                            {[1,2,3,4,5].map(m => `${m}:${dist[m-1]}`).join(' · ')}
+                                            {[1, 2, 3, 4, 5]
+                                                .map(
+                                                    (m) =>
+                                                        `${m}:${dist[m - 1]}`,
+                                                )
+                                                .join(' · ')}
                                         </p>
                                     </div>
                                 </div>
@@ -81,19 +110,19 @@ export default function Export({ entries }: ExportProps) {
                     })()}
 
                     {entries.length === 0 && (
-                        <p className="text-sm text-zinc-400 dark:text-zinc-500">
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
                             {t('export.empty')}
                         </p>
                     )}
 
-                    <div className="max-w-3xl m-auto flex flex-col gap-10">
+                    <div className="m-auto flex max-w-3xl flex-col gap-10">
                         {entries.map((entry) => (
                             <article
                                 key={entry.date}
-                                className="break-inside-avoid print:break-after-page last:print:break-after-auto print:pt-8"
+                                className="break-inside-avoid print:break-after-page print:pt-8 last:print:break-after-auto"
                             >
                                 <header className="mb-3 border-b border-zinc-200 pb-2 dark:border-zinc-800">
-                                    <p className="text-xs text-zinc-400 capitalize dark:text-zinc-500">
+                                    <p className="text-xs text-zinc-600 capitalize dark:text-zinc-400">
                                         {formatLongDate(entry.date, locale)}
                                     </p>
                                     {entry.title && (
@@ -103,7 +132,7 @@ export default function Export({ entries }: ExportProps) {
                                     )}
                                     {(entry.mood !== null ||
                                         entry.tags.length > 0) && (
-                                        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                                        <p className="mt-1 text-xs text-zinc-700 dark:text-zinc-300">
                                             {entry.mood !== null &&
                                                 t('export.moodMeta', {
                                                     mood: t(

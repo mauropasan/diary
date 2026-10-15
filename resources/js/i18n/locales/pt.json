@@ -15,17 +15,18 @@
     },
     "nav": {
         "today": "Ir para hoje",
-        "search": "Procurar",
         "mood": "Humor",
         "notes": "Notas",
         "export": "Exportar",
         "password": "Palavra-passe",
         "users": "Utilizadores",
+        "lock": "Bloquear diário",
         "logout": "Terminar sessão",
         "openMenu": "Abrir menu",
         "closeMenu": "Fechar menu",
         "more": "Mais",
-        "schedule": "Horário"
+        "schedule": "Horário",
+        "settings": "Definições"
     },
     "theme": {
         "label": "Tema",
@@ -121,13 +122,6 @@
     "tags": {
         "placeholder": "Etiquetas…",
         "remove": "Remover {{tag}}"
-    },
-    "search": {
-        "title": "Procurar",
-        "placeholder": "Procure no seu diário…",
-        "empty": "Escreva algo para procurar no título, no conteúdo ou nas etiquetas.",
-        "noResults": "Não foram encontradas entradas para «{{query}}».",
-        "untitled": "Sem título"
     },
     "mood": {
         "title": "Humor",
@@ -242,6 +236,9 @@
         "slotsPlaceholder": "Escreva seu horário aqui...",
         "active": "Ativo",
         "inactive": "Inativo",
+        "onlyWeekdays": "Apenas dias úteis",
+        "moveUp": "Subir",
+        "moveDown": "Descer",
         "addRow": "Adicionar linha",
         "removeRow": "Remover linha",
         "time": "Hora",
@@ -252,5 +249,31 @@
         "fri": "Sex",
         "sat": "Sáb",
         "sun": "Dom"
+    },
+    "settings": {
+        "title": "Definições",
+        "subtitle": "Personaliza o teu diário.",
+        "appearance": "Aparência",
+        "appearanceSubtitle": "Tema, idioma e fundo do diário.",
+        "background": "Fundo",
+        "backgrounds": {
+            "default": "Predefinido",
+            "paper": "Papel",
+            "sky": "Céu",
+            "sage": "Sálvia",
+            "peach": "Pêssego",
+            "slate": "Ardósia"
+        },
+        "backgroundUpload": "Carregar imagem",
+        "backgroundHint": "JPEG, PNG ou WebP · máx. 2 MB",
+        "backgroundClear": "Remover imagem",
+        "backgroundTooLarge": "A imagem excede o máximo de 2 MB.",
+        "backgroundError": "Não foi possível ler a imagem.",
+        "export": "Exportar",
+        "exportSubtitle": "Descarrega ou imprime o teu diário.",
+        "password": "Alterar palavra-passe",
+        "passwordSubtitle": "A chave do diário será reprotetida com a nova palavra-passe.",
+        "users": "Utilizadores",
+        "usersSubtitle": "Cria e elimina contas do diário."
     }
 }

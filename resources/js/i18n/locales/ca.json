@@ -15,17 +15,18 @@
     },
     "nav": {
         "today": "Ves a avui",
-        "search": "Cerca",
         "mood": "Estat d'ànim",
         "notes": "Notes",
         "export": "Exporta",
         "password": "Contrasenya",
         "users": "Usuaris",
+        "lock": "Bloqueja el diari",
         "logout": "Tanca la sessió",
         "openMenu": "Obre el menú",
         "closeMenu": "Tanca el menú",
         "more": "Més",
-        "schedule": "Horari"
+        "schedule": "Horari",
+        "settings": "Configuració"
     },
     "theme": {
         "label": "Tema",
@@ -121,13 +122,6 @@
     "tags": {
         "placeholder": "Etiquetes…",
         "remove": "Treu {{tag}}"
-    },
-    "search": {
-        "title": "Cerca",
-        "placeholder": "Cerca al teu diari…",
-        "empty": "Escriu alguna cosa per cercar al títol, al contingut o a les etiquetes.",
-        "noResults": "No s'han trobat entrades per a «{{query}}».",
-        "untitled": "Sense títol"
     },
     "mood": {
         "title": "Ànim",
@@ -242,6 +236,9 @@
         "slotsPlaceholder": "Escriu el teu horari aquí...",
         "active": "Actiu",
         "inactive": "Inactiu",
+        "onlyWeekdays": "Només dies laborables",
+        "moveUp": "Pujar",
+        "moveDown": "Baixar",
         "addRow": "Afegir fila",
         "removeRow": "Eliminar fila",
         "time": "Hora",
@@ -252,5 +249,31 @@
         "fri": "Dv",
         "sat": "Ds",
         "sun": "Dg"
+    },
+    "settings": {
+        "title": "Configuració",
+        "subtitle": "Personalitza el teu diari.",
+        "appearance": "Aparença",
+        "appearanceSubtitle": "Tema, idioma i fons del diari.",
+        "background": "Fons",
+        "backgrounds": {
+            "default": "Per defecte",
+            "paper": "Paper",
+            "sky": "Cel",
+            "sage": "Sàlvia",
+            "peach": "Préssec",
+            "slate": "Pissarra"
+        },
+        "backgroundUpload": "Pujar imatge",
+        "backgroundHint": "JPEG, PNG o WebP · màx. 2 MB",
+        "backgroundClear": "Treure imatge",
+        "backgroundTooLarge": "La imatge supera el màxim de 2 MB.",
+        "backgroundError": "No s'ha pogut llegir la imatge.",
+        "export": "Exportar",
+        "exportSubtitle": "Descarrega o imprimeix el teu diari.",
+        "password": "Canvia la contrasenya",
+        "passwordSubtitle": "Es tornarà a protegir la clau del diari amb la nova contrasenya.",
+        "users": "Usuaris",
+        "usersSubtitle": "Crea i elimina comptes del diari."
     }
 }

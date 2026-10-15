@@ -6,6 +6,7 @@ import DiaryCalendar from '@/components/DiaryCalendar';
 import DiaryEditor, { type DiaryEditorHandle } from '@/components/DiaryEditor';
 import DiaryNav from '@/components/DiaryNav';
 import LockScreen from '@/components/LockScreen';
+import ScheduleGrid from '@/components/ScheduleGrid';
 import {
     formatLongDate,
     formatLongDay,
@@ -18,33 +19,6 @@ import { cn } from '@/lib/utils';
 import { useInactivityLock } from '@/lib/useInactivityLock';
 import { home, logout } from '@/routes';
 import { lock as diaryLock, show as diaryShow } from '@/routes/diary';
-
-const DAYS = ['time', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
-const DAY_LABELS = {
-    time: 'schedule.time',
-    mon: 'schedule.mon',
-    tue: 'schedule.tue',
-    wed: 'schedule.wed',
-    thu: 'schedule.thu',
-    fri: 'schedule.fri',
-    sat: 'schedule.sat',
-    sun: 'schedule.sun',
-} as const;
-
-function parseGrid(slots: string | null): string[][] {
-    if (!slots) {
-        return Array.from({ length: 1 }, () => Array.from({ length: 8 }, () => ''));
-    }
-    try {
-        const parsed = JSON.parse(slots);
-        if (Array.isArray(parsed)) {
-            return parsed;
-        }
-    } catch {
-        // ignore
-    }
-    return Array.from({ length: 1 }, () => Array.from({ length: 8 }, () => ''));
-}
 
 type Memory = {
     date: string;
@@ -64,6 +38,7 @@ type Schedule = {
     id: number;
     name: string;
     slots: string | null;
+    only_weekdays: boolean;
 };
 
 type EntryProps = {
@@ -85,7 +60,7 @@ type EntryProps = {
     };
     notes: DayNote[];
     upcomingNotes: DayNote[];
-    activeSchedule: Schedule | null;
+    schedules: Schedule[];
 };
 
 export default function Show({
@@ -100,7 +75,7 @@ export default function Show({
     streak,
     notes,
     upcomingNotes,
-    activeSchedule,
+    schedules,
 }: EntryProps) {
     const editorRef = useRef<DiaryEditorHandle>(null);
     const { t, i18n } = useTranslation();
@@ -132,6 +107,10 @@ export default function Show({
         editorRef.current?.flushSave(() => router.post(logout.url()));
     }
 
+    function lockNow(): void {
+        editorRef.current?.flushSave(() => router.post(diaryLock.url()));
+    }
+
     function formatCountdown(seconds: number): string {
         const minutes = Math.floor(seconds / 60);
         const rest = seconds % 60;
@@ -158,7 +137,7 @@ export default function Show({
         <>
             <Head title={formatLongDay(day, locale)} />
 
-            <div className="min-h-screen bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
+            <div className="min-h-screen text-[#1b1b18] dark:text-[#EDEDEC]">
                 <div className="mx-auto max-w-7xl px-6 py-8">
                     {flash.recoveryKey && !recoveryKeyDismissed && (
                         <div className="mb-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100">
@@ -204,7 +183,7 @@ export default function Show({
 
                     <header className="mb-8 flex items-start justify-between gap-4">
                         <div>
-                            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                            <p className="text-sm text-zinc-700 dark:text-zinc-300">
                                 {formatMonthYear(day, locale)}
                             </p>
                             <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
@@ -235,6 +214,7 @@ export default function Show({
                                 editorRef.current?.flushSave()
                             }
                             onLogout={logoutNow}
+                            onLock={lockNow}
                         />
                     </header>
 
@@ -242,7 +222,7 @@ export default function Show({
                         <button
                             type="button"
                             onClick={() => navigateTo(previous)}
-                            className="rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-900"
+                            className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
                         >
                             {t('show.previous')}
                         </button>
@@ -251,7 +231,7 @@ export default function Show({
                             <button
                                 type="button"
                                 onClick={() => navigateTo(next)}
-                                className="rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-900"
+                                className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
                             >
                                 {t('show.next')}
                             </button>
@@ -264,66 +244,41 @@ export default function Show({
                                     router.visit(home.url()),
                                 )
                             }
-                            className="rounded-md px-3 py-1.5 text-sm text-zinc-500 underline-offset-2 transition hover:underline dark:text-zinc-400"
+                            className="rounded-md px-3 py-1.5 text-sm text-zinc-700 underline-offset-2 transition hover:underline dark:text-zinc-300"
                         >
                             {t('nav.today')}
                         </button>
                     </div>
 
                     <main className="flex flex-col gap-8 lg:flex-row">
-                        <div className="flex-1 flex flex-col gap-8">
+                        <div className="flex flex-1 flex-col gap-8">
+                            {schedules.map((schedule) => (
+                                <section
+                                    key={schedule.id}
+                                    className="rounded-lg border border-zinc-200 bg-green-50 p-4 dark:border-zinc-800 dark:bg-green-950"
+                                >
+                                    <div className="mb-3 flex items-center gap-2">
+                                        <span className="rounded-full bg-green-500 px-2 py-0.5 text-xs font-medium text-white">
+                                            {t('schedule.active')}
+                                        </span>
+                                        <h2 className="text-sm font-medium text-green-800 dark:text-green-200">
+                                            {schedule.name}
+                                        </h2>
+                                    </div>
+                                    <ScheduleGrid
+                                        slots={schedule.slots}
+                                        onlyWeekdays={schedule.only_weekdays}
+                                    />
+                                </section>
+                            ))}
+
                             {!entry.content && prompt && (
-                                <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
+                                <p className="mb-4 text-sm text-zinc-700 dark:text-zinc-300">
                                     <span className="font-medium text-zinc-600 dark:text-zinc-300">
                                         {t('show.suggestion')}
                                     </span>{' '}
                                     {prompt}
                                 </p>
-                            )}
-
-                            {activeSchedule && (
-                                <section
-                                    className="rounded-lg border border-zinc-200 bg-green-50 p-4 dark:border-zinc-800 dark:bg-green-900/20">
-                                    <div className="mb-3 flex items-center gap-2">
-                                        <span
-                                            className="rounded-full bg-green-500 px-2 py-0.5 text-xs font-medium text-white">
-                                            {t('schedule.active')}
-                                        </span>
-                                        <h2 className="text-sm font-medium text-green-800 dark:text-green-200">
-                                            {activeSchedule.name}
-                                        </h2>
-                                    </div>
-                                    <div className="overflow-x-auto">
-                                        <table className="min-w-full text-sm">
-                                            <thead>
-                                            <tr>
-                                                {DAYS.map((d) => (
-                                                    <th
-                                                        key={d}
-                                                        className="border border-zinc-200 px-2 py-1 text-left font-medium text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
-                                                    >
-                                                        {t(DAY_LABELS[d])}
-                                                    </th>
-                                                ))}
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {parseGrid(activeSchedule.slots).map((row, i) => (
-                                                <tr key={i}>
-                                                    {row.map((cell, j) => (
-                                                        <td
-                                                            key={j}
-                                                            className="border border-zinc-200 px-2 py-1 text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
-                                                        >
-                                                            {cell}
-                                                        </td>
-                                                    ))}
-                                                </tr>
-                                            ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </section>
                             )}
 
                             <DiaryEditor
@@ -334,10 +289,9 @@ export default function Show({
                                 initialTags={tags}
                                 handleRef={editorRef}
                             />
-
                         </div>
 
-                        <div className="max-w-60 flex shrink-0 flex-col gap-4 lg:w-72">
+                        <div className="flex max-w-60 shrink-0 flex-col gap-4 lg:w-72">
                             <DiaryCalendar
                                 date={date}
                                 month={calendarMonth}
@@ -346,8 +300,8 @@ export default function Show({
                             />
 
                             {notes.length > 0 && (
-                                <section className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-                                    <h2 className="mb-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                                <section className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+                                    <h2 className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
                                         {t('show.notesTitle')}
                                     </h2>
 
@@ -386,7 +340,7 @@ export default function Show({
                                                           : undefined
                                                 }
                                             >
-                                                <span className="mb-1 inline-block rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-black/30 dark:text-zinc-300">
+                                                <span className="mb-1 inline-block rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
                                                     {t(
                                                         `notes.kinds.${note.kind}`,
                                                     )}
@@ -408,8 +362,8 @@ export default function Show({
                             )}
 
                             {upcomingNotes.length > 0 && (
-                                <section className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-                                    <h2 className="mb-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                                <section className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+                                    <h2 className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
                                         {t('show.upcomingTitle')}
                                     </h2>
 
@@ -449,13 +403,13 @@ export default function Show({
                                                 }
                                             >
                                                 <div className="mb-1 flex items-center justify-between gap-2">
-                                                    <span className="rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-black/30 dark:text-zinc-300">
+                                                    <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
                                                         {t(
                                                             `notes.kinds.${note.kind}`,
                                                         )}
                                                     </span>
                                                     {note.date && (
-                                                        <span className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                                                        <span className="text-[10px] text-zinc-700 dark:text-zinc-300">
                                                             {formatShortDayMonth(
                                                                 note.date,
                                                                 locale,
@@ -491,7 +445,7 @@ export default function Show({
                                             >
                                                 {t('show.previous')}
                                             </button>
-                                            <span className="text-xs text-zinc-400 dark:text-zinc-500">
+                                            <span className="text-xs text-zinc-600 dark:text-zinc-400">
                                                 {upcomingPage + 1} /{' '}
                                                 {totalUpcomingPages}
                                             </span>
@@ -516,7 +470,7 @@ export default function Show({
 
                     {memories.length > 0 && (
                         <section className="mt-8">
-                            <h2 className="mb-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                            <h2 className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
                                 {t('show.onThisDay')}
                             </h2>
 
@@ -525,9 +479,9 @@ export default function Show({
                                     <li key={memory.date}>
                                         <Link
                                             href={diaryShow.url(memory.date)}
-                                            className="group flex items-baseline gap-3 rounded-md border border-zinc-200 px-3 py-2 text-sm transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900"
+                                            className="group flex items-baseline gap-3 rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
                                         >
-                                            <span className="shrink-0 text-zinc-500 dark:text-zinc-400">
+                                            <span className="shrink-0 text-zinc-700 dark:text-zinc-300">
                                                 {formatLongDate(
                                                     memory.date,
                                                     locale,

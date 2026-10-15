@@ -59,7 +59,7 @@ export default function TagInput({ value, onChange }: TagInputProps) {
                         type="button"
                         onClick={() => remove(tag)}
                         aria-label={t('tags.remove', { tag })}
-                        className="text-zinc-400 transition hover:text-zinc-700 dark:hover:text-zinc-100"
+                        className="text-zinc-600 transition hover:text-zinc-700 dark:hover:text-zinc-100"
                     >
                         ×
                     </button>
@@ -73,7 +73,7 @@ export default function TagInput({ value, onChange }: TagInputProps) {
                 onKeyDown={handleKeyDown}
                 onBlur={() => commit(draft)}
                 placeholder={t('tags.placeholder')}
-                className="min-w-[8rem] flex-1 border-none bg-transparent px-0 py-1 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 dark:text-zinc-200 dark:placeholder:text-zinc-600"
+                className="min-w-[8rem] flex-1 border-none bg-transparent px-0 py-1 text-sm text-zinc-800 outline-none placeholder:text-zinc-600 dark:text-zinc-200 dark:placeholder:text-zinc-600"
             />
         </div>
     );

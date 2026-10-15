@@ -15,17 +15,18 @@
     },
     "nav": {
         "today": "Zu heute",
-        "search": "Suchen",
         "mood": "Stimmung",
         "notes": "Notizen",
         "export": "Exportieren",
         "password": "Passwort",
         "users": "Benutzer",
+        "lock": "Tagebuch sperren",
         "logout": "Abmelden",
         "openMenu": "Menü öffnen",
         "closeMenu": "Menü schließen",
         "more": "Mehr",
-        "schedule": "Stundenplan"
+        "schedule": "Stundenplan",
+        "settings": "Einstellungen"
     },
     "theme": {
         "label": "Design",
@@ -121,13 +122,6 @@
     "tags": {
         "placeholder": "Schlagwörter…",
         "remove": "{{tag}} entfernen"
-    },
-    "search": {
-        "title": "Suchen",
-        "placeholder": "Durchsuchen Sie Ihr Tagebuch…",
-        "empty": "Geben Sie etwas ein, um im Titel, im Inhalt oder in den Schlagwörtern zu suchen.",
-        "noResults": "Keine Einträge für „{{query}}“ gefunden.",
-        "untitled": "Ohne Titel"
     },
     "mood": {
         "title": "Stimmung",
@@ -242,6 +236,9 @@
         "slotsPlaceholder": "Schreiben Sie Ihren Stundenplan hier...",
         "active": "Aktiv",
         "inactive": "Inaktiv",
+        "onlyWeekdays": "Nur Werktage",
+        "moveUp": "Nach oben",
+        "moveDown": "Nach unten",
         "addRow": "Zeile hinzufügen",
         "removeRow": "Zeile entfernen",
         "time": "Zeit",
@@ -252,5 +249,31 @@
         "fri": "Fr",
         "sat": "Sa",
         "sun": "So"
+    },
+    "settings": {
+        "title": "Einstellungen",
+        "subtitle": "Personalisiere dein Tagebuch.",
+        "appearance": "Erscheinungsbild",
+        "appearanceSubtitle": "Thema, Sprache und Hintergrund des Tagebuchs.",
+        "background": "Hintergrund",
+        "backgrounds": {
+            "default": "Standard",
+            "paper": "Papier",
+            "sky": "Himmel",
+            "sage": "Salbei",
+            "peach": "Pfirsich",
+            "slate": "Schiefer"
+        },
+        "backgroundUpload": "Bild hochladen",
+        "backgroundHint": "JPEG, PNG oder WebP · max. 2 MB",
+        "backgroundClear": "Bild entfernen",
+        "backgroundTooLarge": "Das Bild überschreitet das Maximum von 2 MB.",
+        "backgroundError": "Das Bild konnte nicht gelesen werden.",
+        "export": "Exportieren",
+        "exportSubtitle": "Lade dein Tagebuch herunter oder drucke es.",
+        "password": "Passwort ändern",
+        "passwordSubtitle": "Der Tagebuchschlüssel wird mit dem neuen Passwort neu geschützt.",
+        "users": "Benutzer",
+        "usersSubtitle": "Tagebuchkonten erstellen und löschen."
     }
 }

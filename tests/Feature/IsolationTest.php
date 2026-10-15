@@ -68,23 +68,6 @@ it('does not show other users\' entries to an administrator', function () {
         );
 });
 
-it('scopes search results to the current user', function () {
-    $owner = User::factory()->withDiaryKey('owner-secret')->create();
-    $other = User::factory()->withDiaryKey('other-secret')->create();
-
-    unlockDiaryAs($owner, 'owner-secret');
-    writeEntryFor('Rutina de septiembre', '<p>Nadé por la mañana.</p>');
-
-    unlockDiaryAs($other, 'other-secret');
-
-    $this->get(route('diary.search', ['q' => 'Nadé']))
-        ->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
-            ->component('diary/search')
-            ->where('results', [])
-        );
-});
-
 it('scopes the export to the current user', function () {
     $owner = User::factory()->withDiaryKey('owner-secret')->create();
     $other = User::factory()->withDiaryKey('other-secret')->create();

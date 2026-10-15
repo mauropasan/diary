@@ -10,19 +10,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class PasswordController extends Controller
 {
-    /**
-     * Show the change password screen.
-     */
-    public function edit(): Response
-    {
-        return Inertia::render('auth/password');
-    }
-
     /**
      * Re-wrap the diary key with a KEK derived from the new password and update
      * the login password hash. Entry content is never re-encrypted.
@@ -45,7 +35,7 @@ class PasswordController extends Controller
         }
 
         return redirect()
-            ->route('diary.show', now()->toDateString())
+            ->route('diary.settings')
             ->with('status', __('messages.password.updated'));
     }
 }

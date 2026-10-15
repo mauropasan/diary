@@ -24,6 +24,14 @@ export type DiaryEditorHandle = {
 
 const MOOD_VALUES = [1, 2, 3, 4, 5] as const;
 
+const MOOD_EMOJIS: Record<number, string> = {
+    1: '😞',
+    2: '😕',
+    3: '😐',
+    4: '🙂',
+    5: '😄',
+};
+
 type SaveState = 'idle' | 'pending' | 'saving' | 'saved' | 'error';
 
 type UploadState = 'idle' | 'uploading' | 'error';
@@ -200,7 +208,9 @@ export default function DiaryEditor({
         },
         onUpdate: ({ editor: ed }) => {
             scheduleSave();
-            setWordCount(ed.getText().trim().split(/\s+/).filter(Boolean).length);
+            setWordCount(
+                ed.getText().trim().split(/\s+/).filter(Boolean).length,
+            );
         },
     });
 
@@ -349,29 +359,42 @@ export default function DiaryEditor({
                         scheduleSave();
                     }}
                     placeholder={t('editor.titlePlaceholder')}
-                    className="w-full border-none bg-transparent px-0 text-2xl font-semibold text-zinc-900 outline-none placeholder:text-zinc-400 dark:text-zinc-50 dark:placeholder:text-zinc-600"
+                    className="w-full border-none bg-transparent px-0 text-2xl font-semibold text-zinc-900 outline-none placeholder:text-zinc-600 dark:text-zinc-50 dark:placeholder:text-zinc-600"
                 />
 
-                <select
-                    value={mood ?? ''}
-                    onChange={(event) => {
-                        const next =
-                            event.target.value === ''
-                                ? null
-                                : Number(event.target.value);
-                        moodRef.current = next;
-                        setMood(next);
-                        scheduleSave();
-                    }}
-                    className="rounded-md border border-zinc-200 bg-white px-2 py-1 text-sm text-zinc-700 outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
+                <div
+                    role="group"
+                    aria-label={t('editor.moodPlaceholder')}
+                    className="flex shrink-0 items-center gap-0.5"
                 >
-                    <option value="">{t('editor.moodPlaceholder')}</option>
-                    {MOOD_VALUES.map((value) => (
-                        <option key={value} value={value}>
-                            {t(`editor.moods.${value}`)}
-                        </option>
-                    ))}
-                </select>
+                    {MOOD_VALUES.map((value) => {
+                        const selected = mood === value;
+
+                        return (
+                            <button
+                                key={value}
+                                type="button"
+                                aria-pressed={selected}
+                                aria-label={t(`editor.moods.${value}`)}
+                                title={t(`editor.moods.${value}`)}
+                                onClick={() => {
+                                    const next = selected ? null : value;
+                                    moodRef.current = next;
+                                    setMood(next);
+                                    scheduleSave();
+                                }}
+                                className={cn(
+                                    'rounded-md px-1.5 py-0.5 text-xl leading-none transition',
+                                    selected
+                                        ? 'bg-zinc-100 dark:bg-zinc-800'
+                                        : 'opacity-50 grayscale hover:opacity-100 hover:grayscale-0',
+                                )}
+                            >
+                                {MOOD_EMOJIS[value]}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
 
             <TagInput
@@ -383,13 +406,13 @@ export default function DiaryEditor({
                 }}
             />
 
-            <div className="rounded-lg border border-zinc-200 dark:border-zinc-800">
+            <div className="rounded-lg border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
                 <div className="flex items-center gap-2 border-b border-zinc-200 px-3 py-2 dark:border-zinc-800">
                     <button
                         type="button"
                         onClick={insertTime}
                         title={t('editor.insertTimeTitle')}
-                        className="rounded-md px-2 py-1 text-xs font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                        className="rounded-md px-2 py-1 text-xs font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                     >
                         {t('editor.insertTime')}
                     </button>
@@ -399,7 +422,7 @@ export default function DiaryEditor({
                         onClick={() => fileInputRef.current?.click()}
                         disabled={uploadState === 'uploading'}
                         title={t('media.attachTitle')}
-                        className="rounded-md px-2 py-1 text-xs font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 disabled:opacity-50 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                        className="rounded-md px-2 py-1 text-xs font-medium text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-800 disabled:opacity-50 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                     >
                         {t('media.attach')}
                     </button>
@@ -416,12 +439,12 @@ export default function DiaryEditor({
                             'text-xs',
                             uploadState === 'error' || saveState === 'error'
                                 ? 'text-red-600 dark:text-red-400'
-                                : 'text-zinc-400 dark:text-zinc-500',
+                                : 'text-zinc-600 dark:text-zinc-400',
                         )}
                     >
                         {statusLabel}
                     </span>
-                    <span className="ml-auto text-xs text-zinc-400 dark:text-zinc-500">
+                    <span className="ml-auto text-xs text-zinc-600 dark:text-zinc-400">
                         {t('editor.wordCount', { count: wordCount })}
                     </span>
                 </div>

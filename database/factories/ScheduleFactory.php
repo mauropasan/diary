@@ -22,7 +22,9 @@ class ScheduleFactory extends Factory
             'user_id' => User::factory(),
             'name' => $this->faker->words(2, true),
             'slots' => null,
+            'only_weekdays' => false,
             'active' => true,
+            'position' => 0,
         ];
     }
 }

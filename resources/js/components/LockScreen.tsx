@@ -28,7 +28,7 @@ export default function LockScreen({ onUnlocked }: LockScreenProps) {
                 <h1 className="mb-1 text-lg font-semibold tracking-tight">
                     {t('lock.heading')}
                 </h1>
-                <p className="mb-5 text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="mb-5 text-sm text-zinc-700 dark:text-zinc-300">
                     {t('lock.body')}
                 </p>
 

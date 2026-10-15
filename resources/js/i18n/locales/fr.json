@@ -15,17 +15,18 @@
     },
     "nav": {
         "today": "Aller à aujourd'hui",
-        "search": "Rechercher",
         "mood": "Humeur",
         "notes": "Notes",
         "export": "Exporter",
         "password": "Mot de passe",
         "users": "Utilisateurs",
+        "lock": "Verrouiller le journal",
         "logout": "Se déconnecter",
         "openMenu": "Ouvrir le menu",
         "closeMenu": "Fermer le menu",
         "more": "Plus",
-        "schedule": "Emploi du temps"
+        "schedule": "Emploi du temps",
+        "settings": "Paramètres"
     },
     "theme": {
         "label": "Thème",
@@ -121,13 +122,6 @@
     "tags": {
         "placeholder": "Étiquettes…",
         "remove": "Retirer {{tag}}"
-    },
-    "search": {
-        "title": "Rechercher",
-        "placeholder": "Recherchez dans votre journal…",
-        "empty": "Saisissez quelque chose pour rechercher dans le titre, le contenu ou les étiquettes.",
-        "noResults": "Aucune entrée trouvée pour « {{query}} ».",
-        "untitled": "Sans titre"
     },
     "mood": {
         "title": "Humeur",
@@ -242,6 +236,9 @@
         "slotsPlaceholder": "Écrivez votre emploi du temps ici...",
         "active": "Actif",
         "inactive": "Inactif",
+        "onlyWeekdays": "Jours ouvrables uniquement",
+        "moveUp": "Monter",
+        "moveDown": "Descendre",
         "addRow": "Ajouter une ligne",
         "removeRow": "Supprimer une ligne",
         "time": "Heure",
@@ -252,5 +249,31 @@
         "fri": "Ven",
         "sat": "Sam",
         "sun": "Dim"
+    },
+    "settings": {
+        "title": "Paramètres",
+        "subtitle": "Personnalisez votre journal.",
+        "appearance": "Apparence",
+        "appearanceSubtitle": "Thème, langue et arrière-plan du journal.",
+        "background": "Arrière-plan",
+        "backgrounds": {
+            "default": "Par défaut",
+            "paper": "Papier",
+            "sky": "Ciel",
+            "sage": "Sauge",
+            "peach": "Pêche",
+            "slate": "Ardoise"
+        },
+        "backgroundUpload": "Importer une image",
+        "backgroundHint": "JPEG, PNG ou WebP · max. 2 Mo",
+        "backgroundClear": "Retirer l'image",
+        "backgroundTooLarge": "L'image dépasse le maximum de 2 Mo.",
+        "backgroundError": "Impossible de lire l'image.",
+        "export": "Exporter",
+        "exportSubtitle": "Téléchargez ou imprimez votre journal.",
+        "password": "Changer le mot de passe",
+        "passwordSubtitle": "La clé du journal sera re-protégée avec le nouveau mot de passe.",
+        "users": "Utilisateurs",
+        "usersSubtitle": "Créez et supprimez des comptes du journal."
     }
 }

@@ -14,11 +14,13 @@ use Illuminate\Support\Carbon;
  * @property int $user_id
  * @property string $name
  * @property string|null $slots
+ * @property bool $only_weekdays
  * @property bool $active
+ * @property int $position
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['user_id', 'name', 'slots', 'active'])]
+#[Fillable(['user_id', 'name', 'slots', 'only_weekdays', 'active', 'position'])]
 class Schedule extends Model
 {
     /** @use HasFactory<ScheduleFactory> */
@@ -27,7 +29,9 @@ class Schedule extends Model
     protected function casts(): array
     {
         return [
+            'only_weekdays' => 'boolean',
             'active' => 'boolean',
+            'position' => 'integer',
         ];
     }
 

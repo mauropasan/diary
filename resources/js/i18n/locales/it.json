@@ -15,17 +15,18 @@
     },
     "nav": {
         "today": "Vai a oggi",
-        "search": "Cerca",
         "mood": "Umore",
         "notes": "Note",
         "export": "Esporta",
         "password": "Password",
         "users": "Utenti",
+        "lock": "Blocca diario",
         "logout": "Esci",
         "openMenu": "Apri menu",
         "closeMenu": "Chiudi menu",
         "more": "Altro",
-        "schedule": "Orario"
+        "schedule": "Orario",
+        "settings": "Impostazioni"
     },
     "theme": {
         "label": "Tema",
@@ -121,13 +122,6 @@
     "tags": {
         "placeholder": "Etichette…",
         "remove": "Rimuovi {{tag}}"
-    },
-    "search": {
-        "title": "Cerca",
-        "placeholder": "Cerca nel tuo diario…",
-        "empty": "Scrivi qualcosa per cercare nel titolo, nel contenuto o nelle etichette.",
-        "noResults": "Nessuna voce trovata per «{{query}}».",
-        "untitled": "Senza titolo"
     },
     "mood": {
         "title": "Umore",
@@ -242,6 +236,9 @@
         "slotsPlaceholder": "Scrivi il tuo orario qui...",
         "active": "Attivo",
         "inactive": "Inattivo",
+        "onlyWeekdays": "Solo giorni lavorativi",
+        "moveUp": "Sali",
+        "moveDown": "Scendi",
         "addRow": "Aggiungi riga",
         "removeRow": "Rimuovi riga",
         "time": "Ora",
@@ -252,5 +249,31 @@
         "fri": "Ven",
         "sat": "Sab",
         "sun": "Dom"
+    },
+    "settings": {
+        "title": "Impostazioni",
+        "subtitle": "Personalizza il tuo diario.",
+        "appearance": "Aspetto",
+        "appearanceSubtitle": "Tema, lingua e sfondo del diario.",
+        "background": "Sfondo",
+        "backgrounds": {
+            "default": "Predefinito",
+            "paper": "Carta",
+            "sky": "Cielo",
+            "sage": "Salvia",
+            "peach": "Pesca",
+            "slate": "Ardesia"
+        },
+        "backgroundUpload": "Carica immagine",
+        "backgroundHint": "JPEG, PNG o WebP · max 2 MB",
+        "backgroundClear": "Rimuovi immagine",
+        "backgroundTooLarge": "L'immagine supera il massimo di 2 MB.",
+        "backgroundError": "Non è stato possibile leggere l'immagine.",
+        "export": "Esporta",
+        "exportSubtitle": "Scarica o stampa il tuo diario.",
+        "password": "Cambia password",
+        "passwordSubtitle": "La chiave del diario sarà riproteggeta con la nuova password.",
+        "users": "Utenti",
+        "usersSubtitle": "Crea ed elimina account del diario."
     }
 }

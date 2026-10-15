@@ -45,6 +45,36 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Backgrounds
+    |--------------------------------------------------------------------------
+    |
+    | The preset background keys a user can pick for the diary. The chosen key
+    | is stored encrypted in `users.background` and applied as a CSS class of
+    | the same name (e.g. `bg-paper`) defined in `resources/css/app.css`, with
+    | a dark-mode variant. Keys are stored in the database, so keep them
+    | stable once shipped. `default` means no custom background.
+    |
+    */
+
+    'backgrounds' => ['default', 'paper', 'sky', 'sage', 'peach', 'slate'],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Background image
+    |--------------------------------------------------------------------------
+    |
+    | Maximum size for a custom background image, in kilobytes. The image is
+    | stored as an encrypted `data:` URI on the user and served through the
+    | background route, so keep this modest.
+    |
+    */
+
+    'background' => [
+        'max_size_kb' => (int) env('DIARY_MAX_BACKGROUND_KB', 2048),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Attachments
     |--------------------------------------------------------------------------
     |

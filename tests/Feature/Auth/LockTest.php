@@ -19,3 +19,18 @@ it('locks the diary by discarding the session key', function () {
 it('requires authentication to lock the diary', function () {
     $this->post(route('diary.lock'))->assertRedirect(route('login'));
 });
+
+it('sends an Inertia lock to the unlock screen', function () {
+    $user = User::factory()->withDiaryKey('secret-password')->create();
+
+    $this->actingAs($user)
+        ->post(route('diary.unlock.store'), ['password' => 'secret-password']);
+
+    $this->get(route('diary.show', now()->toDateString()))->assertOk();
+
+    $this->post(route('diary.lock'), [], ['X-Inertia' => 'true'])
+        ->assertRedirect(route('diary.unlock'));
+
+    $this->get(route('diary.show', now()->toDateString()))
+        ->assertRedirect(route('diary.unlock'));
+});

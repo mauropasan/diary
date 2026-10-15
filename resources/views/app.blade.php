@@ -27,7 +27,25 @@
             <title>{{ config('app.name', 'Diario') }}</title>
         </x-inertia::head>
     </head>
-    <body class="font-sans antialiased">
+    @php
+    /*
+     * The background is encrypted with the diary key, so it is only readable
+     * once the diary is unlocked; a locked diary falls back to the default.
+     * Only the CSS declaration is built here; the attribute quotes stay
+     * literal HTML so Blade escaping cannot mangle them.
+     */
+    $background = auth()->user()?->backgroundChoice();
+    $backgroundClass = '';
+    $backgroundStyle = '';
+
+    if ($background === 'image') {
+        $backgroundClass = ' app-background-image';
+        $backgroundStyle = "--app-background-image: url('".route('diary.background')."')";
+    } elseif (is_string($background)) {
+        $backgroundClass = ' bg-'.$background;
+    }
+@endphp
+<body class="font-sans antialiased{{ $backgroundClass }}"@if($backgroundStyle !== '') style="{{ $backgroundStyle }}"@endif>
         <x-inertia::app />
     </body>
 </html>

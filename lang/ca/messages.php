@@ -52,4 +52,8 @@ return [
         'dated-kind-needs-date' => 'Un recordatori o un esdeveniment necessita una data.',
     ],
 
+    'settings' => [
+        'background-updated' => 'Fons actualitzat.',
+    ],
+
 ];

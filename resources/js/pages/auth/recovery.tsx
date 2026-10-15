@@ -22,12 +22,12 @@ export default function Recovery() {
         <>
             <Head title={t('recovery.title')} />
 
-            <div className="flex min-h-screen flex-col items-center justify-center bg-[#FDFDFC] px-6 text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
+            <div className="flex min-h-screen flex-col items-center justify-center px-6 text-[#1b1b18] dark:text-[#EDEDEC]">
                 <div className="w-full max-w-sm">
                     <h1 className="mb-1 text-2xl font-semibold tracking-tight">
                         {t('recovery.heading')}
                     </h1>
-                    <p className="mb-6 text-sm text-zinc-500 dark:text-zinc-400">
+                    <p className="mb-6 text-sm text-zinc-700 dark:text-zinc-300">
                         {t('recovery.subtitle')}
                     </p>
 
@@ -144,7 +144,7 @@ export default function Recovery() {
 
                     <Link
                         href={login.url()}
-                        className="mt-6 inline-block text-sm text-zinc-500 underline-offset-2 transition hover:underline dark:text-zinc-400"
+                        className="mt-6 inline-block text-sm text-zinc-700 underline-offset-2 transition hover:underline dark:text-zinc-300"
                     >
                         {t('common.backToLogin')}
                     </Link>

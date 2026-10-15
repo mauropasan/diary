@@ -52,4 +52,8 @@ return [
         'dated-kind-needs-date' => 'A reminder or event needs a day.',
     ],
 
+    'settings' => [
+        'background-updated' => 'Background updated.',
+    ],
+
 ];

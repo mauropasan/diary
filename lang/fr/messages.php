@@ -52,4 +52,8 @@ return [
         'dated-kind-needs-date' => 'Un rappel ou un événement a besoin d\'un jour.',
     ],
 
+    'settings' => [
+        'background-updated' => 'Arrière-plan mis à jour.',
+    ],
+
 ];

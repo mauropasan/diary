@@ -15,17 +15,18 @@
     },
     "nav": {
         "today": "Ir a hoy",
-        "search": "Buscar",
         "mood": "Ánimo",
         "notes": "Notas",
         "export": "Exportar",
         "password": "Contraseña",
         "users": "Usuarios",
+        "lock": "Bloquear diario",
         "logout": "Cerrar sesión",
         "openMenu": "Abrir menú",
         "closeMenu": "Cerrar menú",
         "more": "Más",
-        "schedule": "Horario"
+        "schedule": "Horario",
+        "settings": "Ajustes"
     },
     "theme": {
         "label": "Tema",
@@ -121,13 +122,6 @@
     "tags": {
         "placeholder": "Etiquetas…",
         "remove": "Quitar {{tag}}"
-    },
-    "search": {
-        "title": "Buscar",
-        "placeholder": "Busca en tu diario…",
-        "empty": "Escribe algo para buscar en el título, el contenido o las etiquetas.",
-        "noResults": "No se han encontrado entradas para «{{query}}».",
-        "untitled": "Sin título"
     },
     "mood": {
         "title": "Ánimo",
@@ -242,6 +236,9 @@
         "slotsPlaceholder": "Escribe tu horario aquí...",
         "active": "Activo",
         "inactive": "Inactivo",
+        "onlyWeekdays": "Solo días laborables",
+        "moveUp": "Subir",
+        "moveDown": "Bajar",
         "addRow": "Añadir fila",
         "removeRow": "Eliminar fila",
         "time": "Hora",
@@ -252,5 +249,31 @@
         "fri": "V",
         "sat": "S",
         "sun": "D"
+    },
+    "settings": {
+        "title": "Ajustes",
+        "subtitle": "Personaliza tu diario.",
+        "appearance": "Apariencia",
+        "appearanceSubtitle": "Tema, idioma y fondo del diario.",
+        "background": "Fondo",
+        "backgrounds": {
+            "default": "Predeterminado",
+            "paper": "Papel",
+            "sky": "Cielo",
+            "sage": "Salvia",
+            "peach": "Melocotón",
+            "slate": "Pizarra"
+        },
+        "backgroundUpload": "Subir imagen",
+        "backgroundHint": "JPEG, PNG o WebP · máx. 2 MB",
+        "backgroundClear": "Quitar imagen",
+        "backgroundTooLarge": "La imagen supera el máximo de 2 MB.",
+        "backgroundError": "No se pudo leer la imagen.",
+        "export": "Exportar",
+        "exportSubtitle": "Descarga o imprime tu diario.",
+        "password": "Cambiar contraseña",
+        "passwordSubtitle": "Se protegerá de nuevo la clave del diario con la nueva contraseña.",
+        "users": "Usuarios",
+        "usersSubtitle": "Crea y elimina cuentas del diario."
     }
 }

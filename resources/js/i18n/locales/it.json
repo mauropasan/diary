@@ -10,7 +10,6 @@
         "close": "Chiudi",
         "cancel": "Annulla",
         "language": "Lingua",
-        "backToDiary": "Torna al diario",
         "backToLogin": "Torna all'accesso"
     },
     "nav": {
@@ -18,13 +17,10 @@
         "mood": "Umore",
         "notes": "Note",
         "export": "Esporta",
-        "password": "Password",
-        "users": "Utenti",
         "lock": "Blocca diario",
         "logout": "Esci",
         "openMenu": "Apri menu",
         "closeMenu": "Chiudi menu",
-        "more": "Altro",
         "schedule": "Orario",
         "settings": "Impostazioni"
     },
@@ -56,9 +52,6 @@
         "submitting": "Creazione…"
     },
     "password": {
-        "title": "Cambia password",
-        "heading": "Cambia password",
-        "subtitle": "Il tuo diario viene decifrato con questa password. Se la perdi, perderai l'accesso alle voci.",
         "current": "Password attuale",
         "submit": "Cambia password",
         "submitting": "Salvataggio…"
@@ -121,7 +114,8 @@
     },
     "tags": {
         "placeholder": "Etichette…",
-        "remove": "Rimuovi {{tag}}"
+        "remove": "Rimuovi {{tag}}",
+        "add": "Aggiungi etichetta"
     },
     "mood": {
         "title": "Umore",
@@ -198,7 +192,6 @@
         "edit": "Modifica",
         "delete": "Elimina",
         "confirmDelete": "Eliminare questa nota? L'operazione non può essere annullata.",
-        "empty": "Non hai ancora note.",
         "untitled": "Nota senza titolo",
         "filters": {
             "all": "Tutti"
@@ -220,7 +213,6 @@
             "reminder": "Promemoria",
             "event": "Evento"
         },
-        "search": "Cerca",
         "searchPlaceholder": "Cerca note..."
     },
     "localePicker": {
@@ -277,5 +269,9 @@
         "passwordSubtitle": "La chiave del diario sarà riproteggeta con la nuova password.",
         "users": "Utenti",
         "usersSubtitle": "Crea ed elimina account del diario."
+    },
+    "error": {
+        "boundary": "Qualcosa è andato storto.",
+        "reload": "Ricarica"
     }
 }

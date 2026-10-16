@@ -10,7 +10,6 @@
         "close": "Fechar",
         "cancel": "Cancelar",
         "language": "Idioma",
-        "backToDiary": "Voltar ao diário",
         "backToLogin": "Voltar ao início de sessão"
     },
     "nav": {
@@ -18,13 +17,10 @@
         "mood": "Humor",
         "notes": "Notas",
         "export": "Exportar",
-        "password": "Palavra-passe",
-        "users": "Utilizadores",
         "lock": "Bloquear diário",
         "logout": "Terminar sessão",
         "openMenu": "Abrir menu",
         "closeMenu": "Fechar menu",
-        "more": "Mais",
         "schedule": "Horário",
         "settings": "Definições"
     },
@@ -56,9 +52,6 @@
         "submitting": "A criar…"
     },
     "password": {
-        "title": "Alterar palavra-passe",
-        "heading": "Alterar palavra-passe",
-        "subtitle": "O seu diário é decifrado com esta palavra-passe. Se a perder, perderá o acesso às entradas.",
         "current": "Palavra-passe atual",
         "submit": "Alterar palavra-passe",
         "submitting": "A guardar…"
@@ -121,7 +114,8 @@
     },
     "tags": {
         "placeholder": "Etiquetas…",
-        "remove": "Remover {{tag}}"
+        "remove": "Remover {{tag}}",
+        "add": "Adicionar etiqueta"
     },
     "mood": {
         "title": "Humor",
@@ -198,7 +192,6 @@
         "edit": "Editar",
         "delete": "Eliminar",
         "confirmDelete": "Eliminar esta nota? Não é possível desfazer.",
-        "empty": "Ainda não tens notas.",
         "untitled": "Nota sem título",
         "filters": {
             "all": "Todos"
@@ -220,7 +213,6 @@
             "reminder": "Lembrete",
             "event": "Evento"
         },
-        "search": "Pesquisar",
         "searchPlaceholder": "Pesquisar notas..."
     },
     "localePicker": {
@@ -277,5 +269,9 @@
         "passwordSubtitle": "A chave do diário será reprotetida com a nova palavra-passe.",
         "users": "Utilizadores",
         "usersSubtitle": "Cria e elimina contas do diário."
+    },
+    "error": {
+        "boundary": "Algo deu errado.",
+        "reload": "Recarregar"
     }
 }

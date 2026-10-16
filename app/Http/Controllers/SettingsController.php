@@ -110,6 +110,10 @@ class SettingsController extends Controller
                 : $background,
         ])->save();
 
+        // Bump the dedicated background version so the client-side cache-busting
+        // token changes on every upload, even within the same second.
+        $request->user()->increment('background_version');
+
         return redirect()
             ->route('diary.settings')
             ->with('status', __('messages.settings.background-updated'));

@@ -4,16 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <script>
-            (function () {
-                try {
-                    var stored = localStorage.getItem('appearance');
-                    var dark = stored === 'dark' || ((stored === null || stored === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                    document.documentElement.classList.toggle('dark', dark);
-                    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-                } catch (error) {}
-            })();
-        </script>
+        {{-- Applied before paint to avoid a flash; external so the production CSP can stay script-src 'self'. --}}
+        <script src="{{ asset('js/appearance.js') }}"></script>
 
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -41,7 +33,7 @@
 
     if ($background === 'image') {
         $backgroundClass = ' app-background-image';
-        $backgroundStyle = "--app-background-image: url('".route('diary.background', ['v' => $user->updated_at->getTimestamp()])."')";
+        $backgroundStyle = "--app-background-image: url('".route('diary.background', ['v' => $user->background_version])."')";
     } elseif (is_string($background)) {
         $backgroundClass = ' bg-'.$background;
     }

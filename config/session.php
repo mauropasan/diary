@@ -167,9 +167,14 @@ return [
     | to the server if the browser has a HTTPS connection. This will keep
     | the cookie from being sent to you when it can't be done securely.
     |
+    | Defaults to true in production so a misconfigured deployment cannot leak
+    | the unlocked session cookie over plain HTTP. (Note: use env('APP_ENV')
+    | rather than app()->environment() here — the latter is not available yet
+    | while configuration files are being loaded.)
+    |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => env('SESSION_SECURE_COOKIE', env('APP_ENV') === 'production'),
 
     /*
     |--------------------------------------------------------------------------

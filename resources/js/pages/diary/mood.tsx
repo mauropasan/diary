@@ -414,16 +414,28 @@ export default function Mood({
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="text-left text-xs text-zinc-700 dark:text-zinc-300">
-                                            <th className="pb-2 font-normal">
+                                            <th
+                                                scope="col"
+                                                className="pb-2 font-normal"
+                                            >
                                                 {t('mood.table.date')}
                                             </th>
-                                            <th className="pb-2 font-normal">
+                                            <th
+                                                scope="col"
+                                                className="pb-2 font-normal"
+                                            >
                                                 {t('mood.table.day')}
                                             </th>
-                                            <th className="pb-2 font-normal">
+                                            <th
+                                                scope="col"
+                                                className="pb-2 font-normal"
+                                            >
                                                 {t('mood.table.mood')}
                                             </th>
-                                            <th className="pb-2 font-normal">
+                                            <th
+                                                scope="col"
+                                                className="pb-2 font-normal"
+                                            >
                                                 {t('mood.table.entry')}
                                             </th>
                                         </tr>

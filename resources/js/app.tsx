@@ -1,4 +1,5 @@
 import { createInertiaApp } from '@inertiajs/react';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import LocaleGate from '@/i18n/LocaleGate';
 import { registerBodyBackgroundSync } from '@/lib/background';
 
@@ -13,7 +14,11 @@ void createInertiaApp({
             return app;
         }
 
-        return <LocaleGate>{app}</LocaleGate>;
+        return (
+            <LocaleGate>
+                <ErrorBoundary>{app}</ErrorBoundary>
+            </LocaleGate>
+        );
     },
     progress: {
         color: '#4B5563',

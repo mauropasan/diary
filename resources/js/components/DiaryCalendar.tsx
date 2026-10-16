@@ -144,9 +144,10 @@ export default function DiaryCalendar({
                             key={iso}
                             type="button"
                             disabled={isFuture}
+                            aria-current={isToday ? 'date' : undefined}
                             onClick={() => goTo(day)}
                             className={cn(
-                                'relative flex h-8 items-center justify-center rounded-md text-sm transition',
+                                'relative flex h-10 items-center justify-center rounded-md text-sm transition',
                                 isSelected
                                     ? 'bg-zinc-900 font-semibold text-zinc-50 dark:bg-zinc-100 dark:text-zinc-900'
                                     : 'text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800',

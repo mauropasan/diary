@@ -1,4 +1,5 @@
-import { Link, router } from '@inertiajs/react';
+import type { PendingVisit } from '@inertiajs/core';
+import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { home, logout } from '@/routes';
@@ -191,7 +192,7 @@ function LogoutIcon(): React.JSX.Element {
 }
 
 type DiaryNavProps = {
-    onBeforeNavigate?: () => void;
+    onBeforeNavigate?: (visit: PendingVisit) => boolean | void;
     onLogout?: () => void;
     onLock?: () => void;
 };
@@ -214,7 +215,12 @@ export default function DiaryNav({
 }: DiaryNavProps) {
     const [open, setOpen] = useState(false);
     const { t } = useTranslation();
+    const pageUrl = usePage().url;
     const todayNumber = new Date().getDate();
+
+    function isActive(href: string): boolean {
+        return new URL(href, window.location.origin).pathname === pageUrl;
+    }
 
     const primary: NavLink[] = [
         {
@@ -276,6 +282,7 @@ export default function DiaryNav({
                         key={link.key}
                         href={link.href}
                         onBefore={onBeforeNavigate}
+                        aria-current={isActive(link.href) ? 'page' : undefined}
                         aria-label={link.label}
                         title={link.label}
                         className={iconButtonClass}
@@ -332,6 +339,9 @@ export default function DiaryNav({
                                     href={link.href}
                                     onBefore={onBeforeNavigate}
                                     onClick={() => setOpen(false)}
+                                    aria-current={
+                                        isActive(link.href) ? 'page' : undefined
+                                    }
                                     className={mobileLinkClass}
                                 >
                                     {link.label}

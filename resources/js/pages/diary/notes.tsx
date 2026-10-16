@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import DiaryNav from '@/components/DiaryNav';
 import { formatLongDate } from '@/lib/dates';
-import { noteColorClass, noteSwatchClasses } from '@/lib/noteColors';
+import { noteSurface, noteSwatchClasses } from '@/lib/noteColors';
 import { cn } from '@/lib/utils';
 import {
     destroy as noteDestroy,
@@ -19,6 +19,7 @@ type Note = {
     color: string;
     kind: string;
     date: string | null;
+    background_image: string | null;
 };
 
 type NotesPageProps = {
@@ -57,7 +58,7 @@ function NoteForm({
         color: note?.color ?? colors[0] ?? 'yellow',
         kind: note?.kind ?? kinds[0] ?? 'note',
         date: note?.date ?? '',
-        background_image: (note as any)?.background_image ?? null,
+        background_image: note?.background_image ?? null,
     });
 
     function submit(event: React.FormEvent<HTMLFormElement>): void {
@@ -98,6 +99,10 @@ function NoteForm({
     }
 
     const hasImage = !!data.background_image;
+    const previewSurface = noteSurface({
+        color: data.color,
+        background_image: data.background_image,
+    });
 
     return (
         <form
@@ -105,19 +110,10 @@ function NoteForm({
             noValidate
             className={cn(
                 'flex flex-col gap-4 rounded-lg border p-4',
-                hasImage
-                    ? 'min-h-[150px] border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800' // Added min-h to prevent container collapse
-                    : data.color && data.color.startsWith('#')
-                      ? 'border-zinc-200'
-                      : noteColorClass(data.color),
+                previewSurface.className,
+                hasImage && 'min-h-[150px]',
             )}
-            style={
-                hasImage
-                    ? { backgroundImage: `url(${data.background_image})` } // Keep the inline style for definitive background application
-                    : data.color && data.color.startsWith('#')
-                      ? { backgroundColor: data.color }
-                      : undefined
-            }
+            style={previewSurface.style}
         >
             <div className="flex flex-col gap-1">
                 <label
@@ -418,77 +414,65 @@ export default function Notes({
 
                     {filteredNotes.length > 0 && (
                         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {filteredNotes.map((note) => (
-                                <li
-                                    key={note.id}
-                                    className={cn(
-                                        'flex flex-col gap-2 rounded-lg border p-4',
-                                        (note as any).background_image
-                                            ? 'border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800'
-                                            : note.color &&
-                                                note.color.startsWith('#')
-                                              ? 'border-zinc-200'
-                                              : noteColorClass(note.color),
-                                    )}
-                                    style={
-                                        (note as any).background_image
-                                            ? {
-                                                  backgroundImage: `url(${(note as any).background_image})`,
-                                              }
-                                            : note.color &&
-                                                note.color.startsWith('#')
-                                              ? {
-                                                    backgroundColor: note.color,
-                                                }
-                                              : undefined
-                                    }
-                                >
-                                    <div className="flex items-start justify-between gap-2">
-                                        <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-                                            {t(`notes.kinds.${note.kind}`)}
-                                        </span>
-                                        {note.date && (
-                                            <span className="text-xs text-zinc-700 dark:text-zinc-300">
-                                                {formatLongDate(
-                                                    note.date,
-                                                    locale,
-                                                )}
-                                            </span>
+                            {filteredNotes.map((note) => {
+                                const surface = noteSurface(note);
+
+                                return (
+                                    <li
+                                        key={note.id}
+                                        className={cn(
+                                            'flex flex-col gap-2 rounded-lg border p-4',
+                                            surface.className,
                                         )}
-                                    </div>
+                                        style={surface.style}
+                                    >
+                                        <div className="flex items-start justify-between gap-2">
+                                            <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                                                {t(`notes.kinds.${note.kind}`)}
+                                            </span>
+                                            {note.date && (
+                                                <span className="text-xs text-zinc-700 dark:text-zinc-300">
+                                                    {formatLongDate(
+                                                        note.date,
+                                                        locale,
+                                                    )}
+                                                </span>
+                                            )}
+                                        </div>
 
-                                    <p className="font-medium text-zinc-900 dark:text-zinc-50">
-                                        {note.title || t('notes.untitled')}
-                                    </p>
-
-                                    {note.body && (
-                                        <p className="text-sm whitespace-pre-wrap text-zinc-700 dark:text-zinc-200">
-                                            {note.body}
+                                        <p className="font-medium text-zinc-900 dark:text-zinc-50">
+                                            {note.title || t('notes.untitled')}
                                         </p>
-                                    )}
 
-                                    <div className="mt-auto flex items-center gap-3 pt-2">
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setEditingId(note.id)
-                                            }
-                                            className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
-                                        >
-                                            {t('notes.edit')}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setNoteToDelete(note)
-                                            }
-                                            className="text-xs text-red-600 underline-offset-2 transition hover:underline dark:text-red-400"
-                                        >
-                                            {t('notes.delete')}
-                                        </button>
-                                    </div>
-                                </li>
-                            ))}
+                                        {note.body && (
+                                            <p className="text-sm whitespace-pre-wrap text-zinc-700 dark:text-zinc-200">
+                                                {note.body}
+                                            </p>
+                                        )}
+
+                                        <div className="mt-auto flex items-center gap-3 pt-2">
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setEditingId(note.id)
+                                                }
+                                                className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
+                                            >
+                                                {t('notes.edit')}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setNoteToDelete(note)
+                                                }
+                                                className="text-xs text-red-600 underline-offset-2 transition hover:underline dark:text-red-400"
+                                            >
+                                                {t('notes.delete')}
+                                            </button>
+                                        </div>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     )}
                 </div>

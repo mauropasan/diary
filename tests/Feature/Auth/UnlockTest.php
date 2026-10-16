@@ -79,3 +79,16 @@ it('locks the diary again after the inactivity window elapses', function () {
     $this->get(route('diary.show', now()->toDateString()))
         ->assertRedirect(route('diary.unlock'));
 });
+
+it('throttles repeated unlock attempts', function () {
+    $user = User::factory()->withDiaryKey('secret-password')->create();
+
+    $this->actingAs($user);
+
+    foreach (range(1, 6) as $attempt) {
+        $this->post(route('diary.unlock.store'), ['password' => 'wrong']);
+    }
+
+    $this->post(route('diary.unlock.store'), ['password' => 'wrong'])
+        ->assertStatus(429);
+});

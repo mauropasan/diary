@@ -10,7 +10,6 @@
         "close": "Cerrar",
         "cancel": "Cancelar",
         "language": "Idioma",
-        "backToDiary": "Volver al diario",
         "backToLogin": "Volver a iniciar sesión"
     },
     "nav": {
@@ -18,13 +17,10 @@
         "mood": "Ánimo",
         "notes": "Notas",
         "export": "Exportar",
-        "password": "Contraseña",
-        "users": "Usuarios",
         "lock": "Bloquear diario",
         "logout": "Cerrar sesión",
         "openMenu": "Abrir menú",
         "closeMenu": "Cerrar menú",
-        "more": "Más",
         "schedule": "Horario",
         "settings": "Ajustes"
     },
@@ -56,9 +52,6 @@
         "submitting": "Creando…"
     },
     "password": {
-        "title": "Cambiar contraseña",
-        "heading": "Cambiar contraseña",
-        "subtitle": "Tu diario se descifra con esta contraseña. Si la pierdes, perderás el acceso a las entradas.",
         "current": "Contraseña actual",
         "submit": "Cambiar contraseña",
         "submitting": "Guardando…"
@@ -121,7 +114,8 @@
     },
     "tags": {
         "placeholder": "Etiquetas…",
-        "remove": "Quitar {{tag}}"
+        "remove": "Quitar {{tag}}",
+        "add": "Añadir etiqueta"
     },
     "mood": {
         "title": "Ánimo",
@@ -198,7 +192,6 @@
         "edit": "Editar",
         "delete": "Eliminar",
         "confirmDelete": "¿Eliminar esta nota? No se puede deshacer.",
-        "empty": "Todavía no tienes notas.",
         "untitled": "Nota sin título",
         "filters": {
             "all": "Todos"
@@ -220,7 +213,6 @@
             "reminder": "Recordatorio",
             "event": "Evento"
         },
-        "search": "Buscar",
         "searchPlaceholder": "Buscar notas..."
     },
     "localePicker": {
@@ -277,5 +269,9 @@
         "passwordSubtitle": "Se protegerá de nuevo la clave del diario con la nueva contraseña.",
         "users": "Usuarios",
         "usersSubtitle": "Crea y elimina cuentas del diario."
+    },
+    "error": {
+        "boundary": "Algo salió mal.",
+        "reload": "Recargar"
     }
 }

@@ -97,3 +97,20 @@ it('rejects an account without recovery material', function () {
         'password_confirmation' => 'recovered-password',
     ])->assertSessionHasErrors('email');
 });
+
+it('throttles repeated recovery attempts', function () {
+    Auth::logout();
+
+    $payload = [
+        'email' => 'diarista@example.com',
+        'recovery_key' => base64_encode(str_repeat('z', 32)),
+        'password' => 'recovered-password',
+        'password_confirmation' => 'recovered-password',
+    ];
+
+    foreach (range(1, 6) as $attempt) {
+        $this->post(route('diary.recovery.store'), $payload);
+    }
+
+    $this->post(route('diary.recovery.store'), $payload)->assertStatus(429);
+});

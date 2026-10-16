@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 import TagInput from '@/components/TagInput';
 
 export type DiaryEditorHandle = {
-    flushSave(onFinished?: () => void): void;
+    flushSave(): Promise<void>;
 };
 
 const MOOD_VALUES = [1, 2, 3, 4, 5] as const;
@@ -45,6 +45,21 @@ function xsrfToken(): string {
     const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
 
     return match ? decodeURIComponent(match[1]) : '';
+}
+
+function countWords(text: string): number {
+    const trimmed = text.trim();
+
+    return trimmed === '' ? 0 : trimmed.split(/\s+/).length;
+}
+
+function countWordsFromHtml(html: string | null | undefined): number {
+    return countWords(
+        (html ?? '')
+            .replace(/<[^>]*>/g, ' ')
+            .replace(/&[a-z]+;/gi, ' ')
+            .replace(/&#\d+;/g, ' '),
+    );
 }
 
 type DiaryEditorProps = {
@@ -73,7 +88,9 @@ export default function DiaryEditor({
     const [saveState, setSaveState] = useState<SaveState>('idle');
     const [uploadState, setUploadState] = useState<UploadState>('idle');
     const [hasUnsaved, setHasUnsaved] = useState(false);
-    const [wordCount, setWordCount] = useState(0);
+    const [wordCount, setWordCount] = useState(() =>
+        countWordsFromHtml(initialContent),
+    );
 
     const titleRef = useRef(title);
     const moodRef = useRef(mood);
@@ -81,6 +98,7 @@ export default function DiaryEditor({
     const dateRef = useRef(date);
     const dirtyRef = useRef(false);
     const timerRef = useRef<number | null>(null);
+    const saveInFlightRef = useRef<Promise<void> | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     function formatCurrentTime(): string {
@@ -208,44 +226,57 @@ export default function DiaryEditor({
         },
         onUpdate: ({ editor: ed }) => {
             scheduleSave();
-            setWordCount(
-                ed.getText().trim().split(/\s+/).filter(Boolean).length,
-            );
+            setWordCount(countWords(ed.getText()));
         },
     });
 
-    const saveNow = (onFinished?: () => void): void => {
+    const saveNow = (): Promise<void> => {
+        if (saveInFlightRef.current !== null) {
+            return saveInFlightRef.current;
+        }
+
         dirtyRef.current = false;
 
         setSaveState('saving');
-        router.put(
-            diaryUpdate.url(dateRef.current),
-            {
-                title: titleRef.current.trim(),
-                content: editor?.getHTML() ?? '',
-                mood: moodRef.current,
-                tags: tagsRef.current,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess: () => {
-                    setSaveState('saved');
-                    setHasUnsaved(dirtyRef.current);
 
-                    onFinished?.();
+        const request = new Promise<void>((resolve, reject) => {
+            router.put(
+                diaryUpdate.url(dateRef.current),
+                {
+                    title: titleRef.current.trim(),
+                    content: editor?.getHTML() ?? '',
+                    mood: moodRef.current,
+                    tags: tagsRef.current,
+                },
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        setSaveState('saved');
+                        setHasUnsaved(dirtyRef.current);
 
-                    if (dirtyRef.current) {
-                        scheduleSave();
-                    }
+                        saveInFlightRef.current = null;
+                        resolve();
+
+                        if (dirtyRef.current) {
+                            scheduleSave();
+                        }
+                    },
+                    onError: () => {
+                        dirtyRef.current = true;
+                        setSaveState('error');
+                        setHasUnsaved(true);
+
+                        saveInFlightRef.current = null;
+                        reject(new Error('Diary entry save failed'));
+                    },
                 },
-                onError: () => {
-                    dirtyRef.current = true;
-                    setSaveState('error');
-                    setHasUnsaved(true);
-                },
-            },
-        );
+            );
+        });
+
+        saveInFlightRef.current = request;
+
+        return request;
     };
 
     const scheduleSave = (): void => {
@@ -261,25 +292,33 @@ export default function DiaryEditor({
             timerRef.current = null;
 
             if (dirtyRef.current) {
-                saveNow();
+                void saveNow().catch(() => {
+                    /* surfaced via saveState */
+                });
             }
         }, 2000);
     };
 
     useImperativeHandle(handleRef, () => ({
-        flushSave(onFinished?: () => void): void {
+        flushSave(): Promise<void> {
             if (timerRef.current !== null) {
                 window.clearTimeout(timerRef.current);
                 timerRef.current = null;
             }
 
-            if (!dirtyRef.current) {
-                onFinished?.();
+            const attempt = (): Promise<void> => {
+                if (saveInFlightRef.current !== null) {
+                    return saveInFlightRef.current.then(attempt);
+                }
 
-                return;
-            }
+                if (!dirtyRef.current) {
+                    return Promise.resolve();
+                }
 
-            saveNow(onFinished);
+                return saveNow().then(attempt);
+            };
+
+            return attempt();
         },
     }));
 
@@ -315,6 +354,7 @@ export default function DiaryEditor({
         setTitle(titleRef.current);
         setMood(moodRef.current);
         setTags(tagsRef.current);
+        setWordCount(countWordsFromHtml(initialContent));
         setSaveState('idle');
         setUploadState('idle');
         setHasUnsaved(false);
@@ -384,7 +424,7 @@ export default function DiaryEditor({
                                     scheduleSave();
                                 }}
                                 className={cn(
-                                    'rounded-md px-1.5 py-0.5 text-xl leading-none transition',
+                                    'flex min-h-10 min-w-10 items-center justify-center rounded-md px-1.5 py-0.5 text-xl leading-none transition',
                                     selected
                                         ? 'bg-zinc-100 dark:bg-zinc-800'
                                         : 'opacity-50 grayscale hover:opacity-100 hover:grayscale-0',
@@ -435,6 +475,7 @@ export default function DiaryEditor({
                     />
 
                     <span
+                        role="status"
                         className={cn(
                             'text-xs',
                             uploadState === 'error' || saveState === 'error'

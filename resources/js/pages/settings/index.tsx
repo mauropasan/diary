@@ -6,7 +6,9 @@ import AdminUsersSection, {
 } from '@/components/AdminUsersSection';
 import BackgroundPicker from '@/components/BackgroundPicker';
 import DiaryNav from '@/components/DiaryNav';
+import FlashBanner from '@/components/FlashBanner';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import RecoveryKeyBanner from '@/components/RecoveryKeyBanner';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { Link } from '@inertiajs/react';
 import { exportMethod as diaryExport } from '@/routes/diary';
@@ -67,45 +69,20 @@ export default function Settings({
                     </header>
 
                     {flash.recoveryKey && !recoveryKeyDismissed && (
-                        <div className="mb-6 w-full rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100">
-                            <div className="mb-2 flex items-start justify-between gap-4">
-                                <div>
-                                    <p className="font-medium">
-                                        {t('admin.recoveryTitle')}
-                                    </p>
-                                    <p className="mt-1 text-xs text-amber-800 dark:text-amber-200">
-                                        {t('admin.recoveryIntro')}
-                                    </p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setRecoveryKeyDismissed(true)
-                                    }
-                                    aria-label={t('common.close')}
-                                    className="shrink-0 leading-none text-amber-600 transition hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-100"
-                                >
-                                    ×
-                                </button>
-                            </div>
-                            <code className="block rounded bg-amber-100 px-3 py-2 font-mono text-xs break-all dark:bg-amber-900/50">
-                                {flash.recoveryKey}
-                            </code>
-                        </div>
+                        <RecoveryKeyBanner
+                            className="w-full"
+                            title={t('admin.recoveryTitle')}
+                            intro={t('admin.recoveryIntro')}
+                            code={flash.recoveryKey}
+                            onClose={() => setRecoveryKeyDismissed(true)}
+                        />
                     )}
 
                     {flash.status && !flashDismissed && (
-                        <div className="mb-6 flex w-full items-start justify-between gap-4 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
-                            <span>{flash.status}</span>
-                            <button
-                                type="button"
-                                onClick={() => setFlashDismissed(true)}
-                                aria-label={t('common.close')}
-                                className="shrink-0 leading-none text-emerald-600 transition hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-100"
-                            >
-                                ×
-                            </button>
-                        </div>
+                        <FlashBanner
+                            message={flash.status}
+                            onClose={() => setFlashDismissed(true)}
+                        />
                     )}
 
                     <div className="flex flex-col gap-8">

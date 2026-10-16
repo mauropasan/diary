@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AddSecurityHeaders;
 use App\Http\Middleware\EnsureDiaryUnlocked;
 use App\Http\Middleware\EnsureNoUsersRegistered;
 use App\Http\Middleware\EnsureUserIsAdmin;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SetLocale::class,
             HandleInertiaRequests::class,
+            AddSecurityHeaders::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 

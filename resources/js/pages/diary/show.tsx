@@ -1,3 +1,4 @@
+import type { PendingVisit } from '@inertiajs/core';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { addDays, format } from 'date-fns';
 import { useRef, useState } from 'react';
@@ -5,17 +6,13 @@ import { useTranslation } from 'react-i18next';
 import DiaryCalendar from '@/components/DiaryCalendar';
 import DiaryEditor, { type DiaryEditorHandle } from '@/components/DiaryEditor';
 import DiaryNav from '@/components/DiaryNav';
+import FlashBanner from '@/components/FlashBanner';
 import LockScreen from '@/components/LockScreen';
+import NoteCard from '@/components/NoteCard';
+import RecoveryKeyBanner from '@/components/RecoveryKeyBanner';
 import ScheduleGrid from '@/components/ScheduleGrid';
-import {
-    formatLongDate,
-    formatLongDay,
-    formatMonthYear,
-    formatShortDayMonth,
-} from '@/lib/dates';
+import { formatLongDate, formatLongDay, formatMonthYear } from '@/lib/dates';
 import { lockDiary } from '@/lib/lockDiary';
-import { noteColorClass } from '@/lib/noteColors';
-import { cn } from '@/lib/utils';
 import { useInactivityLock } from '@/lib/useInactivityLock';
 import { home, logout } from '@/routes';
 import { lock as diaryLock, show as diaryShow } from '@/routes/diary';
@@ -32,6 +29,7 @@ type DayNote = {
     color: string;
     kind: string;
     date: string | null;
+    background_image: string | null;
 };
 
 type Schedule = {
@@ -87,12 +85,22 @@ export default function Show({
 
     const remaining = useInactivityLock({
         lockAfterMinutes: diary.lockAfterMinutes,
-        onWarning: () => editorRef.current?.flushSave(),
-        onLock: () =>
-            editorRef.current?.flushSave(() => {
-                lockDiary(diaryLock.url());
-                setLocked(true);
-            }),
+        onWarning: () => {
+            void editorRef.current?.flushSave().catch(() => {
+                /* lock anyway; unsaved edits stay in the editor */
+            });
+        },
+        onLock: () => {
+            void editorRef.current
+                ?.flushSave()
+                .catch(() => {
+                    /* lock anyway; the session key must not outlive the idle window */
+                })
+                .then(() => {
+                    lockDiary(diaryLock.url());
+                    setLocked(true);
+                });
+        },
     });
 
     const day = new Date(`${date}T12:00:00`);
@@ -100,15 +108,47 @@ export default function Show({
     const next = format(addDays(day, 1), 'yyyy-MM-dd');
 
     function navigateTo(target: string): void {
-        editorRef.current?.flushSave(() => router.visit(diaryShow.url(target)));
+        void editorRef.current
+            ?.flushSave()
+            .then(() => router.visit(diaryShow.url(target)))
+            .catch(() => {
+                /* save failed: stay on the page so the error is visible */
+            });
     }
 
     function logoutNow(): void {
-        editorRef.current?.flushSave(() => router.post(logout.url()));
+        void editorRef.current
+            ?.flushSave()
+            .then(() => router.post(logout.url()))
+            .catch(() => {
+                /* save failed: do not log out */
+            });
     }
 
     function lockNow(): void {
-        editorRef.current?.flushSave(() => router.post(diaryLock.url()));
+        void editorRef.current
+            ?.flushSave()
+            .then(() => router.post(diaryLock.url()))
+            .catch(() => {
+                /* save failed: do not lock */
+            });
+    }
+
+    function flushBeforeVisit(visit: PendingVisit): boolean | void {
+        const handle = editorRef.current;
+
+        if (!handle) {
+            return;
+        }
+
+        void handle
+            .flushSave()
+            .then(() => router.visit(visit.url.href))
+            .catch(() => {
+                /* save failed: cancel navigation and keep the editor state */
+            });
+
+        return false;
     }
 
     function formatCountdown(seconds: number): string {
@@ -140,45 +180,19 @@ export default function Show({
             <div className="min-h-screen text-[#1b1b18] dark:text-[#EDEDEC]">
                 <div className="mx-auto max-w-7xl px-6 py-8">
                     {flash.recoveryKey && !recoveryKeyDismissed && (
-                        <div className="mb-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100">
-                            <div className="mb-2 flex items-start justify-between gap-4">
-                                <div>
-                                    <p className="font-medium">
-                                        {t('show.recoveryTitle')}
-                                    </p>
-                                    <p className="mt-1 text-xs text-amber-800 dark:text-amber-200">
-                                        {t('show.recoveryIntro')}
-                                    </p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setRecoveryKeyDismissed(true)
-                                    }
-                                    aria-label={t('common.close')}
-                                    className="shrink-0 leading-none text-amber-600 transition hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-100"
-                                >
-                                    ×
-                                </button>
-                            </div>
-                            <code className="block rounded bg-amber-100 px-3 py-2 font-mono text-xs break-all dark:bg-amber-900/50">
-                                {flash.recoveryKey}
-                            </code>
-                        </div>
+                        <RecoveryKeyBanner
+                            title={t('show.recoveryTitle')}
+                            intro={t('show.recoveryIntro')}
+                            code={flash.recoveryKey}
+                            onClose={() => setRecoveryKeyDismissed(true)}
+                        />
                     )}
 
                     {flash.status && !flashDismissed && (
-                        <div className="mb-6 flex items-start justify-between gap-4 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
-                            <span>{flash.status}</span>
-                            <button
-                                type="button"
-                                onClick={() => setFlashDismissed(true)}
-                                aria-label={t('common.close')}
-                                className="shrink-0 leading-none text-emerald-600 transition hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-100"
-                            >
-                                ×
-                            </button>
-                        </div>
+                        <FlashBanner
+                            message={flash.status}
+                            onClose={() => setFlashDismissed(true)}
+                        />
                     )}
 
                     <header className="mb-8 flex items-start justify-between gap-4">
@@ -210,9 +224,7 @@ export default function Show({
                         </div>
 
                         <DiaryNav
-                            onBeforeNavigate={() =>
-                                editorRef.current?.flushSave()
-                            }
+                            onBeforeNavigate={flushBeforeVisit}
                             onLogout={logoutNow}
                             onLock={lockNow}
                         />
@@ -239,11 +251,14 @@ export default function Show({
 
                         <button
                             type="button"
-                            onClick={() =>
-                                editorRef.current?.flushSave(() =>
-                                    router.visit(home.url()),
-                                )
-                            }
+                            onClick={() => {
+                                void editorRef.current
+                                    ?.flushSave()
+                                    .then(() => router.visit(home.url()))
+                                    .catch(() => {
+                                        /* save failed: stay on the page */
+                                    });
+                            }}
                             className="rounded-md px-3 py-1.5 text-sm text-zinc-700 underline-offset-2 transition hover:underline dark:text-zinc-300"
                         >
                             {t('nav.today')}
@@ -307,55 +322,10 @@ export default function Show({
 
                                     <ul className="flex flex-col gap-3">
                                         {notes.map((note) => (
-                                            <li
+                                            <NoteCard
                                                 key={note.id}
-                                                className={cn(
-                                                    'rounded-lg border p-3',
-                                                    (note as any)
-                                                        .background_image
-                                                        ? 'border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800'
-                                                        : note.color &&
-                                                            note.color.startsWith(
-                                                                '#',
-                                                            )
-                                                          ? 'border-zinc-200'
-                                                          : noteColorClass(
-                                                                note.color,
-                                                            ),
-                                                )}
-                                                style={
-                                                    (note as any)
-                                                        .background_image
-                                                        ? {
-                                                              backgroundImage: `url(${(note as any).background_image})`,
-                                                          }
-                                                        : note.color &&
-                                                            note.color.startsWith(
-                                                                '#',
-                                                            )
-                                                          ? {
-                                                                backgroundColor:
-                                                                    note.color,
-                                                            }
-                                                          : undefined
-                                                }
-                                            >
-                                                <span className="mb-1 inline-block rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-                                                    {t(
-                                                        `notes.kinds.${note.kind}`,
-                                                    )}
-                                                </span>
-                                                {note.title && (
-                                                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                                                        {note.title}
-                                                    </p>
-                                                )}
-                                                {note.body && (
-                                                    <p className="mt-1 text-xs whitespace-pre-wrap text-zinc-700 dark:text-zinc-200">
-                                                        {note.body}
-                                                    </p>
-                                                )}
-                                            </li>
+                                                note={note}
+                                            />
                                         ))}
                                     </ul>
                                 </section>
@@ -369,65 +339,11 @@ export default function Show({
 
                                     <ul className="flex flex-col gap-3">
                                         {visibleUpcoming.map((note) => (
-                                            <li
+                                            <NoteCard
                                                 key={note.id}
-                                                className={cn(
-                                                    'rounded-lg border p-3',
-                                                    (note as any)
-                                                        .background_image
-                                                        ? 'border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800'
-                                                        : note.color &&
-                                                            note.color.startsWith(
-                                                                '#',
-                                                            )
-                                                          ? 'border-zinc-200'
-                                                          : noteColorClass(
-                                                                note.color,
-                                                            ),
-                                                )}
-                                                style={
-                                                    (note as any)
-                                                        .background_image
-                                                        ? {
-                                                              backgroundImage: `url(${(note as any).background_image})`,
-                                                          }
-                                                        : note.color &&
-                                                            note.color.startsWith(
-                                                                '#',
-                                                            )
-                                                          ? {
-                                                                backgroundColor:
-                                                                    note.color,
-                                                            }
-                                                          : undefined
-                                                }
-                                            >
-                                                <div className="mb-1 flex items-center justify-between gap-2">
-                                                    <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-                                                        {t(
-                                                            `notes.kinds.${note.kind}`,
-                                                        )}
-                                                    </span>
-                                                    {note.date && (
-                                                        <span className="text-[10px] text-zinc-700 dark:text-zinc-300">
-                                                            {formatShortDayMonth(
-                                                                note.date,
-                                                                locale,
-                                                            )}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                {note.title && (
-                                                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                                                        {note.title}
-                                                    </p>
-                                                )}
-                                                {note.body && (
-                                                    <p className="mt-1 text-xs whitespace-pre-wrap text-zinc-700 dark:text-zinc-200">
-                                                        {note.body}
-                                                    </p>
-                                                )}
-                                            </li>
+                                                note={note}
+                                                showDate
+                                            />
                                         ))}
                                     </ul>
 
@@ -479,6 +395,7 @@ export default function Show({
                                     <li key={memory.date}>
                                         <Link
                                             href={diaryShow.url(memory.date)}
+                                            onBefore={flushBeforeVisit}
                                             className="group flex items-baseline gap-3 rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
                                         >
                                             <span className="shrink-0 text-zinc-700 dark:text-zinc-300">

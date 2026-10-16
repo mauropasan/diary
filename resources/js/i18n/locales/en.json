@@ -10,7 +10,6 @@
         "close": "Close",
         "cancel": "Cancel",
         "language": "Language",
-        "backToDiary": "Back to the diary",
         "backToLogin": "Back to sign in"
     },
     "nav": {
@@ -18,13 +17,10 @@
         "mood": "Mood",
         "notes": "Notes",
         "export": "Export",
-        "password": "Password",
-        "users": "Users",
         "lock": "Lock diary",
         "logout": "Sign out",
         "openMenu": "Open menu",
         "closeMenu": "Close menu",
-        "more": "More",
         "schedule": "Schedule",
         "settings": "Settings"
     },
@@ -56,9 +52,6 @@
         "submitting": "Creating…"
     },
     "password": {
-        "title": "Change password",
-        "heading": "Change password",
-        "subtitle": "Your diary is decrypted with this password. If you lose it, you will lose access to your entries.",
         "current": "Current password",
         "submit": "Change password",
         "submitting": "Saving…"
@@ -121,7 +114,8 @@
     },
     "tags": {
         "placeholder": "Tags…",
-        "remove": "Remove {{tag}}"
+        "remove": "Remove {{tag}}",
+        "add": "Add tag"
     },
     "mood": {
         "title": "Mood",
@@ -198,7 +192,6 @@
         "edit": "Edit",
         "delete": "Delete",
         "confirmDelete": "Delete this note? This cannot be undone.",
-        "empty": "You have no notes yet.",
         "untitled": "Untitled note",
         "filters": {
             "all": "All"
@@ -220,7 +213,6 @@
             "reminder": "Reminder",
             "event": "Event"
         },
-        "search": "Search",
         "searchPlaceholder": "Search notes..."
     },
     "localePicker": {
@@ -277,5 +269,9 @@
         "passwordSubtitle": "The diary key will be re-protected with the new password.",
         "users": "Users",
         "usersSubtitle": "Create and delete diary accounts."
+    },
+    "error": {
+        "boundary": "Something went wrong.",
+        "reload": "Reload"
     }
 }

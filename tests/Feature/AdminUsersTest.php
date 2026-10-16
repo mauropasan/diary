@@ -184,3 +184,15 @@ it('blocks non-admin users from removing accounts', function () {
 
     expect(User::query()->whereKey($other->id)->exists())->toBeTrue();
 });
+
+it('throttles repeated admin user creation attempts', function () {
+    $admin = User::factory()->asAdmin()->create();
+
+    $this->actingAs($admin);
+
+    foreach (range(1, 10) as $attempt) {
+        $this->post(route('admin.users.store'), []);
+    }
+
+    $this->post(route('admin.users.store'), [])->assertStatus(429);
+});

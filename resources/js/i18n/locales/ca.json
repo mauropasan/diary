@@ -10,7 +10,6 @@
         "close": "Tanca",
         "cancel": "Cancel·la",
         "language": "Idioma",
-        "backToDiary": "Torna al diari",
         "backToLogin": "Torna a l'inici de sessió"
     },
     "nav": {
@@ -18,13 +17,10 @@
         "mood": "Estat d'ànim",
         "notes": "Notes",
         "export": "Exporta",
-        "password": "Contrasenya",
-        "users": "Usuaris",
         "lock": "Bloqueja el diari",
         "logout": "Tanca la sessió",
         "openMenu": "Obre el menú",
         "closeMenu": "Tanca el menú",
-        "more": "Més",
         "schedule": "Horari",
         "settings": "Configuració"
     },
@@ -56,9 +52,6 @@
         "submitting": "S'està creant…"
     },
     "password": {
-        "title": "Canvia la contrasenya",
-        "heading": "Canvia la contrasenya",
-        "subtitle": "El teu diari es desxifra amb aquesta contrasenya. Si la perds, perdràs l'accés a les entrades.",
         "current": "Contrasenya actual",
         "submit": "Canvia la contrasenya",
         "submitting": "S'està desant…"
@@ -121,7 +114,8 @@
     },
     "tags": {
         "placeholder": "Etiquetes…",
-        "remove": "Treu {{tag}}"
+        "remove": "Treu {{tag}}",
+        "add": "Afegeix una etiqueta"
     },
     "mood": {
         "title": "Ànim",
@@ -198,7 +192,6 @@
         "edit": "Edita",
         "delete": "Elimina",
         "confirmDelete": "Vols eliminar aquesta nota? No es pot desfer.",
-        "empty": "Encara no tens cap nota.",
         "untitled": "Nota sense títol",
         "filters": {
             "all": "Tots"
@@ -220,7 +213,6 @@
             "reminder": "Recordatori",
             "event": "Esdeveniment"
         },
-        "search": "Cerca",
         "searchPlaceholder": "Cerca notes..."
     },
     "localePicker": {
@@ -277,5 +269,9 @@
         "passwordSubtitle": "Es tornarà a protegir la clau del diari amb la nova contrasenya.",
         "users": "Usuaris",
         "usersSubtitle": "Crea i elimina comptes del diari."
+    },
+    "error": {
+        "boundary": "Alguna cosa ha anat malament.",
+        "reload": "Torna-ho a carregar"
     }
 }

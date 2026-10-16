@@ -72,6 +72,7 @@ export default function TagInput({ value, onChange }: TagInputProps) {
                 onChange={(event) => setDraft(event.target.value)}
                 onKeyDown={handleKeyDown}
                 onBlur={() => commit(draft)}
+                aria-label={t('tags.add')}
                 placeholder={t('tags.placeholder')}
                 className="min-w-[8rem] flex-1 border-none bg-transparent px-0 py-1 text-sm text-zinc-800 outline-none placeholder:text-zinc-600 dark:text-zinc-200 dark:placeholder:text-zinc-400"
             />

@@ -10,7 +10,6 @@
         "close": "Fermer",
         "cancel": "Annuler",
         "language": "Langue",
-        "backToDiary": "Retour au journal",
         "backToLogin": "Retour à la connexion"
     },
     "nav": {
@@ -18,13 +17,10 @@
         "mood": "Humeur",
         "notes": "Notes",
         "export": "Exporter",
-        "password": "Mot de passe",
-        "users": "Utilisateurs",
         "lock": "Verrouiller le journal",
         "logout": "Se déconnecter",
         "openMenu": "Ouvrir le menu",
         "closeMenu": "Fermer le menu",
-        "more": "Plus",
         "schedule": "Emploi du temps",
         "settings": "Paramètres"
     },
@@ -56,9 +52,6 @@
         "submitting": "Création…"
     },
     "password": {
-        "title": "Changer le mot de passe",
-        "heading": "Changer le mot de passe",
-        "subtitle": "Votre journal est déchiffré avec ce mot de passe. Si vous le perdez, vous perdrez l'accès à vos entrées.",
         "current": "Mot de passe actuel",
         "submit": "Changer le mot de passe",
         "submitting": "Enregistrement…"
@@ -121,7 +114,8 @@
     },
     "tags": {
         "placeholder": "Étiquettes…",
-        "remove": "Retirer {{tag}}"
+        "remove": "Retirer {{tag}}",
+        "add": "Ajouter une étiquette"
     },
     "mood": {
         "title": "Humeur",
@@ -198,7 +192,6 @@
         "edit": "Modifier",
         "delete": "Supprimer",
         "confirmDelete": "Supprimer cette note ? Action irréversible.",
-        "empty": "Tu n'as encore aucune note.",
         "untitled": "Note sans titre",
         "filters": {
             "all": "Tous"
@@ -220,7 +213,6 @@
             "reminder": "Rappel",
             "event": "Événement"
         },
-        "search": "Rechercher",
         "searchPlaceholder": "Rechercher des notes..."
     },
     "localePicker": {
@@ -277,5 +269,9 @@
         "passwordSubtitle": "La clé du journal sera re-protégée avec le nouveau mot de passe.",
         "users": "Utilisateurs",
         "usersSubtitle": "Créez et supprimez des comptes du journal."
+    },
+    "error": {
+        "boundary": "Une erreur s'est produite.",
+        "reload": "Recharger"
     }
 }

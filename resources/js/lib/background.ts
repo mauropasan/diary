@@ -41,11 +41,15 @@ function currentFromBody(): AppliedBackground {
 }
 
 function imageUrl(version: string | null): string {
+    const base =
+        (typeof window !== 'undefined' ? window.location.origin : '') +
+        backgroundImage.url();
+
     if (version === null) {
-        return backgroundImage.url();
+        return base;
     }
 
-    return `${backgroundImage.url()}?v=${encodeURIComponent(version)}`;
+    return `${base}?v=${encodeURIComponent(version)}`;
 }
 
 /**
@@ -82,7 +86,7 @@ export function applyBodyBackground(
         return;
     }
 
-    for (const name of [...document.body.classList]) {
+    for (const name of Array.from(document.body.classList)) {
         if (name === IMAGE_CLASS || name.startsWith('bg-')) {
             document.body.classList.remove(name);
         }

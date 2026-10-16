@@ -6,6 +6,8 @@
  * render the same notes consistently.
  */
 
+import type { CSSProperties } from 'react';
+
 export const noteColorClasses: Record<string, string> = {
     yellow: 'border-amber-200 bg-amber-100 dark:border-amber-900 dark:bg-amber-950',
     pink: 'border-rose-200 bg-rose-100 dark:border-rose-900 dark:bg-rose-950',
@@ -26,4 +28,36 @@ export const noteSwatchClasses: Record<string, string> = {
 
 export function noteColorClass(color: string): string {
     return noteColorClasses[color] ?? noteColorClasses.gray;
+}
+
+export type NoteSurfaceInput = {
+    color: string;
+    background_image?: string | null;
+};
+
+/**
+ * Resolve the card surface (border/background classes + inline style) for a
+ * note. A custom background image wins over hex colors, which win over the
+ * named palette keys.
+ */
+export function noteSurface(note: NoteSurfaceInput): {
+    className: string;
+    style?: CSSProperties;
+} {
+    if (note.background_image) {
+        return {
+            className:
+                'border-zinc-200 bg-cover bg-center bg-no-repeat dark:border-zinc-800',
+            style: { backgroundImage: `url(${note.background_image})` },
+        };
+    }
+
+    if (note.color.startsWith('#')) {
+        return {
+            className: 'border-zinc-200',
+            style: { backgroundColor: note.color },
+        };
+    }
+
+    return { className: noteColorClass(note.color) };
 }

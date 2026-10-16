@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\EncryptedEntryText;
 use Database\Factories\ScheduleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +30,8 @@ class Schedule extends Model
     protected function casts(): array
     {
         return [
+            'name' => EncryptedEntryText::class,
+            'slots' => EncryptedEntryText::class,
             'only_weekdays' => 'boolean',
             'active' => 'boolean',
             'position' => 'integer',

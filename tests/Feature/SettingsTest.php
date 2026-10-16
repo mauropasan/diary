@@ -123,6 +123,24 @@ it('accepts a small custom image as a data uri', function () {
         ->and(DB::table('users')->where('id', $this->user->id)->value('background'))->not->toContain('iVBOR');
 });
 
+it('bumps background_version so the client cache-busting version changes on upload', function () {
+    ($this->unlock)();
+
+    $before = $this->user->fresh()->background_version;
+
+    $png = base64_encode(base64_decode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        true,
+    ));
+    $uri = 'data:image/png;base64,'.$png;
+
+    $this->put(route('diary.settings.update'), ['background' => $uri])
+        ->assertRedirect(route('diary.settings'))
+        ->assertSessionHas('status');
+
+    expect($this->user->refresh()->background_version)->toBeGreaterThan($before);
+});
+
 it('rejects a custom image over the size limit', function () {
     ($this->unlock)();
 
@@ -216,7 +234,7 @@ it('renders a well formed image style on the body', function () {
 
     expect($html)
         ->toContain('<body class="font-sans antialiased app-background-image" style="--app-background-image: url(')
-        ->toContain(route('diary.background', ['v' => $this->user->refresh()->updated_at->getTimestamp()]))
+        ->toContain(route('diary.background', ['v' => $this->user->refresh()->background_version]))
         ->not->toContain('style=&quot;');
 });
 
@@ -227,7 +245,7 @@ it('shares a background version so the client can tell image replacements apart'
         'background' => 'data:image/png;base64,'.base64_encode('first-image'),
     ]);
 
-    $version = (string) $this->user->refresh()->updated_at->getTimestamp();
+    $version = (string) $this->user->refresh()->background_version;
 
     $this->get(route('diary.show', now()->toDateString()))
         ->assertInertia(fn (AssertableInertia $page) => $page
@@ -241,7 +259,7 @@ it('shares a background version so the client can tell image replacements apart'
         'background' => 'data:image/png;base64,'.base64_encode('second-image'),
     ]);
 
-    $newVersion = (string) $this->user->refresh()->updated_at->getTimestamp();
+    $newVersion = (string) $this->user->refresh()->background_version;
 
     expect($newVersion)->not->toBe($version);
 
@@ -271,6 +289,26 @@ it('serves the custom background image from a short url', function () {
     $response->assertHeader('Content-Type', 'image/png')
         ->assertHeader('Cache-Control', 'must-revalidate, no-store, private')
         ->assertHeader('Cross-Origin-Resource-Policy', 'same-origin');
+});
+
+it('serves the uploaded image with a cache-busting query string', function () {
+    ($this->unlock)();
+
+    $png = base64_encode(base64_decode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        true,
+    ));
+    $uri = 'data:image/png;base64,'.$png;
+
+    $this->put(route('diary.settings.update'), ['background' => $uri])
+        ->assertRedirect(route('diary.settings'));
+
+    $version = $this->user->fresh()->updated_at->getTimestamp();
+
+    $response = $this->get(route('diary.background', ['v' => $version]))
+        ->assertOk();
+
+    expect($response->getContent())->toBe(base64_decode($png));
 });
 
 it('blocks a locked user from the background image', function () {

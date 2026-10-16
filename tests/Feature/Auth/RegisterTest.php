@@ -73,3 +73,11 @@ it('rejects an empty payload', function () {
     $this->post(route('register.store'))
         ->assertSessionHasErrors(['name', 'email', 'password']);
 });
+
+it('throttles repeated registration attempts', function () {
+    foreach (range(1, 6) as $attempt) {
+        $this->post(route('register.store'), []);
+    }
+
+    $this->post(route('register.store'), [])->assertStatus(429);
+});

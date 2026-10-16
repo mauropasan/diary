@@ -382,8 +382,11 @@ export default function DiaryNav({
                     <button
                         type="button"
                         onClick={() => {
-                            setNotificationsOpen(true);
-                            void loadNotifications();
+                            const next = !notificationsOpen;
+                            setNotificationsOpen(next);
+                            if (next) {
+                                void loadNotifications();
+                            }
                         }}
                         aria-label={t('notifications.navLabel')}
                         title={t('notifications.navLabel')}

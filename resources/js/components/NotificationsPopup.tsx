@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { notifications as notificationsIndex } from '@/routes/diary';
@@ -36,6 +37,23 @@ export default function NotificationsPopup({
         (notification) => notification.readAt === null,
     ).length;
 
+    // Close the popup when clicking outside of it.
+    useEffect(() => {
+        if (!open) {
+            return;
+        }
+
+        function handleClickOutside(event: MouseEvent): void {
+            if (!(event.target as Element).closest('[data-popup]')) {
+                onClose();
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [open, onClose]);
+
     async function markRead(id: number): Promise<void> {
         await fetch(notificationMarkRead.url(id), { method: 'PATCH' });
         onMarkRead(id);
@@ -51,11 +69,22 @@ export default function NotificationsPopup({
     }
 
     return (
-        <div className="absolute top-full right-0 z-20 mt-2 w-72 rounded-md border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+        <div
+            data-popup
+            className="absolute top-full right-0 z-20 mt-2 w-72 rounded-md border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-800 dark:bg-zinc-900"
+        >
             <div className="px-3 py-2 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                     {t('notifications.title')}
                 </h2>
+                <button
+                    type="button"
+                    onClick={onClose}
+                    aria-label={t('common.close')}
+                    className="text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+                >
+                    ×
+                </button>
                 {unreadCount > 0 && (
                     <button
                         type="button"

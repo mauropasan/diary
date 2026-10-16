@@ -17,6 +17,7 @@
         "mood": "Estat d'ànim",
         "notes": "Notes",
         "export": "Exporta",
+        "notifications": "Notificacions",
         "lock": "Bloqueja el diari",
         "logout": "Tanca la sessió",
         "openMenu": "Obre el menú",
@@ -214,6 +215,27 @@
             "event": "Esdeveniment"
         },
         "searchPlaceholder": "Cerca notes..."
+    },
+    "notifications": {
+        "title": "Notificacions",
+        "subtitle": "Recordatori i esdeveniments per al teu diari.",
+        "navLabel": "Notificacions",
+        "titleLabel": "Títol",
+        "titlePlaceholder": "Títol del recordatori",
+        "bodyLabel": "Text",
+        "bodyPlaceholder": "Escriu el teu recordatori aquí…",
+        "save": "Desa",
+        "saving": "Guardant…",
+        "reset": "Restableix",
+        "list": "Les teves notificacions",
+        "empty": "Encara no tens notificacions.",
+        "read": "Llegit",
+        "unread": "No llegit",
+        "markRead": "Marca com a llegit",
+        "delete": "Esborra",
+        "confirmDelete": "Esborra aquesta notificació? No es pot desfer.",
+        "untitled": "Notificació sense títol",
+        "viewAll": "Veure totes les notificacions"
     },
     "localePicker": {
         "title": "Tria el teu idioma",

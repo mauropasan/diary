@@ -17,6 +17,7 @@
         "mood": "Stimmung",
         "notes": "Notizen",
         "export": "Exportieren",
+        "notifications": "Benachrichtigungen",
         "lock": "Tagebuch sperren",
         "logout": "Abmelden",
         "openMenu": "Menü öffnen",
@@ -214,6 +215,27 @@
             "event": "Termin"
         },
         "searchPlaceholder": "Notizen durchsuchen..."
+    },
+    "notifications": {
+        "title": "Benachrichtigungen",
+        "subtitle": "Erinnerungen und Ereignisse für Ihr Tagebuch.",
+        "navLabel": "Benachrichtigungen",
+        "titleLabel": "Titel",
+        "titlePlaceholder": "Titel der Erinnerung",
+        "bodyLabel": "Text",
+        "bodyPlaceholder": "Schreiben Sie Ihre Erinnerung hier…",
+        "save": "Speichern",
+        "saving": "Wird gespeichert…",
+        "reset": "Zurücksetzen",
+        "list": "Ihre Benachrichtigungen",
+        "empty": "Noch keine Benachrichtigungen.",
+        "read": "Gelesen",
+        "unread": "Ungelesen",
+        "markRead": "Als gelesen markieren",
+        "delete": "Löschen",
+        "confirmDelete": "Diese Benachrichtigung löschen? Dies kann nicht rückgängig gemacht werden.",
+        "untitled": "Benachrichtigung ohne Titel",
+        "viewAll": "Alle anzeigen"
     },
     "localePicker": {
         "title": "Wählen Sie Ihre Sprache",

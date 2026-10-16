@@ -56,4 +56,20 @@ return [
         'background-updated' => 'Arrière-plan mis à jour.',
     ],
 
+    'notifications' => [
+        'created' => 'Rappel créé.',
+        'deleted' => 'Notification supprimée.',
+    ],
+
+    'emails' => [
+        'reminder' => [
+            'subject' => 'Nouveau rappel dans :app',
+            'heading' => 'Nouveau rappel dans :app',
+            'intro' => 'Bonjour :name,',
+            'body' => 'Vous avez un nouveau rappel dans votre journal. Ouvrez l\'app pour le voir.',
+            'openDiary' => 'Ouvrir le journal',
+            'note' => 'Cet e-mail ne contient aucun contenu du journal. Vos entrées restent chiffrées et ne sont lisibles que dans votre journal.',
+        ],
+    ],
+
 ];

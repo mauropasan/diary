@@ -3,6 +3,13 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { home, logout } from '@/routes';
+import { cn } from '@/lib/utils';
+import NotificationsPopup from '@/components/NotificationsPopup';
+import {
+    destroy as notificationDestroy,
+    read as notificationMarkRead,
+    list as notificationList,
+} from '@/routes/diary/notifications';
 import {
     lock as diaryLock,
     mood as diaryMood,
@@ -191,6 +198,25 @@ function LogoutIcon(): React.JSX.Element {
     );
 }
 
+function BellIcon({ unread }: { unread: boolean }): React.JSX.Element {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={cn('h-4 w-4', unread ? 'text-zinc-900' : 'text-zinc-500 dark:text-zinc-400')}
+            aria-hidden="true"
+        >
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+    );
+}
+
 type DiaryNavProps = {
     onBeforeNavigate?: (visit: PendingVisit) => boolean | void;
     onLogout?: () => void;
@@ -214,9 +240,45 @@ export default function DiaryNav({
     onLock,
 }: DiaryNavProps) {
     const [open, setOpen] = useState(false);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [notificationsList, setNotificationsList] = useState<
+        Array<{
+            id: number;
+            title: string | null;
+            body: string | null;
+            readAt: string | null;
+            createdAt: string;
+        }
+    >>([]);
     const { t } = useTranslation();
     const pageUrl = usePage().url;
     const todayNumber = new Date().getDate();
+    const notificationCount =
+        (usePage().props as { notificationCount?: number }).notificationCount ??
+        0;
+
+    async function loadNotifications(): Promise<void> {
+        const response = await fetch(notificationList.url());
+        setNotificationsList(await response.json());
+    }
+
+    async function markNotificationRead(id: number): Promise<void> {
+        await fetch(notificationMarkRead.url(id), { method: 'PATCH' });
+        setNotificationsList((list) =>
+            list.map((notification) =>
+                notification.id === id
+                    ? { ...notification, readAt: new Date().toISOString() }
+                    : notification,
+            ),
+        );
+    }
+
+    async function removeNotification(id: number): Promise<void> {
+        await fetch(notificationDestroy.url(id), { method: 'DELETE' });
+        setNotificationsList((list) =>
+            list.filter((notification) => notification.id !== id),
+        );
+    }
 
     function isActive(href: string): boolean {
         return new URL(href, window.location.origin).pathname === pageUrl;
@@ -291,6 +353,34 @@ export default function DiaryNav({
                     </Link>
                 ))}
 
+                <div className="relative">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setNotificationsOpen(true);
+                            void loadNotifications();
+                        }}
+                        aria-label={t('notifications.navLabel')}
+                        title={t('notifications.navLabel')}
+                        className={iconButtonClass}
+                        aria-expanded={notificationsOpen}
+                    >
+                        <BellIcon unread={notificationCount > 0} />
+                        {notificationCount > 0 && (
+                            <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-zinc-50">
+                                {notificationCount > 9 ? '9+' : notificationCount}
+                            </span>
+                        )}
+                    </button>
+                    <NotificationsPopup
+                        open={notificationsOpen}
+                        onClose={() => setNotificationsOpen(false)}
+                        list={notificationsList}
+                        onMarkRead={markNotificationRead}
+                        onRemove={removeNotification}
+                    />
+                </div>
+
                 <button
                     type="button"
                     onClick={lockHandler}
@@ -356,6 +446,22 @@ export default function DiaryNav({
                                 className={mobileLinkClass}
                             >
                                 {t('nav.lock')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setOpen(false);
+                                    setNotificationsOpen(true);
+                                    void loadNotifications();
+                                }}
+                                className={mobileLinkClass}
+                            >
+                                {t('notifications.navLabel')}
+                                {notificationCount > 0 ? (
+                                    <span className="ml-auto rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-zinc-50">
+                                        {notificationCount > 9 ? '9+' : notificationCount}
+                                    </span>
+                                ) : null}
                             </button>
                             <button
                                 type="button"

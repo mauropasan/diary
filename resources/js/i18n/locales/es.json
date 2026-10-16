@@ -17,6 +17,7 @@
         "mood": "Ánimo",
         "notes": "Notas",
         "export": "Exportar",
+        "notifications": "Notificaciones",
         "lock": "Bloquear diario",
         "logout": "Cerrar sesión",
         "openMenu": "Abrir menú",
@@ -214,6 +215,27 @@
             "event": "Evento"
         },
         "searchPlaceholder": "Buscar notas..."
+    },
+    "notifications": {
+        "title": "Notificaciones",
+        "subtitle": "Recordatorios y eventos para tu diario.",
+        "navLabel": "Notificaciones",
+        "titleLabel": "Título",
+        "titlePlaceholder": "Título del recordatorio",
+        "bodyLabel": "Texto",
+        "bodyPlaceholder": "Escribe tu recordatorio aquí…",
+        "save": "Guardar",
+        "saving": "Guardando…",
+        "reset": "Restablecer",
+        "list": "Tus notificaciones",
+        "empty": "Aún no tienes notificaciones.",
+        "read": "Leído",
+        "unread": "No leído",
+        "markRead": "Marcar como leído",
+        "delete": "Eliminar",
+        "confirmDelete": "¿Eliminar esta notificación? No se puede deshacer.",
+        "untitled": "Notificación sin título",
+        "viewAll": "Ver todas"
     },
     "localePicker": {
         "title": "Elige tu idioma",

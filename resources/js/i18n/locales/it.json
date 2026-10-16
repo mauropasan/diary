@@ -17,6 +17,7 @@
         "mood": "Umore",
         "notes": "Note",
         "export": "Esporta",
+        "notifications": "Notifiche",
         "lock": "Blocca diario",
         "logout": "Esci",
         "openMenu": "Apri menu",
@@ -214,6 +215,27 @@
             "event": "Evento"
         },
         "searchPlaceholder": "Cerca note..."
+    },
+    "notifications": {
+        "title": "Notifiche",
+        "subtitle": "Promemoria ed eventi per il tuo diario.",
+        "navLabel": "Notifiche",
+        "titleLabel": "Titolo",
+        "titlePlaceholder": "Titolo del promemoria",
+        "bodyLabel": "Testo",
+        "bodyPlaceholder": "Scrivi il tuo promemoria qui…",
+        "save": "Salva",
+        "saving": "Salvataggio…",
+        "reset": "Reimposta",
+        "list": "Le tue notifiche",
+        "empty": "Nessuna notifica ancora.",
+        "read": "Letto",
+        "unread": "Non letto",
+        "markRead": "Segna come letto",
+        "delete": "Elimina",
+        "confirmDelete": "Eliminare questa notifica? L'operazione non è annullabile.",
+        "untitled": "Notifica senza titolo",
+        "viewAll": "Vedi tutto"
     },
     "localePicker": {
         "title": "Scegli la tua lingua",

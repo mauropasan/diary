@@ -56,4 +56,20 @@ return [
         'background-updated' => 'Fundo atualizado.',
     ],
 
+    'notifications' => [
+        'created' => 'Lembrete criado.',
+        'deleted' => 'Notificação eliminada.',
+    ],
+
+    'emails' => [
+        'reminder' => [
+            'subject' => 'Novo lembrete em :app',
+            'heading' => 'Novo lembrete em :app',
+            'intro' => 'Olá :name,',
+            'body' => 'Tem um novo lembrete no seu diário. Abra a aplicação para ver.',
+            'openDiary' => 'Abrir diário',
+            'note' => 'Este e-mail não contém conteúdo do diário. As suas entradas permanecem cifradas e só podem ser lidas no seu diário.',
+        ],
+    ],
+
 ];

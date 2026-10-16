@@ -56,4 +56,20 @@ return [
         'background-updated' => 'Fons actualitzat.',
     ],
 
+    'notifications' => [
+        'created' => 'Recordatori creat.',
+        'deleted' => 'Notificació esborrada.',
+    ],
+
+    'emails' => [
+        'reminder' => [
+            'subject' => 'Nou recordatori a :app',
+            'heading' => 'Nou recordatori a :app',
+            'intro' => 'Hola :name,',
+            'body' => 'Tens un nou recordatori al teu diari. Obrir l\'aplicació per veure\'l.',
+            'openDiary' => 'Obre el diari',
+            'note' => 'Aquest correu no conté contingut del diari. Les teves entrades segueixen xifrades i només es poden llegir al teu diari.',
+        ],
+    ],
+
 ];

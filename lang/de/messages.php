@@ -56,4 +56,20 @@ return [
         'background-updated' => 'Hintergrund aktualisiert.',
     ],
 
+    'notifications' => [
+        'created' => 'Erinnerung erstellt.',
+        'deleted' => 'Benachrichtigung gelöscht.',
+    ],
+
+    'emails' => [
+        'reminder' => [
+            'subject' => 'Neue Erinnerung in :app',
+            'heading' => 'Neue Erinnerung in :app',
+            'intro' => 'Hallo :name,',
+            'body' => 'Sie haben eine neue Erinnerung in Ihrem Tagebuch. Öffnen Sie die App, um sie zu sehen.',
+            'openDiary' => 'Tagebuch öffnen',
+            'note' => 'Diese E-Mail enthält keinen Tagebuchinhalt. Ihre Einträge bleiben verschlüsselt und sind nur in der App lesbar.',
+        ],
+    ],
+
 ];

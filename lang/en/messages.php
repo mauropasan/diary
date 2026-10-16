@@ -56,4 +56,20 @@ return [
         'background-updated' => 'Background updated.',
     ],
 
+    'notifications' => [
+        'created' => 'Reminder created.',
+        'deleted' => 'Notification deleted.',
+    ],
+
+    'emails' => [
+        'reminder' => [
+            'subject' => 'New reminder in :app',
+            'heading' => 'New reminder in :app',
+            'intro' => 'Hello :name,',
+            'body' => 'You have a new reminder in your diary. Open the app to see it.',
+            'openDiary' => 'Open diary',
+            'note' => 'This email contains no diary content. Your entries stay encrypted and can only be read in your diary.',
+        ],
+    ],
+
 ];

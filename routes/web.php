@@ -12,6 +12,7 @@ use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\MoodController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
@@ -81,6 +82,12 @@ Route::middleware('auth')->group(function () {
 
         Route::get('export', [ExportController::class, 'index'])->name('diary.export');
         Route::get('export/markdown', [ExportController::class, 'markdown'])->name('diary.export.markdown');
+
+        Route::get('diary/notifications', [NotificationController::class, 'index'])->name('diary.notifications');
+        Route::post('diary/notifications', [NotificationController::class, 'store'])->name('diary.notifications.store');
+        Route::patch('diary/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('diary.notifications.read');
+        Route::delete('diary/notifications/{notification}', [NotificationController::class, 'destroy'])->name('diary.notifications.destroy');
+        Route::get('diary/notifications/list', [NotificationController::class, 'list'])->name('diary.notifications.list');
 
         Route::get('diary/schedule', [ScheduleController::class, 'index'])->name('diary.schedule');
         Route::post('diary/schedule', [ScheduleController::class, 'store'])->name('diary.schedule.store');

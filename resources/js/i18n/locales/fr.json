@@ -17,6 +17,7 @@
         "mood": "Humeur",
         "notes": "Notes",
         "export": "Exporter",
+        "notifications": "Notifications",
         "lock": "Verrouiller le journal",
         "logout": "Se déconnecter",
         "openMenu": "Ouvrir le menu",
@@ -214,6 +215,27 @@
             "event": "Événement"
         },
         "searchPlaceholder": "Rechercher des notes..."
+    },
+    "notifications": {
+        "title": "Notifications",
+        "subtitle": "Rappels et événements pour votre journal.",
+        "navLabel": "Notifications",
+        "titleLabel": "Titre",
+        "titlePlaceholder": "Titre du rappel",
+        "bodyLabel": "Texte",
+        "bodyPlaceholder": "Écrivez votre rappel ici…",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "reset": "Réinitialiser",
+        "list": "Vos notifications",
+        "empty": "Aucune notification pour le moment.",
+        "read": "Lu",
+        "unread": "Non lu",
+        "markRead": "Marquer comme lu",
+        "delete": "Supprimer",
+        "confirmDelete": "Supprimer cette notification ? Cette action est irréversible.",
+        "untitled": "Notification sans titre",
+        "viewAll": "Voir tout"
     },
     "localePicker": {
         "title": "Choisissez votre langue",

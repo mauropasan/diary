@@ -56,4 +56,20 @@ return [
         'background-updated' => 'Sfondo aggiornato.',
     ],
 
+    'notifications' => [
+        'created' => 'Promemoria creato.',
+        'deleted' => 'Notifica eliminata.',
+    ],
+
+    'emails' => [
+        'reminder' => [
+            'subject' => 'Nuovo promemoria in :app',
+            'heading' => 'Nuovo promemoria in :app',
+            'intro' => 'Ciao :name,',
+            'body' => 'Hai un nuovo promemoria nel tuo diario. Apri l\'app per vederlo.',
+            'openDiary' => 'Apri diario',
+            'note' => 'Questa email non contiene contenuti del diario. Le tue voci rimangono cifrate e leggibili solo nel tuo diario.',
+        ],
+    ],
+
 ];

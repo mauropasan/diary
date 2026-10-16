@@ -56,4 +56,20 @@ return [
         'background-updated' => 'Fondo actualizado.',
     ],
 
+    'notifications' => [
+        'created' => 'Recordatorio creado.',
+        'deleted' => 'Notificación eliminada.',
+    ],
+
+    'emails' => [
+        'reminder' => [
+            'subject' => 'Nuevo recordatorio en :app',
+            'heading' => 'Nuevo recordatorio en :app',
+            'intro' => 'Hola :name,',
+            'body' => 'Tienes un nuevo recordatorio en tu diario. Abre la app para verlo.',
+            'openDiary' => 'Abrir diario',
+            'note' => 'Este correo no contiene contenido del diario. Tus entradas permanecen cifradas y solo se pueden leer en tu diario.',
+        ],
+    ],
+
 ];

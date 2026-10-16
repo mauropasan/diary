@@ -381,6 +381,7 @@ export default function DiaryNav({
                 <div className="relative">
                     <button
                         type="button"
+                        onMouseDown={(event) => event.stopPropagation()}
                         onClick={() => {
                             const next = !notificationsOpen;
                             setNotificationsOpen(next);

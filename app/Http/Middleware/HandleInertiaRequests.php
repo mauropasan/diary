@@ -50,6 +50,7 @@ class HandleInertiaRequests extends Middleware
                 'lockAfterMinutes' => (int) config('diary.lock_after_minutes'),
                 'timezone' => config('app.timezone'),
             ],
+            'csrfToken' => csrf_token(),
             'flash' => [
                 'status' => $request->session()->get('status'),
                 'recoveryKey' => $request->session()->get('recoveryKey'),

@@ -26,14 +26,34 @@ export default function Notifications({
     notifications,
 }: NotificationsPageProps): React.JSX.Element {
     const { t } = useTranslation();
+    const csrfToken =
+        (usePage().props as { csrfToken?: string }).csrfToken ?? '';
+    const [notificationsList, setNotificationsList] = useState(notifications);
     const [notificationToDelete, setNotificationToDelete] = useState<number | null>(
         null,
     );
     const [flashDismissed, setFlashDismissed] = useState(false);
 
+    function csrfHeaders(): HeadersInit {
+        return {
+            'X-CSRF-TOKEN': csrfToken,
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        };
+    }
+
     function markRead(id: number): void {
-        router.patch(notificationMarkRead.url(id), {
-            preserveScroll: true,
+        fetch(notificationMarkRead.url(id), {
+            method: 'PATCH',
+            headers: csrfHeaders(),
+        }).then(() => {
+            setNotificationsList((list) =>
+                list.map((notification) =>
+                    notification.id === id
+                        ? { ...notification, readAt: new Date().toISOString() }
+                        : notification,
+                ),
+            );
         });
     }
 
@@ -51,7 +71,7 @@ export default function Notifications({
         });
     }
 
-    const unreadCount = notifications.filter(
+    const unreadCount = notificationsList.filter(
         (notification) => notification.readAt === null,
     ).length;
 
@@ -88,7 +108,7 @@ export default function Notifications({
                         />
                     )}
 
-                    <div className="m-auto max-w-3xl">
+                    <div className="m-auto">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                                 {t('notifications.list')}
@@ -100,15 +120,15 @@ export default function Notifications({
                             </h2>
                         </div>
 
-                        {notifications.length === 0 && (
+                        {notificationsList.length === 0 && (
                             <p className="text-sm text-zinc-600 dark:text-zinc-400">
                                 {t('notifications.empty')}
                             </p>
                         )}
 
-                        {notifications.length > 0 && (
+                        {notificationsList.length > 0 && (
                             <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                                {notifications.map((notification) => {
+                                {notificationsList.map((notification) => {
                                     const isRead = notification.readAt !== null;
 
                                     return (

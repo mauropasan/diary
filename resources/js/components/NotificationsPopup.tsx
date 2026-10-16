@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
@@ -33,9 +33,19 @@ export default function NotificationsPopup({
     onDismiss,
 }: NotificationsPopupProps): React.JSX.Element | null {
     const { t } = useTranslation();
+    const csrfToken =
+        (usePage().props as { csrfToken?: string }).csrfToken ?? '';
     const unreadCount = list.filter(
         (notification) => notification.readAt === null,
     ).length;
+
+    function csrfHeaders(): HeadersInit {
+        return {
+            'X-CSRF-TOKEN': csrfToken,
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        };
+    }
 
     // Close the popup when clicking outside of it.
     useEffect(() => {
@@ -55,12 +65,18 @@ export default function NotificationsPopup({
     }, [open, onClose]);
 
     async function markRead(id: number): Promise<void> {
-        await fetch(notificationMarkRead.url(id), { method: 'PATCH' });
+        await fetch(notificationMarkRead.url(id), {
+            method: 'PATCH',
+            headers: csrfHeaders(),
+        });
         onMarkRead(id);
     }
 
     async function dismiss(id: number): Promise<void> {
-        await fetch(notificationMarkRead.url(id), { method: 'PATCH' });
+        await fetch(notificationMarkRead.url(id), {
+            method: 'PATCH',
+            headers: csrfHeaders(),
+        });
         onDismiss(id);
     }
 

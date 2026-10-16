@@ -1,7 +1,6 @@
 import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ConfirmDialog from '@/components/ConfirmDialog';
 import DiaryNav from '@/components/DiaryNav';
 import FlashBanner from '@/components/FlashBanner';
 import { cn } from '@/lib/utils';
@@ -29,9 +28,6 @@ export default function Notifications({
     const csrfToken =
         (usePage().props as { csrfToken?: string }).csrfToken ?? '';
     const [notificationsList, setNotificationsList] = useState(notifications);
-    const [notificationToDelete, setNotificationToDelete] = useState<number | null>(
-        null,
-    );
     const [flashDismissed, setFlashDismissed] = useState(false);
 
     function csrfHeaders(): HeadersInit {
@@ -57,17 +53,14 @@ export default function Notifications({
         });
     }
 
-    function confirmRemove(id: number): void {
-        setNotificationToDelete(id);
-    }
-
-    function remove(): void {
-        if (notificationToDelete === null) {
-            return;
-        }
-        router.delete(notificationDestroy.url(notificationToDelete), {
+    function remove(id: number): void {
+        router.delete(notificationDestroy.url(id), {
             preserveScroll: true,
-            onFinish: () => setNotificationToDelete(null),
+            onFinish: () => {
+                setNotificationsList((list) =>
+                    list.filter((notification) => notification.id !== id),
+                );
+            },
         });
     }
 
@@ -193,9 +186,7 @@ export default function Notifications({
                                                 <button
                                                     type="button"
                                                     onClick={() =>
-                                                        confirmRemove(
-                                                            notification.id,
-                                                        )
+                                                        remove(notification.id)
                                                     }
                                                     className="text-xs text-red-600 underline-offset-2 transition hover:underline dark:text-red-400"
                                                 >
@@ -209,16 +200,6 @@ export default function Notifications({
                         )}
                     </div>
 
-                    <ConfirmDialog
-                        open={notificationToDelete !== null}
-                        destructive
-                        title={t('notifications.delete')}
-                        message={t('notifications.confirmDelete')}
-                        confirmLabel={t('notifications.delete')}
-                        cancelLabel={t('notifications.cancel')}
-                        onConfirm={remove}
-                        onCancel={() => setNotificationToDelete(null)}
-                    />
                 </div>
             </div>
         </>

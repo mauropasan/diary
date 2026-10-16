@@ -407,7 +407,7 @@ export default function DiaryNav({
                         list={notificationsList}
                         onMarkRead={markNotificationRead}
                         onMarkAllRead={markAllNotificationsRead}
-                        onDismiss={removeNotification}
+                        onDelete={removeNotification}
                     />
                 </div>
 

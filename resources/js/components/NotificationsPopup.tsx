@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { notifications as notificationsIndex } from '@/routes/diary';
 import {
+    destroy as notificationDestroy,
     read as notificationMarkRead,
 } from '@/routes/diary/notifications';
 
@@ -21,7 +22,7 @@ type NotificationsPopupProps = {
     list: Notification[];
     onMarkRead: (id: number) => void;
     onMarkAllRead: () => void;
-    onDismiss: (id: number) => void;
+    onDelete: (id: number) => void;
 };
 
 export default function NotificationsPopup({
@@ -30,7 +31,7 @@ export default function NotificationsPopup({
     list,
     onMarkRead,
     onMarkAllRead,
-    onDismiss,
+    onDelete,
 }: NotificationsPopupProps): React.JSX.Element | null {
     const { t } = useTranslation();
     const csrfToken =
@@ -72,12 +73,12 @@ export default function NotificationsPopup({
         onMarkRead(id);
     }
 
-    async function dismiss(id: number): Promise<void> {
-        await fetch(notificationMarkRead.url(id), {
-            method: 'PATCH',
+    async function remove(id: number): Promise<void> {
+        await fetch(notificationDestroy.url(id), {
+            method: 'DELETE',
             headers: csrfHeaders(),
         });
-        onDismiss(id);
+        onDelete(id);
     }
 
     if (!open) {
@@ -173,7 +174,7 @@ export default function NotificationsPopup({
                                     )}
                                     <button
                                         type="button"
-                                        onClick={() => dismiss(notification.id)}
+                                        onClick={() => onDelete(notification.id)}
                                         className="text-xs text-red-600 underline-offset-2 transition hover:underline dark:text-red-400"
                                     >
                                         {t('notifications.delete')}

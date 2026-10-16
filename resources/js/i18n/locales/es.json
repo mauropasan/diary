@@ -232,6 +232,7 @@
         "read": "Leído",
         "unread": "No leído",
         "markRead": "Marcar como leído",
+        "markAllRead": "Marcar todo como leído",
         "delete": "Eliminar",
         "confirmDelete": "¿Eliminar esta notificación? No se puede deshacer.",
         "untitled": "Notificación sin título",

@@ -232,6 +232,7 @@
         "read": "Letto",
         "unread": "Non letto",
         "markRead": "Segna come letto",
+        "markAllRead": "Segna tutto come letto",
         "delete": "Elimina",
         "confirmDelete": "Eliminare questa notifica? L'operazione non è annullabile.",
         "untitled": "Notifica senza titolo",

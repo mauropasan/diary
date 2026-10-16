@@ -37,26 +37,42 @@ it('renders the notifications page', function () {
         );
 });
 
-it('creates a notification, sends a content-free email and stores it encrypted', function () {
+it('creates a notification when a reminder note is created and sends a content-free email', function () {
     ($this->unlock)();
     Mail::fake();
 
-    $response = $this->post(route('diary.notifications.store'), [
-        'title' => 'Call the bank',
-        'body' => 'Ask about the mortgage rate.',
-    ]);
+    $future = now()->addDays(3)->toDateString();
 
-    $response->assertRedirect(route('diary.notifications'))
-        ->assertSessionHas('status');
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Renew passport',
+        'body' => 'Go to the city hall.',
+        'kind' => 'reminder',
+        'date' => $future,
+    ])->assertRedirect(route('diary.notes'));
 
     Mail::assertSent(ReminderNotification::class);
 
     $notification = $this->user->fresh()->notifications()->first();
 
-    expect($notification->title)->toBe('Call the bank')
-        ->and($notification->body)->toBe('Ask about the mortgage rate.')
+    expect($notification->title)->toBe('Renew passport')
+        ->and($notification->body)->toBe('Go to the city hall.')
         ->and($notification->read_at)->toBeNull()
-        ->and(DB::table('notifications')->where('id', $notification->id)->value('title'))->not->toBe('Call the bank');
+        ->and(DB::table('notifications')->where('id', $notification->id)->value('title'))->not->toBe('Renew passport');
+});
+
+it('does not create a notification for a plain note', function () {
+    ($this->unlock)();
+    Mail::fake();
+
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Loose note',
+        'body' => 'Just a thought.',
+        'kind' => 'note',
+    ])->assertRedirect(route('diary.notes'));
+
+    Mail::assertNotSent(ReminderNotification::class);
+
+    expect($this->user->fresh()->notifications)->toHaveCount(0);
 });
 
 it('shares the unread notification count', function () {
@@ -83,6 +99,18 @@ it('serves the notification list as JSON for the nav popup', function () {
         ->assertJson([0 => ['title' => 'Buy milk', 'body' => 'Two litres.']]);
 });
 
+it('marks all notifications as read', function () {
+    ($this->unlock)();
+
+    $this->user->notifications()->create(['title' => 'First reminder']);
+    $this->user->notifications()->create(['title' => 'Second reminder']);
+
+    $this->patch(route('diary.notifications.read-all'))
+        ->assertOk();
+
+    expect($this->user->fresh()->notifications()->whereNull('read_at')->count())->toBe(0);
+});
+
 it('marks a notification as read', function () {
     ($this->unlock)();
 
@@ -107,12 +135,15 @@ it('deletes a notification', function () {
     expect($this->user->fresh()->notifications)->toHaveCount(0);
 });
 
-it('blocks a locked user from saving a notification', function () {
+it('blocks a locked user from saving a note-based notification', function () {
     ($this->unlock)();
     $this->post(route('diary.lock'));
 
-    $this->post(route('diary.notifications.store'), ['title' => 'Blocked'])
-        ->assertRedirect(route('diary.unlock'));
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Blocked reminder',
+        'kind' => 'reminder',
+        'date' => now()->addDay()->toDateString(),
+    ])->assertRedirect(route('diary.unlock'));
 
     expect($this->user->fresh()->notifications)->toHaveCount(0);
 });

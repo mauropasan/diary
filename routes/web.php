@@ -84,10 +84,10 @@ Route::middleware('auth')->group(function () {
         Route::get('export/markdown', [ExportController::class, 'markdown'])->name('diary.export.markdown');
 
         Route::get('diary/notifications', [NotificationController::class, 'index'])->name('diary.notifications');
-        Route::post('diary/notifications', [NotificationController::class, 'store'])->name('diary.notifications.store');
         Route::patch('diary/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('diary.notifications.read');
         Route::delete('diary/notifications/{notification}', [NotificationController::class, 'destroy'])->name('diary.notifications.destroy');
         Route::get('diary/notifications/list', [NotificationController::class, 'list'])->name('diary.notifications.list');
+        Route::patch('diary/notifications/read-all', [NotificationController::class, 'readAll'])->name('diary.notifications.read-all');
 
         Route::get('diary/schedule', [ScheduleController::class, 'index'])->name('diary.schedule');
         Route::post('diary/schedule', [ScheduleController::class, 'store'])->name('diary.schedule.store');

@@ -9,6 +9,7 @@ import {
     destroy as notificationDestroy,
     read as notificationMarkRead,
     list as notificationList,
+    readAll as notificationMarkAllRead,
 } from '@/routes/diary/notifications';
 import {
     lock as diaryLock,
@@ -208,7 +209,7 @@ function BellIcon({ unread }: { unread: boolean }): React.JSX.Element {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={cn('h-4 w-4', unread ? 'text-zinc-900' : 'text-zinc-500 dark:text-zinc-400')}
+            className={cn('h-4 w-4', unread ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400')}
             aria-hidden="true"
         >
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -253,13 +254,24 @@ export default function DiaryNav({
     const { t } = useTranslation();
     const pageUrl = usePage().url;
     const todayNumber = new Date().getDate();
-    const notificationCount =
+    const sharedCount =
         (usePage().props as { notificationCount?: number }).notificationCount ??
         0;
+    const [unreadCount, setUnreadCount] = useState(sharedCount);
 
     async function loadNotifications(): Promise<void> {
         const response = await fetch(notificationList.url());
-        setNotificationsList(await response.json());
+        const list: Array<{
+            id: number;
+            title: string | null;
+            body: string | null;
+            readAt: string | null;
+            createdAt: string;
+        }> = await response.json();
+        setNotificationsList(list);
+        setUnreadCount(
+            list.filter((item) => item.readAt === null).length,
+        );
     }
 
     async function markNotificationRead(id: number): Promise<void> {
@@ -271,13 +283,26 @@ export default function DiaryNav({
                     : notification,
             ),
         );
+        setUnreadCount((prev) => Math.max(prev - 1, 0));
+    }
+
+    async function markAllNotificationsRead(): Promise<void> {
+        await fetch(notificationMarkAllRead.url(), { method: 'PATCH' });
+        setNotificationsList((list) =>
+            list.map((notification) => ({
+                ...notification,
+                readAt: new Date().toISOString(),
+            })),
+        );
+        setUnreadCount(0);
     }
 
     async function removeNotification(id: number): Promise<void> {
-        await fetch(notificationDestroy.url(id), { method: 'DELETE' });
+        await fetch(notificationMarkRead.url(id), { method: 'PATCH' });
         setNotificationsList((list) =>
             list.filter((notification) => notification.id !== id),
         );
+        setUnreadCount((prev) => Math.max(prev - 1, 0));
     }
 
     function isActive(href: string): boolean {
@@ -365,10 +390,10 @@ export default function DiaryNav({
                         className={iconButtonClass}
                         aria-expanded={notificationsOpen}
                     >
-                        <BellIcon unread={notificationCount > 0} />
-                        {notificationCount > 0 && (
+                        <BellIcon unread={unreadCount > 0} />
+                        {unreadCount > 0 && (
                             <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-zinc-50">
-                                {notificationCount > 9 ? '9+' : notificationCount}
+                                {unreadCount > 9 ? '9+' : unreadCount}
                             </span>
                         )}
                     </button>
@@ -377,7 +402,8 @@ export default function DiaryNav({
                         onClose={() => setNotificationsOpen(false)}
                         list={notificationsList}
                         onMarkRead={markNotificationRead}
-                        onRemove={removeNotification}
+                        onMarkAllRead={markAllNotificationsRead}
+                        onDismiss={removeNotification}
                     />
                 </div>
 
@@ -457,9 +483,9 @@ export default function DiaryNav({
                                 className={mobileLinkClass}
                             >
                                 {t('notifications.navLabel')}
-                                {notificationCount > 0 ? (
+                                {unreadCount > 0 ? (
                                     <span className="ml-auto rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-zinc-50">
-                                        {notificationCount > 9 ? '9+' : notificationCount}
+                                        {unreadCount > 9 ? '9+' : unreadCount}
                                     </span>
                                 ) : null}
                             </button>

@@ -232,6 +232,7 @@
         "read": "Gelesen",
         "unread": "Ungelesen",
         "markRead": "Als gelesen markieren",
+        "markAllRead": "Alle als gelesen markieren",
         "delete": "Löschen",
         "confirmDelete": "Diese Benachrichtigung löschen? Dies kann nicht rückgängig gemacht werden.",
         "untitled": "Benachrichtigung ohne Titel",

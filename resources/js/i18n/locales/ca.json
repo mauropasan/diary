@@ -232,6 +232,7 @@
         "read": "Llegit",
         "unread": "No llegit",
         "markRead": "Marca com a llegit",
+        "markAllRead": "Marca totes com a llegides",
         "delete": "Esborra",
         "confirmDelete": "Esborra aquesta notificació? No es pot desfer.",
         "untitled": "Notificació sense títol",

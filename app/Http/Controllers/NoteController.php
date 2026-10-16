@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveNoteRequest;
+use App\Mail\ReminderNotification;
 use App\Models\Note;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -35,7 +37,17 @@ class NoteController extends Controller
      */
     public function store(SaveNoteRequest $request): RedirectResponse
     {
-        $request->user()->notes()->create($this->attributes($request));
+        $note = $request->user()->notes()->create($this->attributes($request));
+
+        if (in_array($note->kind, Note::DATED_KINDS, true)) {
+            $notification = $request->user()->notifications()->create([
+                'title' => $note->title,
+                'body' => $note->body,
+            ]);
+
+            Mail::to($request->user()->email)
+                ->send(new ReminderNotification($request->user()));
+        }
 
         return redirect()->route('diary.notes');
     }

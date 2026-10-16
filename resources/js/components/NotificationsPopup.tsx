@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { notifications as notificationsIndex } from '@/routes/diary';
 import {
-    destroy as notificationDestroy,
     read as notificationMarkRead,
 } from '@/routes/diary/notifications';
 
@@ -20,7 +19,8 @@ type NotificationsPopupProps = {
     onClose: () => void;
     list: Notification[];
     onMarkRead: (id: number) => void;
-    onRemove: (id: number) => void;
+    onMarkAllRead: () => void;
+    onDismiss: (id: number) => void;
 };
 
 export default function NotificationsPopup({
@@ -28,20 +28,22 @@ export default function NotificationsPopup({
     onClose,
     list,
     onMarkRead,
-    onRemove,
+    onMarkAllRead,
+    onDismiss,
 }: NotificationsPopupProps): React.JSX.Element | null {
     const { t } = useTranslation();
     const unreadCount = list.filter(
         (notification) => notification.readAt === null,
     ).length;
 
-    if (!open) {
-        return null;
+    async function markRead(id: number): Promise<void> {
+        await fetch(notificationMarkRead.url(id), { method: 'PATCH' });
+        onMarkRead(id);
     }
 
-    async function remove(id: number): Promise<void> {
-        await fetch(notificationDestroy.url(id), { method: 'DELETE' });
-        onRemove(id);
+    async function dismiss(id: number): Promise<void> {
+        await fetch(notificationMarkRead.url(id), { method: 'PATCH' });
+        onDismiss(id);
     }
 
     if (!open) {
@@ -50,14 +52,20 @@ export default function NotificationsPopup({
 
     return (
         <div className="absolute top-full right-0 z-20 mt-2 w-72 rounded-md border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-            <h2 className="px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                {t('notifications.title')}
-                {unreadCount > 0 ? (
-                    <span className="ml-2 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-zinc-50">
-                        {unreadCount}
-                    </span>
-                ) : null}
-            </h2>
+            <div className="px-3 py-2 flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    {t('notifications.title')}
+                </h2>
+                {unreadCount > 0 && (
+                    <button
+                        type="button"
+                        onClick={onMarkAllRead}
+                        className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
+                    >
+                        {t('notifications.markAllRead')}
+                    </button>
+                )}
+            </div>
 
             {list.length === 0 && (
                 <div className="px-3 py-3 text-sm text-zinc-600 dark:text-zinc-400">
@@ -112,9 +120,7 @@ export default function NotificationsPopup({
                                     {!isRead && (
                                         <button
                                             type="button"
-                                            onClick={() =>
-                                                onMarkRead(notification.id)
-                                            }
+                                            onClick={() => markRead(notification.id)}
                                             className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
                                         >
                                             {t('notifications.markRead')}
@@ -122,9 +128,7 @@ export default function NotificationsPopup({
                                     )}
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            onRemove(notification.id)
-                                        }
+                                        onClick={() => dismiss(notification.id)}
                                         className="text-xs text-red-600 underline-offset-2 transition hover:underline dark:text-red-400"
                                     >
                                         {t('notifications.delete')}

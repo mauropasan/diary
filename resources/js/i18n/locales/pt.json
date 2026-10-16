@@ -232,6 +232,7 @@
         "read": "Lida",
         "unread": "Não lida",
         "markRead": "Marcar como lida",
+        "markAllRead": "Marcar tudo como lida",
         "delete": "Eliminar",
         "confirmDelete": "Eliminar esta notificação? Não pode ser desfeito.",
         "untitled": "Notificação sem título",

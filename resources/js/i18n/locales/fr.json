@@ -232,6 +232,7 @@
         "read": "Lu",
         "unread": "Non lu",
         "markRead": "Marquer comme lu",
+        "markAllRead": "Tout marquer comme lu",
         "delete": "Supprimer",
         "confirmDelete": "Supprimer cette notification ? Cette action est irréversible.",
         "untitled": "Notification sans titre",

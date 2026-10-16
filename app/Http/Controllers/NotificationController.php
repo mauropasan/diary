@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ReminderNotification;
 use App\Models\Notification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -39,32 +37,6 @@ class NotificationController extends Controller
     }
 
     /**
-     * Create a new reminder notification.
-     *
-     * An email is sent to the user's registered address. It deliberately
-     * contains no diary content, only an invitation to open the app.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'body' => ['nullable', 'string'],
-        ]);
-
-        $notification = $request->user()->notifications()->create([
-            'title' => $validated['title'],
-            'body' => $validated['body'] ?? null,
-        ]);
-
-        Mail::to($request->user()->email)
-            ->send(new ReminderNotification($request->user()));
-
-        return redirect()
-            ->route('diary.notifications')
-            ->with('status', __('messages.notification.created'));
-    }
-
-    /**
      * Mark a notification as read.
      */
     public function markRead(Request $request, Notification $notification)
@@ -79,6 +51,16 @@ class NotificationController extends Controller
             'id' => $notification->id,
             'readAt' => $notification->read_at->toISOString(),
         ]);
+    }
+
+    /**
+     * Mark every notification of the user as read.
+     */
+    public function readAll(Request $request)
+    {
+        $request->user()->notifications()->unread()->update(['read_at' => now()]);
+
+        return response()->json(['ok' => true]);
     }
 
     /**

@@ -236,6 +236,7 @@
         "read": "Read",
         "unread": "Unread",
         "markRead": "Mark as read",
+        "markAllRead": "Mark all as read",
         "delete": "Delete",
         "confirmDelete": "Delete this notification? This cannot be undone.",
         "untitled": "Untitled notification",

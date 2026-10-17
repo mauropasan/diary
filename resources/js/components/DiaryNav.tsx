@@ -310,6 +310,10 @@ export default function DiaryNav({
     }
 
     function isActive(href: string): boolean {
+        if (typeof window === 'undefined') {
+            return false;
+        }
+
         return new URL(href, window.location.origin).pathname === pageUrl;
     }
 

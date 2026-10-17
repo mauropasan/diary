@@ -36,9 +36,10 @@ export default function NotificationsPopup({
     const { t } = useTranslation();
     const csrfToken =
         (usePage().props as { csrfToken?: string }).csrfToken ?? '';
-    const unreadCount = list.filter(
+    const unreadNotifications = list.filter(
         (notification) => notification.readAt === null,
-    ).length;
+    );
+    const unreadCount = unreadNotifications.length;
 
     function csrfHeaders(): HeadersInit {
         return {
@@ -119,9 +120,9 @@ export default function NotificationsPopup({
                 </div>
             )}
 
-            {list.length > 0 && (
+            {unreadNotifications.length > 0 && (
                 <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                    {list.map((notification) => {
+                    {unreadNotifications.map((notification) => {
                         const isRead = notification.readAt !== null;
 
                         return (

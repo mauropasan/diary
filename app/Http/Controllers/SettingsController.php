@@ -20,6 +20,7 @@ class SettingsController extends Controller
         return Inertia::render('settings/index', [
             'background' => $request->user()->backgroundChoice(),
             'backgrounds' => array_values(config('diary.backgrounds', [])),
+            'emailNotifications' => (bool) $request->user()->email_notifications,
             'users' => $request->user()->is_admin
                 ? $this->users()
                 : null,
@@ -100,6 +101,7 @@ class SettingsController extends Controller
                     }
                 },
             ],
+            'email_notifications' => ['nullable', 'boolean'],
         ]);
 
         $background = $validated['background'] ?? null;
@@ -108,6 +110,7 @@ class SettingsController extends Controller
             'background' => $background === null || $background === 'default'
                 ? null
                 : $background,
+            'email_notifications' => (bool) ($validated['email_notifications'] ?? $request->user()->email_notifications),
         ])->save();
 
         // Bump the dedicated background version so the client-side cache-busting

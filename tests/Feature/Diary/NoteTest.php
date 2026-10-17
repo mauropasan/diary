@@ -1,7 +1,9 @@
 <?php
 
+use App\Mail\ReminderNotification;
 use App\Models\Note;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia;
 
 beforeEach(function () {
@@ -27,6 +29,46 @@ it('creates a note and encrypts its text', function () {
         ->and($note->body)->toBe('And a loaf of bread')
         ->and($note->color)->toBe('blue')
         ->and($note->kind)->toBe('note');
+});
+
+it('sends a reminder email by default when a dated reminder note is created', function () {
+    Mail::fake();
+
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Renew passport',
+        'body' => 'Go to the city hall.',
+        'kind' => 'reminder',
+        'date' => now()->addDays(3)->toDateString(),
+    ])->assertRedirect(route('diary.notes'));
+
+    Mail::assertSent(ReminderNotification::class, 1);
+});
+
+it('does not send a reminder email when email notifications are disabled', function () {
+    Mail::fake();
+
+    $this->user->forceFill(['email_notifications' => false])->save();
+
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Renew passport',
+        'body' => 'Go to the city hall.',
+        'kind' => 'reminder',
+        'date' => now()->addDays(3)->toDateString(),
+    ])->assertRedirect(route('diary.notes'));
+
+    Mail::assertNotSent(ReminderNotification::class);
+});
+
+it('does not send a reminder email for a plain note', function () {
+    Mail::fake();
+
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Loose note',
+        'body' => 'Just a thought.',
+        'kind' => 'note',
+    ])->assertRedirect(route('diary.notes'));
+
+    Mail::assertNotSent(ReminderNotification::class);
 });
 
 it('attaches a note to a day and shows it on the entry page', function () {

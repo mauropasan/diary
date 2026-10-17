@@ -81,6 +81,52 @@ it('persists a preset background encrypted at rest', function () {
         ->and(DB::table('users')->where('id', $this->user->id)->value('background'))->not->toBe('sky');
 });
 
+it('shares the email notifications preference on the settings page', function () {
+    ($this->unlock)();
+
+    $this->get(route('diary.settings'))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('settings/index')
+            ->where('emailNotifications', true)
+        );
+});
+
+it('persists the email notifications toggle', function () {
+    ($this->unlock)();
+
+    $this->put(route('diary.settings.update'), ['email_notifications' => false])
+        ->assertRedirect(route('diary.settings'))
+        ->assertSessionHas('status');
+
+    expect($this->user->refresh()->email_notifications)->toBeFalse();
+
+    $this->put(route('diary.settings.update'), ['email_notifications' => true])
+        ->assertRedirect(route('diary.settings'))
+        ->assertSessionHas('status');
+
+    expect($this->user->refresh()->email_notifications)->toBeTrue();
+});
+
+it('rejects a non boolean email notifications value', function () {
+    ($this->unlock)();
+
+    $this->put(route('diary.settings.update'), ['email_notifications' => 'yes'])
+        ->assertSessionHasErrors('email_notifications');
+
+    expect($this->user->refresh()->email_notifications)->toBeTrue();
+});
+
+it('blocks a locked user from saving the email notifications toggle', function () {
+    ($this->unlock)();
+    $this->post(route('diary.lock'));
+
+    $this->put(route('diary.settings.update'), ['email_notifications' => false])
+        ->assertRedirect(route('diary.unlock'));
+
+    expect($this->user->refresh()->email_notifications)->toBeTrue();
+});
+
 it('rejects an unknown preset background', function () {
     ($this->unlock)();
 

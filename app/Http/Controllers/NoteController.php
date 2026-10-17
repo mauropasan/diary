@@ -45,8 +45,10 @@ class NoteController extends Controller
                 'body' => $note->body,
             ]);
 
-            Mail::to($request->user()->email)
-                ->send(new ReminderNotification($request->user()));
+            if ($request->user()->email_notifications) {
+                Mail::to($request->user()->email)
+                    ->send(new ReminderNotification($request->user()));
+            }
         }
 
         return redirect()->route('diary.notes');

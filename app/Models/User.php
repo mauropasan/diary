@@ -20,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property string $email
  * @property bool $is_admin
  * @property string|null $background
+ * @property bool $email_notifications
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $kdf_salt
@@ -29,7 +30,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'is_admin', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background'])]
+#[Fillable(['name', 'email', 'password', 'is_admin', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background', 'email_notifications'])]
 #[Hidden(['password', 'remember_token', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background'])]
 class User extends Authenticatable
 {
@@ -48,6 +49,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_admin' => 'boolean',
             'background' => EncryptedEntryText::class,
+            'email_notifications' => 'boolean',
         ];
     }
 

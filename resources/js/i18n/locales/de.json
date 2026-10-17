@@ -291,7 +291,12 @@
         "password": "Passwort ändern",
         "passwordSubtitle": "Der Tagebuchschlüssel wird mit dem neuen Passwort neu geschützt.",
         "users": "Benutzer",
-        "usersSubtitle": "Tagebuchkonten erstellen und löschen."
+        "usersSubtitle": "Tagebuchkonten erstellen und löschen.",
+        "notifications": "E-Mail-Benachrichtigungen",
+        "notificationsSubtitle": "Erhalten Sie eine E-Mail, wenn eine neue Erinnerung erstellt wird.",
+        "emailNotifications": "E-Mail-Benachrichtigungen",
+        "emailNotificationsOn": "An",
+        "emailNotificationsOff": "Aus"
     },
     "error": {
         "boundary": "Etwas ist schiefgelaufen.",

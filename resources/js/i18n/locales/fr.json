@@ -291,7 +291,12 @@
         "password": "Changer le mot de passe",
         "passwordSubtitle": "La clé du journal sera re-protégée avec le nouveau mot de passe.",
         "users": "Utilisateurs",
-        "usersSubtitle": "Créez et supprimez des comptes du journal."
+        "usersSubtitle": "Créez et supprimez des comptes du journal.",
+        "notifications": "Notifications par e-mail",
+        "notificationsSubtitle": "Recevez un e-mail lorsqu'un nouveau rappel est créé.",
+        "emailNotifications": "Notifications par e-mail",
+        "emailNotificationsOn": "Activé",
+        "emailNotificationsOff": "Désactivé"
     },
     "error": {
         "boundary": "Une erreur s'est produite.",

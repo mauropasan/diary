@@ -291,7 +291,12 @@
         "password": "Cambia password",
         "passwordSubtitle": "La chiave del diario sarà riproteggeta con la nuova password.",
         "users": "Utenti",
-        "usersSubtitle": "Crea ed elimina account del diario."
+        "usersSubtitle": "Crea ed elimina account del diario.",
+        "notifications": "Notifiche email",
+        "notificationsSubtitle": "Ricevi un'email quando viene creato un nuovo promemoria.",
+        "emailNotifications": "Notifiche email",
+        "emailNotificationsOn": "Attivo",
+        "emailNotificationsOff": "Disattivo"
     },
     "error": {
         "boundary": "Qualcosa è andato storto.",

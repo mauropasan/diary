@@ -291,7 +291,12 @@
         "password": "Canvia la contrasenya",
         "passwordSubtitle": "Es tornarà a protegir la clau del diari amb la nova contrasenya.",
         "users": "Usuaris",
-        "usersSubtitle": "Crea i elimina comptes del diari."
+        "usersSubtitle": "Crea i elimina comptes del diari.",
+        "notifications": "Notificacions per correu",
+        "notificationsSubtitle": "Rep un correu quan es crei un nou recordatori.",
+        "emailNotifications": "Notificacions per correu",
+        "emailNotificationsOn": "Activat",
+        "emailNotificationsOff": "Desactivat"
     },
     "error": {
         "boundary": "Alguna cosa ha anat malament.",

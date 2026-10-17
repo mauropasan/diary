@@ -298,11 +298,15 @@ export default function DiaryNav({
     }
 
     async function removeNotification(id: number): Promise<void> {
-        await fetch(notificationMarkRead.url(id), { method: 'PATCH' });
-        setNotificationsList((list) =>
-            list.filter((notification) => notification.id !== id),
-        );
-        setUnreadCount((prev) => Math.max(prev - 1, 0));
+        await router.delete(notificationDestroy.url(id), {
+            preserveScroll: true,
+            onFinish: () => {
+                setNotificationsList((list) =>
+                    list.filter((notification) => notification.id !== id),
+                );
+                setUnreadCount((prev) => Math.max(prev - 1, 0));
+            },
+        });
     }
 
     function isActive(href: string): boolean {

@@ -291,7 +291,12 @@
         "password": "Cambiar contraseña",
         "passwordSubtitle": "Se protegerá de nuevo la clave del diario con la nueva contraseña.",
         "users": "Usuarios",
-        "usersSubtitle": "Crea y elimina cuentas del diario."
+        "usersSubtitle": "Crea y elimina cuentas del diario.",
+        "notifications": "Notificaciones por correo",
+        "notificationsSubtitle": "Recibe un correo cuando se cree un nuevo recordatorio.",
+        "emailNotifications": "Notificaciones por correo",
+        "emailNotificationsOn": "Activado",
+        "emailNotificationsOff": "Desactivado"
     },
     "error": {
         "boundary": "Algo salió mal.",

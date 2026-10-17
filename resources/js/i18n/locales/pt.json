@@ -291,7 +291,12 @@
         "password": "Alterar palavra-passe",
         "passwordSubtitle": "A chave do diário será reprotetida com a nova palavra-passe.",
         "users": "Utilizadores",
-        "usersSubtitle": "Cria e elimina contas do diário."
+        "usersSubtitle": "Cria e elimina contas do diário.",
+        "notifications": "Notificações por email",
+        "notificationsSubtitle": "Receba um email quando um novo lembrete for criado.",
+        "emailNotifications": "Notificações por email",
+        "emailNotificationsOn": "Ligado",
+        "emailNotificationsOff": "Desligado"
     },
     "error": {
         "boundary": "Algo deu errado.",

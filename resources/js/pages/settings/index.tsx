@@ -13,10 +13,12 @@ import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { Link } from '@inertiajs/react';
 import { exportMethod as diaryExport } from '@/routes/diary';
 import { update as passwordUpdate } from '@/routes/diary/password';
+import { update as settingsUpdate } from '@/routes/diary/settings';
 
 type SettingsProps = {
     background: string | null;
     backgrounds: string[];
+    emailNotifications: boolean;
     users: AdminUser[] | null;
 };
 
@@ -26,6 +28,7 @@ const fieldClass =
 export default function Settings({
     background,
     backgrounds,
+    emailNotifications,
     users,
 }: SettingsProps) {
     const { t } = useTranslation();
@@ -39,10 +42,23 @@ export default function Settings({
         password_confirmation: '',
     });
 
+    const notifications = useForm({
+        email_notifications: emailNotifications,
+    });
+
     function submitPassword(event: React.FormEvent<HTMLFormElement>): void {
         event.preventDefault();
         password.put(passwordUpdate.url(), {
             onSuccess: () => password.reset(),
+        });
+    }
+
+    function submitNotifications(event: React.FormEvent<HTMLFormElement>): void {
+        event.preventDefault();
+        notifications.put(settingsUpdate.url(), {
+            onSuccess: () => {
+                notifications.setData('email_notifications', notifications.data.email_notifications);
+            },
         });
     }
 
@@ -140,6 +156,45 @@ export default function Settings({
                                     {t('nav.export')}
                                 </Link>
                             </div>
+                        </section>
+
+                        <section className="w-full">
+                            <h2 className="mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                                {t('settings.notifications')}
+                            </h2>
+                            <p className="mb-4 text-xs text-zinc-700 dark:text-zinc-300">
+                                {t('settings.notificationsSubtitle')}
+                            </p>
+
+                            <form
+                                onSubmit={submitNotifications}
+                                noValidate
+                                className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
+                            >
+                                <input
+                                    id="email_notifications"
+                                    type="checkbox"
+                                    checked={notifications.data.email_notifications}
+                                    onChange={(event) =>
+                                        notifications.setData(
+                                            'email_notifications',
+                                            event.target.checked,
+                                        )
+                                    }
+                                    className="rounded-zinc-700 border-zinc-700 text-zinc-900 focus:ring-zinc-700 dark:ring-zinc-700"
+                                />
+                                <label
+                                    htmlFor="email_notifications"
+                                    className="text-sm font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer select-none"
+                                >
+                                    {t('settings.emailNotifications')}
+                                </label>
+                                <span className="ml-auto text-xs text-zinc-500 dark:text-zinc-500">
+                                    {notifications.data.email_notifications
+                                        ? t('settings.emailNotificationsOn')
+                                        : t('settings.emailNotificationsOff')}
+                                </span>
+                            </form>
                         </section>
 
                         <section className="w-full">

@@ -9,12 +9,19 @@ type ConfirmDialogProps = {
     onConfirm: () => void;
     onCancel: () => void;
     destructive?: boolean;
+    confirmDisabled?: boolean;
+    /** Extra fields, such as the password a sensitive change asks for. */
+    children?: React.ReactNode;
 };
 
 /**
  * Accessible confirmation modal used in place of `window.confirm`. It renders a
  * backdrop, focuses the confirm button when opened and can be dismissed with
  * the Escape key or by clicking outside the dialog.
+ *
+ * The focus and the Escape listener are attached when the dialog opens only:
+ * re-focusing on every render would pull the cursor out of any field the dialog
+ * carries while it is being typed into.
  */
 export default function ConfirmDialog({
     open,
@@ -25,9 +32,16 @@ export default function ConfirmDialog({
     onConfirm,
     onCancel,
     destructive = false,
+    confirmDisabled = false,
+    children,
 }: ConfirmDialogProps): React.JSX.Element | null {
     const titleId = useId();
     const confirmRef = useRef<HTMLButtonElement>(null);
+    const onCancelRef = useRef(onCancel);
+
+    useEffect(() => {
+        onCancelRef.current = onCancel;
+    }, [onCancel]);
 
     useEffect(() => {
         if (!open) {
@@ -38,14 +52,14 @@ export default function ConfirmDialog({
 
         function closeOnEscape(event: KeyboardEvent): void {
             if (event.key === 'Escape') {
-                onCancel();
+                onCancelRef.current();
             }
         }
 
         window.addEventListener('keydown', closeOnEscape);
 
         return () => window.removeEventListener('keydown', closeOnEscape);
-    }, [open, onCancel]);
+    }, [open]);
 
     if (!open) {
         return null;
@@ -77,6 +91,8 @@ export default function ConfirmDialog({
                     {message}
                 </p>
 
+                {children}
+
                 <div className="mt-6 flex justify-end gap-3">
                     <button
                         type="button"
@@ -89,10 +105,12 @@ export default function ConfirmDialog({
                         ref={confirmRef}
                         type="button"
                         onClick={onConfirm}
+                        disabled={confirmDisabled}
                         className={
-                            destructive
+                            (destructive
                                 ? 'rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700'
-                                : 'rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 transition hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300'
+                                : 'rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 transition hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300') +
+                            ' disabled:opacity-50'
                         }
                     >
                         {confirmLabel}

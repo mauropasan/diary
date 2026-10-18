@@ -4,6 +4,7 @@ use App\Jobs\SendReminderEmail;
 use App\Mail\ReminderNotification;
 use App\Models\Note;
 use App\Models\User;
+use App\Security\TwoFactorNotifier;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
@@ -97,6 +98,32 @@ it('reveals the notification only from the day before the note date', function (
         ->assertOk()
         ->assertJsonCount(1)
         ->assertJson([0 => ['title' => 'Renew passport']]);
+
+    $this->get(route('diary.notifications'))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('notificationCount', 1)
+        );
+});
+
+it('shows application notifications translated without leaking their key', function () {
+    ($this->unlock)();
+
+    $this->user->notifications()->create([
+        'kind' => TwoFactorNotifier::DISABLED_BY_ADMIN,
+        'params' => ['actor' => 'Ada'],
+        'due_at' => now(),
+    ]);
+
+    $this->get(route('diary.notifications.list'))
+        ->assertOk()
+        ->assertJsonCount(1)
+        ->assertJson([0 => [
+            'title' => __('messages.notifications.kinds.two_factor_disabled_by_admin.title'),
+            'body' => __('messages.notifications.kinds.two_factor_disabled_by_admin.body', ['actor' => 'Ada']),
+        ]])
+        ->assertJsonMissing(['kind' => TwoFactorNotifier::DISABLED_BY_ADMIN])
+        ->assertJsonMissing(['params' => ['actor' => 'Ada']]);
 
     $this->get(route('diary.notifications'))
         ->assertOk()

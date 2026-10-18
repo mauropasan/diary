@@ -33,6 +33,8 @@ return [
         'disabled' => 'L\'autenticació de dos factors està desactivada.',
         'codes-regenerated' => 'S\'han generat codis de recuperació nous. Els anteriors ja no funcionen.',
         'invalid-code' => 'Aquest codi no és vàlid. Comproveu l\'aplicació d\'autenticació i torneu-ho a provar.',
+        'password-required' => 'Escriu la teva contrasenya per desactivar l\'autenticació de dos factors.',
+        'invalid-password' => 'Aquesta contrasenya no és correcta, així que l\'autenticació de dos factors continua activada.',
     ],
 
     'admin' => [
@@ -40,7 +42,7 @@ return [
         'self-delete' => 'No pots eliminar el teu propi compte.',
         'deleted' => 'El compte de :name ha estat eliminat.',
         'email-updated' => 'El correu electrònic de :name s\'ha actualitzat.',
-        'two-factor-disabled' => 'L\'autenticació de dos factors s\'ha desactivat per a :name.',
+        'two-factor-disabled' => 'L\'autenticació de dos factors s\'ha desactivat per a :name i s\'ha tancat la seva sessió a tots els dispositius.',
     ],
 
     'moods' => [
@@ -71,6 +73,23 @@ return [
     'notifications' => [
         'created' => 'Recordatori creat.',
         'deleted' => 'Notificació esborrada.',
+
+        // Missatges que genera la mateixa aplicació. S\'emmagatzemen com una
+        // clau i els seus paràmetres, de manera que es poden traduir en llegir-los.
+        'kinds' => [
+            'two_factor_enabled' => [
+                'title' => 'Autenticació de dos factors activada',
+                'body' => 'L\'autenticació de dos factors està activada al teu compte. Per iniciar sessió caldrà un codi de la teva aplicació d\'autenticació.',
+            ],
+            'two_factor_disabled' => [
+                'title' => 'Autenticació de dos factors desactivada',
+                'body' => 'L\'autenticació de dos factors està desactivada al teu compte. Per iniciar sessió només caldrà la contrasenya.',
+            ],
+            'two_factor_disabled_by_admin' => [
+                'title' => 'Un administrador ha desactivat la teva autenticació de dos factors',
+                'body' => ':actor ha desactivat l\'autenticació de dos factors del teu compte. A partir d\'ara, per iniciar sessió només caldrà la contrasenya.',
+            ],
+        ],
     ],
 
     'emails' => [
@@ -81,6 +100,29 @@ return [
             'body' => 'Tens un nou recordatori al teu diari. Obrir l\'aplicació per veure\'l.',
             'openDiary' => 'Obre el diari',
             'note' => 'Aquest correu no conté contingut del diari. Les teves entrades segueixen xifrades i només es poden llegir al teu diari.',
+        ],
+
+        'two_factor' => [
+            'intro' => 'Hola :name,',
+            'two_factor_enabled' => [
+                'subject' => 'Autenticació de dos factors activada a :app',
+                'heading' => 'L\'autenticació de dos factors està activada',
+                'body' => 'Has activat l\'autenticació de dos factors. A partir d\'ara, per iniciar sessió caldrà un codi de la teva aplicació d\'autenticació, a més de la contrasenya. Guarda els codis de recuperació en un lloc segur.',
+            ],
+            'two_factor_disabled' => [
+                'subject' => 'Autenticació de dos factors desactivada a :app',
+                'heading' => 'L\'autenticació de dos factors està desactivada',
+                'body' => 'Has desactivat l\'autenticació de dos factors. Per iniciar sessió només caldrà la contrasenya.',
+            ],
+            'two_factor_disabled_by_admin' => [
+                'subject' => 'Autenticació de dos factors desactivada a :app',
+                'heading' => 'Un administrador ha desactivat la teva autenticació de dos factors',
+                'body' => 'Un administrador (:actor) ha desactivat l\'autenticació de dos factors del teu compte. Per iniciar sessió només caldrà la contrasenya.',
+            ],
+            'signedOut' => 'Per seguretat, s\'han tancat totes les sessions obertes al teu compte, així que hauràs de tornar a iniciar sessió.',
+            'warning' => 'Si no esperaves aquest canvi, demana a l\'administrador del diari que ho revisi.',
+            'openDiary' => 'Obre el diari',
+            'noContent' => 'Aquest correu no conté contingut del diari. Les teves entrades segueixen xifrades i només es poden llegir al teu diari.',
         ],
     ],
 

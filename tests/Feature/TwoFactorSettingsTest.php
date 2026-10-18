@@ -1,14 +1,19 @@
 <?php
 
+use App\Mail\TwoFactorStatusChanged;
 use App\Models\TwoFactorDevice;
 use App\Models\User;
 use App\Security\RecoveryCodes;
 use App\Security\Totp;
+use App\Security\TwoFactorNotifier;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia;
 
 beforeEach(function () {
+    Mail::fake();
+
     $this->user = User::factory()->withDiaryKey('secret-password')->create();
 
     $this->unlock = function (): void {
@@ -212,7 +217,9 @@ it('turns two factor authentication off and forgets every trusted browser', func
         'expires_at' => now()->addDays(30),
     ]);
 
-    $this->delete(route('diary.settings.two-factor.disable'))
+    $this->delete(route('diary.settings.two-factor.disable'), [
+        'current_password' => 'secret-password',
+    ])
         ->assertRedirect(route('diary.settings'))
         ->assertSessionHas('status', __('messages.two_factor.disabled'));
 
@@ -223,6 +230,112 @@ it('turns two factor authentication off and forgets every trusted browser', func
         ->and($this->user->two_factor_recovery_codes)->toBeNull()
         ->and(TwoFactorDevice::query()->where('user_id', $this->user->id)->exists())->toBeFalse();
 });
+
+it('refuses to turn two factor authentication off without the account password', function (array $payload) {
+    ($this->unlock)();
+    ($this->enable)();
+    ($this->confirm)($this->user->refresh()->two_factor_secret);
+
+    TwoFactorDevice::query()->create([
+        'user_id' => $this->user->id,
+        'token_hash' => hash('sha256', 'known-token'),
+        'expires_at' => now()->addDays(30),
+    ]);
+
+    $this->delete(route('diary.settings.two-factor.disable'), $payload)
+        ->assertSessionHasErrors('current_password');
+
+    $this->user->refresh();
+
+    expect($this->user->twoFactorEnabled())->toBeTrue()
+        ->and($this->user->two_factor_secret)->not->toBeNull()
+        ->and($this->user->two_factor_recovery_codes)->toHaveCount(RecoveryCodes::COUNT)
+        ->and(TwoFactorDevice::query()->where('user_id', $this->user->id)->exists())->toBeTrue();
+
+    Mail::assertNotSent(
+        TwoFactorStatusChanged::class,
+        fn (TwoFactorStatusChanged $mail) => $mail->kind === TwoFactorNotifier::DISABLED,
+    );
+})->with([
+    'no password' => [[]],
+    'wrong password' => [['current_password' => 'not-the-password']],
+]);
+
+it('cancels a pending enrolment without asking for the password', function () {
+    ($this->unlock)();
+    ($this->enable)();
+
+    $this->delete(route('diary.settings.two-factor.disable'))
+        ->assertRedirect(route('diary.settings'))
+        ->assertSessionHas('status', __('messages.two_factor.disabled'));
+
+    expect($this->user->refresh()->two_factor_secret)->toBeNull();
+
+    Mail::assertNothingSent();
+});
+
+it('warns the owner by notification and email when two factor is turned on and off', function () {
+    ($this->unlock)();
+    ($this->enable)();
+    ($this->confirm)($this->user->refresh()->two_factor_secret);
+
+    $notifications = $this->user->notifications()->get();
+
+    expect($notifications)->toHaveCount(1)
+        ->and($notifications->first()->kind)->toBe(TwoFactorNotifier::ENABLED);
+
+    Mail::assertSent(
+        TwoFactorStatusChanged::class,
+        fn (TwoFactorStatusChanged $mail) => $mail->kind === TwoFactorNotifier::ENABLED
+            && $mail->hasTo($this->user->email)
+            && $mail->actorName === null,
+    );
+
+    $this->delete(route('diary.settings.two-factor.disable'), [
+        'current_password' => 'secret-password',
+    ]);
+
+    $notifications = $this->user->notifications()->get();
+
+    expect($notifications)->toHaveCount(2)
+        ->and($notifications->last()->kind)->toBe(TwoFactorNotifier::DISABLED);
+
+    Mail::assertSent(
+        TwoFactorStatusChanged::class,
+        fn (TwoFactorStatusChanged $mail) => $mail->kind === TwoFactorNotifier::DISABLED,
+    );
+
+    Mail::assertSentCount(2);
+});
+
+it('stores application notifications encrypted and readable without diary text', function () {
+    ($this->unlock)();
+    ($this->enable)();
+    ($this->confirm)($this->user->refresh()->two_factor_secret);
+
+    $notification = $this->user->notifications()->firstOrFail();
+
+    expect($notification->title)->toBeNull()
+        ->and($notification->isSystem())->toBeTrue()
+        ->and($notification->displayTitle())
+        ->toBe(__('messages.notifications.kinds.two_factor_enabled.title'))
+        ->and($notification->displayBody())
+        ->toBe(__('messages.notifications.kinds.two_factor_enabled.body'))
+        ->and(DB::table('notifications')->where('id', $notification->id)->value('kind'))
+        ->not->toContain(TwoFactorNotifier::ENABLED);
+});
+
+it('renders the warning email for every kind of change', function (string $kind, ?string $actor, string $expected) {
+    app()->setLocale('en');
+
+    $mail = new TwoFactorStatusChanged($this->user, $kind, $actor);
+
+    expect($mail->render())->toContain($expected);
+})->with([
+    'enabled' => [TwoFactorNotifier::ENABLED, null, 'Two-factor authentication is on'],
+    'disabled' => [TwoFactorNotifier::DISABLED, null, 'Two-factor authentication is off'],
+    'disabled by an administrator' => [TwoFactorNotifier::DISABLED_BY_ADMIN, 'Ada Lovelace', 'Ada Lovelace'],
+]);
 
 it('blocks a locked diary from managing two factor authentication', function (string $method, string $route) {
     ($this->unlock)();
@@ -264,7 +377,9 @@ it('lets an administrator turn off two factor authentication for another account
             ->where('users', fn (Collection $users) => $users->firstWhere('id', $victim->id)['two_factor_enabled'] === true)
         );
 
-    $this->delete(route('admin.users.two-factor', $victim))
+    $this->delete(route('admin.users.two-factor', $victim), [
+        'current_password' => 'secret-password',
+    ])
         ->assertRedirect(route('diary.settings'))
         ->assertSessionHas('status', __('messages.admin.two-factor-disabled', ['name' => $victim->name]));
 
@@ -274,6 +389,62 @@ it('lets an administrator turn off two factor authentication for another account
         ->and($victim->two_factor_secret)->toBeNull()
         ->and($victim->two_factor_recovery_codes)->toBeNull()
         ->and(TwoFactorDevice::query()->where('user_id', $victim->id)->exists())->toBeFalse();
+
+    $notifications = $victim->notifications()->get();
+
+    expect($notifications)->toHaveCount(1)
+        ->and($notifications->first()->kind)->toBe(TwoFactorNotifier::DISABLED_BY_ADMIN)
+        ->and($notifications->first()->displayBody())
+        ->toContain($this->user->name);
+
+    Mail::assertSent(
+        TwoFactorStatusChanged::class,
+        fn (TwoFactorStatusChanged $mail) => $mail->kind === TwoFactorNotifier::DISABLED_BY_ADMIN
+            && $mail->hasTo($victim->email)
+            && $mail->actorName === $this->user->name,
+    );
+});
+
+it('requires the administrator password to turn off another account two factor authentication', function () {
+    $this->user->forceFill(['is_admin' => true])->save();
+    ($this->unlock)();
+
+    $victim = User::factory()->withTwoFactor()->create();
+
+    $this->delete(route('admin.users.two-factor', $victim), [
+        'current_password' => 'not-the-password',
+    ])->assertSessionHasErrors('current_password');
+
+    expect($victim->refresh()->twoFactorEnabled())->toBeTrue();
+
+    Mail::assertNothingSent();
+});
+
+it('signs the account out everywhere when an administrator turns two factor off', function () {
+    $this->user->forceFill(['is_admin' => true])->save();
+    ($this->unlock)();
+
+    $victim = User::factory()->withTwoFactor()->create([
+        'remember_token' => 'known-remember-token',
+    ]);
+
+    DB::table('sessions')->insert([
+        'id' => 'victim-session',
+        'user_id' => $victim->id,
+        'ip_address' => '127.0.0.1',
+        'user_agent' => 'test',
+        'payload' => 'payload',
+        'last_activity' => now()->timestamp,
+    ]);
+
+    $this->delete(route('admin.users.two-factor', $victim), [
+        'current_password' => 'secret-password',
+    ])->assertRedirect(route('diary.settings'));
+
+    $victim->refresh();
+
+    expect(DB::table('sessions')->where('user_id', $victim->id)->exists())->toBeFalse()
+        ->and($victim->remember_token)->not->toBe('known-remember-token');
 });
 
 it('blocks a regular account from turning off another account two factor authentication', function () {

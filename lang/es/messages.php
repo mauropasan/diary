@@ -33,6 +33,8 @@ return [
         'disabled' => 'La autenticación de dos factores está desactivada.',
         'codes-regenerated' => 'Se han generado códigos de recuperación nuevos. Los anteriores ya no funcionan.',
         'invalid-code' => 'Ese código no es válido. Comprueba tu aplicación de autenticación e inténtalo de nuevo.',
+        'password-required' => 'Escribe tu contraseña para desactivar la autenticación de dos factores.',
+        'invalid-password' => 'Esa contraseña no es correcta, así que la autenticación de dos factores sigue activada.',
     ],
 
     'admin' => [
@@ -40,7 +42,7 @@ return [
         'self-delete' => 'No puedes eliminar tu propia cuenta.',
         'deleted' => 'La cuenta de :name ha sido eliminada.',
         'email-updated' => 'El correo electrónico de :name ha sido actualizado.',
-        'two-factor-disabled' => 'La autenticación de dos factores se ha desactivado para :name.',
+        'two-factor-disabled' => 'La autenticación de dos factores se ha desactivado para :name y se han cerrado todas sus sesiones.',
     ],
 
     'moods' => [
@@ -76,6 +78,23 @@ return [
     'notifications' => [
         'created' => 'Recordatorio creado.',
         'deleted' => 'Notificación eliminada.',
+
+        // Mensajes que genera la propia aplicación. Se guardan como una clave
+        // y sus parámetros, así que se traducen al leerlos.
+        'kinds' => [
+            'two_factor_enabled' => [
+                'title' => 'Autenticación de dos factores activada',
+                'body' => 'La autenticación de dos factores está activada en tu cuenta. Al iniciar sesión se pedirá un código de tu aplicación de autenticación.',
+            ],
+            'two_factor_disabled' => [
+                'title' => 'Autenticación de dos factores desactivada',
+                'body' => 'La autenticación de dos factores está desactivada en tu cuenta. Para iniciar sesión solo hará falta tu contraseña.',
+            ],
+            'two_factor_disabled_by_admin' => [
+                'title' => 'Un administrador ha desactivado tu autenticación de dos factores',
+                'body' => ':actor ha desactivado la autenticación de dos factores de tu cuenta. A partir de ahora, para iniciar sesión solo hará falta tu contraseña.',
+            ],
+        ],
     ],
 
     'emails' => [
@@ -86,6 +105,29 @@ return [
             'body' => 'Tienes un nuevo recordatorio en tu diario. Abre la app para verlo.',
             'openDiary' => 'Abrir diario',
             'note' => 'Este correo no contiene contenido del diario. Tus entradas permanecen cifradas y solo se pueden leer en tu diario.',
+        ],
+
+        'two_factor' => [
+            'intro' => 'Hola :name,',
+            'two_factor_enabled' => [
+                'subject' => 'Autenticación de dos factores activada en :app',
+                'heading' => 'La autenticación de dos factores está activada',
+                'body' => 'Has activado la autenticación de dos factores. A partir de ahora necesitarás un código de tu aplicación de autenticación, además de tu contraseña, para iniciar sesión. Guarda los códigos de recuperación en un lugar seguro.',
+            ],
+            'two_factor_disabled' => [
+                'subject' => 'Autenticación de dos factores desactivada en :app',
+                'heading' => 'La autenticación de dos factores está desactivada',
+                'body' => 'Has desactivado la autenticación de dos factores. Para iniciar sesión solo hará falta tu contraseña.',
+            ],
+            'two_factor_disabled_by_admin' => [
+                'subject' => 'Autenticación de dos factores desactivada en :app',
+                'heading' => 'Un administrador ha desactivado tu autenticación de dos factores',
+                'body' => 'Un administrador (:actor) ha desactivado la autenticación de dos factores de tu cuenta. Para iniciar sesión solo hará falta tu contraseña.',
+            ],
+            'signedOut' => 'Por seguridad, se han cerrado todas las sesiones abiertas de tu cuenta, así que tendrás que iniciar sesión de nuevo.',
+            'warning' => 'Si no esperabas este cambio, pide al administrador del diario que lo revise.',
+            'openDiary' => 'Abrir diario',
+            'noContent' => 'Este correo no contiene contenido del diario. Tus entradas permanecen cifradas y solo se pueden leer en tu diario.',
         ],
     ],
 

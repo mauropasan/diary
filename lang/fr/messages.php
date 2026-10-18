@@ -33,6 +33,8 @@ return [
         'disabled' => 'L\'authentification à deux facteurs est désactivée.',
         'codes-regenerated' => 'De nouveaux codes de récupération ont été générés. Les précédents ne fonctionnent plus.',
         'invalid-code' => 'Ce code n\'est pas valide. Vérifiez votre application d\'authentification et réessayez.',
+        'password-required' => 'Saisissez votre mot de passe pour désactiver l\'authentification à deux facteurs.',
+        'invalid-password' => 'Ce mot de passe n\'est pas correct, l\'authentification à deux facteurs reste donc activée.',
     ],
 
     'admin' => [
@@ -40,7 +42,7 @@ return [
         'self-delete' => 'Vous ne pouvez pas supprimer votre propre compte.',
         'deleted' => 'Le compte de :name a été supprimé.',
         'email-updated' => 'L\'adresse e-mail de :name a été mise à jour.',
-        'two-factor-disabled' => 'L\'authentification à deux facteurs a été désactivée pour :name.',
+        'two-factor-disabled' => 'L\'authentification à deux facteurs a été désactivée pour :name et toutes ses sessions ont été fermées.',
     ],
 
     'moods' => [
@@ -71,6 +73,23 @@ return [
     'notifications' => [
         'created' => 'Rappel créé.',
         'deleted' => 'Notification supprimée.',
+
+        // Messages que l\'application émet elle-même. Ils sont stockés sous
+        // forme de clé et de paramètres, puis traduits à la lecture.
+        'kinds' => [
+            'two_factor_enabled' => [
+                'title' => 'Authentification à deux facteurs activée',
+                'body' => 'L\'authentification à deux facteurs est activée sur votre compte. À la connexion, un code de votre application d\'authentification sera demandé.',
+            ],
+            'two_factor_disabled' => [
+                'title' => 'Authentification à deux facteurs désactivée',
+                'body' => 'L\'authentification à deux facteurs est désactivée sur votre compte. Seul votre mot de passe sera nécessaire pour vous connecter.',
+            ],
+            'two_factor_disabled_by_admin' => [
+                'title' => 'Un administrateur a désactivé votre authentification à deux facteurs',
+                'body' => ':actor a désactivé l\'authentification à deux facteurs de votre compte. Désormais, seul votre mot de passe sera nécessaire pour vous connecter.',
+            ],
+        ],
     ],
 
     'emails' => [
@@ -81,6 +100,29 @@ return [
             'body' => 'Vous avez un nouveau rappel dans votre journal. Ouvrez l\'app pour le voir.',
             'openDiary' => 'Ouvrir le journal',
             'note' => 'Cet e-mail ne contient aucun contenu du journal. Vos entrées restent chiffrées et ne sont lisibles que dans votre journal.',
+        ],
+
+        'two_factor' => [
+            'intro' => 'Bonjour :name,',
+            'two_factor_enabled' => [
+                'subject' => 'Authentification à deux facteurs activée dans :app',
+                'heading' => 'L\'authentification à deux facteurs est activée',
+                'body' => 'Vous avez activé l\'authentification à deux facteurs. Désormais, un code de votre application d\'authentification sera nécessaire, en plus de votre mot de passe, pour vous connecter. Conservez vos codes de récupération en lieu sûr.',
+            ],
+            'two_factor_disabled' => [
+                'subject' => 'Authentification à deux facteurs désactivée dans :app',
+                'heading' => 'L\'authentification à deux facteurs est désactivée',
+                'body' => 'Vous avez désactivé l\'authentification à deux facteurs. Seul votre mot de passe sera nécessaire pour vous connecter.',
+            ],
+            'two_factor_disabled_by_admin' => [
+                'subject' => 'Authentification à deux facteurs désactivée dans :app',
+                'heading' => 'Un administrateur a désactivé votre authentification à deux facteurs',
+                'body' => 'Un administrateur (:actor) a désactivé l\'authentification à deux facteurs de votre compte. Seul votre mot de passe sera nécessaire pour vous connecter.',
+            ],
+            'signedOut' => 'Par sécurité, toutes les sessions ouvertes de votre compte ont été fermées : vous devrez vous reconnecter.',
+            'warning' => 'Si vous n\'attendiez pas ce changement, demandez à l\'administrateur du journal de vérifier.',
+            'openDiary' => 'Ouvrir le journal',
+            'noContent' => 'Cet e-mail ne contient aucun contenu du journal. Vos entrées restent chiffrées et ne sont lisibles que dans votre journal.',
         ],
     ],
 

@@ -16,6 +16,8 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $user_id
  * @property int|null $note_id
+ * @property string|null $kind
+ * @property array<string, string>|null $params
  * @property string|null $title
  * @property string|null $body
  * @property Carbon $due_at
@@ -25,8 +27,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read User $user
  */
-#[Fillable(['title', 'body', 'note_id', 'due_at', 'emailed_at', 'read_at'])]
-#[Hidden(['title', 'body'])]
+#[Fillable(['title', 'body', 'kind', 'params', 'note_id', 'due_at', 'emailed_at', 'read_at'])]
+#[Hidden(['title', 'body', 'kind', 'params'])]
 class Notification extends Model
 {
     /** @use HasFactory<NotificationFactory> */
@@ -37,10 +39,61 @@ class Notification extends Model
         return [
             'title' => EncryptedEntryText::class,
             'body' => EncryptedEntryText::class,
+            // Application notifications are built by the server, often for an
+            // account whose diary key is not available, so they are encrypted
+            // with the application key instead of the diary key.
+            'kind' => 'encrypted',
+            'params' => 'encrypted:array',
             'due_at' => 'datetime',
             'emailed_at' => 'datetime',
             'read_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Whether the notification was raised by the application itself.
+     *
+     * Those carry a message key and its parameters instead of diary text, so
+     * they can be rendered without the diary key.
+     */
+    public function isSystem(): bool
+    {
+        return is_string($this->kind) && $this->kind !== '';
+    }
+
+    /**
+     * The title to show: a translation for application notifications, the
+     * decrypted text for the ones derived from a note.
+     */
+    public function displayTitle(): ?string
+    {
+        if (! $this->isSystem()) {
+            return $this->title;
+        }
+
+        return $this->translate('title');
+    }
+
+    /**
+     * The body to show, following the same rule as {@see displayTitle()}.
+     */
+    public function displayBody(): ?string
+    {
+        if (! $this->isSystem()) {
+            return $this->body;
+        }
+
+        return $this->translate('body');
+    }
+
+    /**
+     * Resolve one line of an application notification in the reader's language.
+     */
+    private function translate(string $line): ?string
+    {
+        $text = __("messages.notifications.kinds.{$this->kind}.{$line}", $this->params ?? []);
+
+        return is_string($text) ? $text : null;
     }
 
     /**

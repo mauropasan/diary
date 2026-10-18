@@ -89,6 +89,9 @@ class NotificationController extends Controller
     /**
      * Flatten the user's notifications, newest first, for the page and popup.
      *
+     * Title and body come from the model: application notifications are
+     * translated in the reader's language there, diary reminders are decrypted.
+     *
      * @return array<int, array{id: int, title: string|null, body: string|null, readAt: string|null, createdAt: string}>
      */
     private function payload(Request $request): array
@@ -100,8 +103,8 @@ class NotificationController extends Controller
             ->get()
             ->map(fn (Notification $notification): array => [
                 'id' => $notification->id,
-                'title' => $notification->title,
-                'body' => $notification->body,
+                'title' => $notification->displayTitle(),
+                'body' => $notification->displayBody(),
                 'readAt' => $notification->read_at?->toISOString(),
                 'createdAt' => $notification->created_at->toISOString(),
             ])

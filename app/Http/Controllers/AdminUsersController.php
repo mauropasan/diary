@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Crypto\DiaryKeyManager;
 use App\Http\Requests\Auth\AdminCreateUserRequest;
+use App\Http\Requests\DisableTwoFactorRequest;
 use App\Http\Requests\UpdateEmailRequest;
 use App\Models\User;
 use App\Security\TrustedDevices;
+use App\Security\TwoFactorNotifier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class AdminUsersController extends Controller
 {
@@ -64,9 +67,13 @@ class AdminUsersController extends Controller
      * A lost authenticator device must never lock the owner out of their own
      * diary, so an administrator can always restore password-only sign-in:
      * the secret, the recovery codes and every trusted browser are removed.
+     * The administrator confirms their own password first, the account is
+     * signed out everywhere and its owner is warned by notification and email.
      */
-    public function disableTwoFactor(User $user, TrustedDevices $trusted): RedirectResponse
+    public function disableTwoFactor(DisableTwoFactorRequest $request, User $user, TrustedDevices $trusted, TwoFactorNotifier $notifier): RedirectResponse
     {
+        $actor = $request->user();
+
         $user->forceFill([
             'two_factor_secret' => null,
             'two_factor_confirmed_at' => null,
@@ -75,9 +82,34 @@ class AdminUsersController extends Controller
 
         $trusted->revoke($user);
 
+        // An administrator turning the feature off for their own account is
+        // doing it from the settings page in all but name: signing themselves
+        // out mid-request would only be surprising.
+        if (! $user->is($actor)) {
+            $this->endSessions($user);
+        }
+
+        $notifier->disabled($user, $actor);
+
         return redirect()
             ->route('diary.settings')
             ->with('status', __('messages.admin.two-factor-disabled', ['name' => $user->name]));
+    }
+
+    /**
+     * Sign an account out of every browser.
+     *
+     * The "remember me" token is rotated and the stored sessions are dropped,
+     * so a device that was signed in (or trusted for two-factor) keeps no way
+     * back in once an administrator has turned the second factor off.
+     */
+    private function endSessions(User $user): void
+    {
+        $user->forceFill(['remember_token' => Str::random(60)])->save();
+
+        DB::table((string) config('session.table', 'sessions'))
+            ->where('user_id', $user->id)
+            ->delete();
     }
 
     /**

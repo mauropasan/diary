@@ -33,8 +33,11 @@ your entries in plaintext once they are saved.
   of any other account from the same screen.
 - **Two-factor authentication** (opt-in, TOTP): scan the setup key with an
   authenticator app, save one-time recovery codes and trust a browser for 30
-  days so the code is asked only once. The recovery key still bypasses the
-  challenge, and an admin can turn the second factor off if the device is lost.
+  days so the code is asked only once. Turning it off asks for the account
+  password again, and every change is reported to its owner by in-app
+  notification and email. The recovery key still bypasses the challenge, and an
+  admin can turn the second factor off if the device is lost (which signs the
+  account out everywhere but is never silent).
 
 ## How encryption works
 
@@ -236,6 +239,18 @@ Key environment variables (see `.env.example`):
   the recovery codes as one-way hashes. The password-only inactivity unlock and
   the one-time recovery key never ask for a code, so a lost device never locks
   you out of your own diary.
+- Switching the second factor off is the one security change that cannot be made
+  from an unlocked browser alone: the acting account confirms its password
+  (an administrator confirms their own before acting on somebody else's). When
+  an administrator does it for another account, that account's sessions are
+  dropped, its "remember me" token is rotated and all of its trusted browsers
+  are revoked.
+- Every two-factor change is announced on both channels the owner can see: an
+  entry in the notification list and an email. They carry no diary content,
+  and the entry is stored as a message key with its parameters encrypted with
+  `APP_KEY` (not the diary key), so it can be raised for an account whose key
+  the actor does not hold. Each admin action also leaves a `Log::notice` entry
+  naming the actor.
 
 ## Project structure
 
@@ -244,9 +259,10 @@ app/
   Casts/        EncryptedEntryText        # Eloquent cast for encrypted columns
   Console/      CreateDiaryUser, BackupDiary
   Crypto/       DiaryCrypto, DiaryKeyManager, DiaryKeyStore, DiaryUnlocker, TagNameIndex
-  Security/     Totp, RecoveryCodes, TrustedDevices   # two-factor authentication
+  Security/     Totp, RecoveryCodes, TrustedDevices, TwoFactorNotifier
   Http/         Controllers, Middleware, Requests
   Models/       User, Entry, Tag, Schedule, TwoFactorDevice
+  Mail/         ReminderNotification, TwoFactorStatusChanged
 resources/js/
   pages/        auth/* and diary/* (Inertia React pages)
   components/   DiaryEditor, DiaryCalendar, TagInput, LockScreen, DiaryNav
@@ -266,4 +282,5 @@ vendor/bin/pest --filter=diary
 The suite covers the encryption round-trip, wrong-password handling, password
 change with key re-wrap, inactivity lock, future-date rejection, the one-time
 registration flow and the two-factor flows (enrolment, challenge, single-use
-recovery codes and trusted browsers).
+recovery codes, trusted browsers, the password confirmation before turning it
+off and the notification and email each change raises).

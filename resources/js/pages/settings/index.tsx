@@ -5,9 +5,9 @@ import AdminUsersSection, {
     type AdminUser,
 } from '@/components/AdminUsersSection';
 import BackgroundPicker from '@/components/BackgroundPicker';
-import ConfirmDialog from '@/components/ConfirmDialog';
 import DiaryNav from '@/components/DiaryNav';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import PasswordConfirmDialog from '@/components/PasswordConfirmDialog';
 import RecoveryCodesBanner from '@/components/RecoveryCodesBanner';
 import RecoveryKeyBanner from '@/components/RecoveryKeyBanner';
 import StatusFlyout from '@/components/StatusFlyout';
@@ -76,6 +76,10 @@ export default function Settings({
         code: '',
     });
 
+    const twoFactorPassword = useForm({
+        current_password: '',
+    });
+
     function submitAccount(event: React.FormEvent<HTMLFormElement>): void {
         event.preventDefault();
         account.patch(settingsEmailUpdate.url(), {
@@ -140,10 +144,25 @@ export default function Settings({
         );
     }
 
+    function openDisableTwoFactor(): void {
+        twoFactorPassword.reset();
+        twoFactorPassword.clearErrors();
+        setDisableTwoFactorOpen(true);
+    }
+
+    function cancelDisableTwoFactor(): void {
+        twoFactorPassword.reset();
+        twoFactorPassword.clearErrors();
+        setDisableTwoFactorOpen(false);
+    }
+
     function confirmDisableTwoFactor(): void {
-        router.delete(twoFactorDisable.url(), {
+        twoFactorPassword.delete(twoFactorDisable.url(), {
             preserveScroll: true,
-            onFinish: () => setDisableTwoFactorOpen(false),
+            onSuccess: () => {
+                twoFactorPassword.reset();
+                setDisableTwoFactorOpen(false);
+            },
         });
     }
 
@@ -594,11 +613,7 @@ export default function Settings({
                                             </button>
                                             <button
                                                 type="button"
-                                                onClick={() =>
-                                                    setDisableTwoFactorOpen(
-                                                        true,
-                                                    )
-                                                }
+                                                onClick={openDisableTwoFactor}
                                                 className="rounded-md px-3 py-1.5 text-sm text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
                                             >
                                                 {t('settings.twoFactorDisable')}
@@ -608,15 +623,28 @@ export default function Settings({
                                 )}
                             </div>
 
-                            <ConfirmDialog
+                            <PasswordConfirmDialog
                                 open={disableTwoFactorOpen}
-                                destructive
                                 title={t('settings.twoFactorDisable')}
                                 message={t('settings.twoFactorDisableConfirm')}
+                                passwordLabel={t('common.password')}
+                                password={
+                                    twoFactorPassword.data.current_password
+                                }
+                                onPasswordChange={(value) =>
+                                    twoFactorPassword.setData(
+                                        'current_password',
+                                        value,
+                                    )
+                                }
+                                error={
+                                    twoFactorPassword.errors.current_password
+                                }
+                                processing={twoFactorPassword.processing}
                                 confirmLabel={t('settings.twoFactorDisable')}
                                 cancelLabel={t('common.cancel')}
                                 onConfirm={confirmDisableTwoFactor}
-                                onCancel={() => setDisableTwoFactorOpen(false)}
+                                onCancel={cancelDisableTwoFactor}
                             />
                         </section>
 

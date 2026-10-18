@@ -33,6 +33,8 @@ return [
         'disabled' => 'Die Zwei-Faktor-Authentifizierung ist deaktiviert.',
         'codes-regenerated' => 'Neue Wiederherstellungscodes wurden erstellt. Die vorherigen funktionieren nicht mehr.',
         'invalid-code' => 'Dieser Code ist nicht gültig. Prüfen Sie Ihre Authenticator-App und versuchen Sie es erneut.',
+        'password-required' => 'Gib dein Passwort ein, um die Zwei-Faktor-Authentifizierung zu deaktivieren.',
+        'invalid-password' => 'Dieses Passwort ist nicht korrekt, die Zwei-Faktor-Authentifizierung bleibt daher aktiv.',
     ],
 
     'admin' => [
@@ -40,7 +42,7 @@ return [
         'self-delete' => 'Du kannst dein eigenes Konto nicht löschen.',
         'deleted' => 'Das Konto für :name wurde gelöscht.',
         'email-updated' => 'Die E-Mail-Adresse von :name wurde aktualisiert.',
-        'two-factor-disabled' => 'Die Zwei-Faktor-Authentifizierung wurde für :name deaktiviert.',
+        'two-factor-disabled' => 'Die Zwei-Faktor-Authentifizierung wurde für :name deaktiviert und alle Sitzungen wurden beendet.',
     ],
 
     'moods' => [
@@ -71,6 +73,23 @@ return [
     'notifications' => [
         'created' => 'Erinnerung erstellt.',
         'deleted' => 'Benachrichtigung gelöscht.',
+
+        // Meldungen, die die Anwendung selbst auslöst. Sie werden als Schlüssel
+        // und Parameter gespeichert und erst beim Lesen übersetzt.
+        'kinds' => [
+            'two_factor_enabled' => [
+                'title' => 'Zwei-Faktor-Authentifizierung aktiviert',
+                'body' => 'Die Zwei-Faktor-Authentifizierung ist für dein Konto aktiv. Beim Anmelden wird ein Code aus deiner Authenticator-App verlangt.',
+            ],
+            'two_factor_disabled' => [
+                'title' => 'Zwei-Faktor-Authentifizierung deaktiviert',
+                'body' => 'Die Zwei-Faktor-Authentifizierung ist für dein Konto deaktiviert. Zum Anmelden genügt wieder dein Passwort.',
+            ],
+            'two_factor_disabled_by_admin' => [
+                'title' => 'Ein Administrator hat deine Zwei-Faktor-Authentifizierung deaktiviert',
+                'body' => ':actor hat die Zwei-Faktor-Authentifizierung für dein Konto deaktiviert. Ab jetzt genügt zum Anmelden dein Passwort.',
+            ],
+        ],
     ],
 
     'emails' => [
@@ -81,6 +100,29 @@ return [
             'body' => 'Sie haben eine neue Erinnerung in Ihrem Tagebuch. Öffnen Sie die App, um sie zu sehen.',
             'openDiary' => 'Tagebuch öffnen',
             'note' => 'Diese E-Mail enthält keinen Tagebuchinhalt. Ihre Einträge bleiben verschlüsselt und sind nur in der App lesbar.',
+        ],
+
+        'two_factor' => [
+            'intro' => 'Hallo :name,',
+            'two_factor_enabled' => [
+                'subject' => 'Zwei-Faktor-Authentifizierung in :app aktiviert',
+                'heading' => 'Die Zwei-Faktor-Authentifizierung ist aktiv',
+                'body' => 'Sie haben die Zwei-Faktor-Authentifizierung aktiviert. Ab jetzt benötigen Sie zum Anmelden zusätzlich zum Passwort einen Code aus Ihrer Authenticator-App. Bewahren Sie Ihre Wiederherstellungscodes sicher auf.',
+            ],
+            'two_factor_disabled' => [
+                'subject' => 'Zwei-Faktor-Authentifizierung in :app deaktiviert',
+                'heading' => 'Die Zwei-Faktor-Authentifizierung ist deaktiviert',
+                'body' => 'Sie haben die Zwei-Faktor-Authentifizierung deaktiviert. Zum Anmelden genügt wieder Ihr Passwort.',
+            ],
+            'two_factor_disabled_by_admin' => [
+                'subject' => 'Zwei-Faktor-Authentifizierung in :app deaktiviert',
+                'heading' => 'Ein Administrator hat Ihre Zwei-Faktor-Authentifizierung deaktiviert',
+                'body' => 'Ein Administrator (:actor) hat die Zwei-Faktor-Authentifizierung für Ihr Konto deaktiviert. Zum Anmelden genügt wieder Ihr Passwort.',
+            ],
+            'signedOut' => 'Sicherheitshalber wurden alle offenen Sitzungen Ihres Kontos beendet; Sie müssen sich erneut anmelden.',
+            'warning' => 'Wenn Sie diese Änderung nicht erwartet haben, wenden Sie sich an den Administrator des Tagebuchs.',
+            'openDiary' => 'Tagebuch öffnen',
+            'noContent' => 'Diese E-Mail enthält keinen Tagebuchinhalt. Ihre Einträge bleiben verschlüsselt und sind nur in der App lesbar.',
         ],
     ],
 

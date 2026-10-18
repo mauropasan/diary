@@ -33,6 +33,8 @@ return [
         'disabled' => 'A autenticação de dois fatores está desativada.',
         'codes-regenerated' => 'Novos códigos de recuperação gerados. Os anteriores já não funcionam.',
         'invalid-code' => 'Esse código não é válido. Verifica a tua aplicação de autenticação e tenta novamente.',
+        'password-required' => 'Escreve a tua palavra-passe para desativar a autenticação de dois fatores.',
+        'invalid-password' => 'Essa palavra-passe não está correta, por isso a autenticação de dois fatores continua ativa.',
     ],
 
     'admin' => [
@@ -40,7 +42,7 @@ return [
         'self-delete' => 'Não podes eliminar a tua própria conta.',
         'deleted' => 'A conta de :name foi eliminada.',
         'email-updated' => 'O e-mail de :name foi atualizado.',
-        'two-factor-disabled' => 'A autenticação de dois fatores foi desativada para :name.',
+        'two-factor-disabled' => 'A autenticação de dois fatores foi desativada para :name e todas as suas sessões foram encerradas.',
     ],
 
     'moods' => [
@@ -71,6 +73,23 @@ return [
     'notifications' => [
         'created' => 'Lembrete criado.',
         'deleted' => 'Notificação eliminada.',
+
+        // Mensagens que a própria aplicação gera. São guardadas como chave e
+        // parâmetros, por isso são traduzidas no momento da leitura.
+        'kinds' => [
+            'two_factor_enabled' => [
+                'title' => 'Autenticação de dois fatores ativada',
+                'body' => 'A autenticação de dois fatores está ativa na tua conta. Ao iniciares sessão será pedido um código da tua aplicação de autenticação.',
+            ],
+            'two_factor_disabled' => [
+                'title' => 'Autenticação de dois fatores desativada',
+                'body' => 'A autenticação de dois fatores está desativada na tua conta. Para iniciares sessão basta a tua palavra-passe.',
+            ],
+            'two_factor_disabled_by_admin' => [
+                'title' => 'Um administrador desativou a tua autenticação de dois fatores',
+                'body' => ':actor desativou a autenticação de dois fatores da tua conta. A partir de agora, para iniciares sessão basta a tua palavra-passe.',
+            ],
+        ],
     ],
 
     'emails' => [
@@ -81,6 +100,29 @@ return [
             'body' => 'Tem um novo lembrete no seu diário. Abra a aplicação para ver.',
             'openDiary' => 'Abrir diário',
             'note' => 'Este e-mail não contém conteúdo do diário. As suas entradas permanecem cifradas e só podem ser lidas no seu diário.',
+        ],
+
+        'two_factor' => [
+            'intro' => 'Olá :name,',
+            'two_factor_enabled' => [
+                'subject' => 'Autenticação de dois fatores ativada em :app',
+                'heading' => 'A autenticação de dois fatores está ativa',
+                'body' => 'Ativaste a autenticação de dois fatores. A partir de agora, para iniciares sessão vais precisar de um código da tua aplicação de autenticação, além da palavra-passe. Guarda os códigos de recuperação num local seguro.',
+            ],
+            'two_factor_disabled' => [
+                'subject' => 'Autenticação de dois fatores desativada em :app',
+                'heading' => 'A autenticação de dois fatores está desativada',
+                'body' => 'Desativaste a autenticação de dois fatores. Para iniciares sessão basta a tua palavra-passe.',
+            ],
+            'two_factor_disabled_by_admin' => [
+                'subject' => 'Autenticação de dois fatores desativada em :app',
+                'heading' => 'Um administrador desativou a tua autenticação de dois fatores',
+                'body' => 'Um administrador (:actor) desativou a autenticação de dois fatores da tua conta. Para iniciares sessão basta a tua palavra-passe.',
+            ],
+            'signedOut' => 'Por segurança, todas as sessões abertas na tua conta foram encerradas, por isso terás de iniciar sessão novamente.',
+            'warning' => 'Se não esperavas esta alteração, pede ao administrador do diário para verificar.',
+            'openDiary' => 'Abrir diário',
+            'noContent' => 'Este e-mail não contém conteúdo do diário. As tuas entradas permanecem cifradas e só podem ser lidas no teu diário.',
         ],
     ],
 

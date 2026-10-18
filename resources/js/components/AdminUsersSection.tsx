@@ -2,6 +2,7 @@ import { router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import PasswordConfirmDialog from '@/components/PasswordConfirmDialog';
 import {
     destroy as adminUsersDestroy,
     email as adminEmailUpdate,
@@ -41,6 +42,8 @@ export default function AdminUsersSection({
     });
 
     const emailUpdate = useForm({ email: '' });
+
+    const twoFactorPassword = useForm({ current_password: '' });
 
     function submit(event: React.FormEvent<HTMLFormElement>): void {
         event.preventDefault();
@@ -87,15 +90,33 @@ export default function AdminUsersSection({
         });
     }
 
+    function startDisableTwoFactor(user: AdminUser): void {
+        twoFactorPassword.reset();
+        twoFactorPassword.clearErrors();
+        setUserToDisableTwoFactor(user);
+    }
+
+    function cancelDisableTwoFactor(): void {
+        twoFactorPassword.reset();
+        twoFactorPassword.clearErrors();
+        setUserToDisableTwoFactor(null);
+    }
+
     function confirmDisableTwoFactor(): void {
         if (!userToDisableTwoFactor) {
             return;
         }
 
-        router.delete(adminTwoFactorDisable.url(userToDisableTwoFactor.id), {
-            preserveScroll: true,
-            onFinish: () => setUserToDisableTwoFactor(null),
-        });
+        twoFactorPassword.delete(
+            adminTwoFactorDisable.url(userToDisableTwoFactor.id),
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    twoFactorPassword.reset();
+                    setUserToDisableTwoFactor(null);
+                },
+            },
+        );
     }
 
     const fieldClass =
@@ -269,7 +290,7 @@ export default function AdminUsersSection({
                                         <button
                                             type="button"
                                             onClick={() =>
-                                                setUserToDisableTwoFactor(user)
+                                                startDisableTwoFactor(user)
                                             }
                                             className="shrink-0 rounded-md px-3 py-1.5 text-xs text-red-600 transition hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950"
                                         >
@@ -364,17 +385,23 @@ export default function AdminUsersSection({
                 onCancel={() => setUserToDelete(null)}
             />
 
-            <ConfirmDialog
+            <PasswordConfirmDialog
                 open={userToDisableTwoFactor !== null}
-                destructive
                 title={t('admin.turnOffTwoFactor')}
                 message={t('admin.confirmTurnOffTwoFactor', {
                     name: userToDisableTwoFactor?.name ?? '',
                 })}
+                passwordLabel={t('common.password')}
+                password={twoFactorPassword.data.current_password}
+                onPasswordChange={(value) =>
+                    twoFactorPassword.setData('current_password', value)
+                }
+                error={twoFactorPassword.errors.current_password}
+                processing={twoFactorPassword.processing}
                 confirmLabel={t('admin.turnOffTwoFactor')}
                 cancelLabel={t('common.cancel')}
                 onConfirm={confirmDisableTwoFactor}
-                onCancel={() => setUserToDisableTwoFactor(null)}
+                onCancel={cancelDisableTwoFactor}
             />
         </>
     );

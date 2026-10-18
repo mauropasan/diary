@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DisableTwoFactorRequest;
 use App\Security\RecoveryCodes;
 use App\Security\Totp;
 use App\Security\TrustedDevices;
+use App\Security\TwoFactorNotifier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -40,7 +42,7 @@ class TwoFactorController extends Controller
     /**
      * Confirm a code from the authenticator app and issue the recovery codes.
      */
-    public function confirm(Request $request, Totp $totp, RecoveryCodes $recovery): RedirectResponse
+    public function confirm(Request $request, Totp $totp, RecoveryCodes $recovery, TwoFactorNotifier $notifier): RedirectResponse
     {
         $request->validate(['code' => ['required', 'string', 'max:32']]);
 
@@ -63,6 +65,8 @@ class TwoFactorController extends Controller
             'two_factor_confirmed_at' => now(),
             'two_factor_recovery_codes' => $recovery->hash($codes),
         ])->save();
+
+        $notifier->enabled($user);
 
         return redirect()
             ->route('diary.settings')
@@ -94,10 +98,15 @@ class TwoFactorController extends Controller
     /**
      * Turn two-factor authentication off: secret, recovery codes and every
      * trusted browser are removed, and signing in only needs the password.
+     *
+     * The account is asked for its password first, and the change is reported
+     * to its owner. Cancelling an enrolment that was never confirmed needs no
+     * password: it leaves the owner's way of signing in untouched.
      */
-    public function disable(Request $request, TrustedDevices $trusted): RedirectResponse
+    public function disable(DisableTwoFactorRequest $request, TrustedDevices $trusted, TwoFactorNotifier $notifier): RedirectResponse
     {
         $user = $request->user();
+        $wasEnabled = $user->twoFactorEnabled();
 
         $user->forceFill([
             'two_factor_secret' => null,
@@ -106,6 +115,10 @@ class TwoFactorController extends Controller
         ])->save();
 
         $trusted->revoke($user);
+
+        if ($wasEnabled) {
+            $notifier->disabled($user);
+        }
 
         return redirect()->route('diary.settings')->with('status', __('messages.two_factor.disabled'));
     }

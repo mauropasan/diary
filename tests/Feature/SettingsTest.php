@@ -401,3 +401,75 @@ it('returns 404 when the user has no custom background image', function () {
 it('redirects guests away from the background image', function () {
     $this->get(route('diary.background'))->assertRedirect(route('login'));
 });
+
+it('lets a user change their own email', function () {
+    ($this->unlock)();
+
+    $this->patch(route('diary.settings.email'), ['email' => 'new@example.com'])
+        ->assertRedirect(route('diary.settings'))
+        ->assertSessionHas('status', __('messages.settings.email-updated'));
+
+    expect($this->user->refresh()->email)->toBe('new@example.com');
+
+    $this->assertAuthenticatedAs($this->user);
+});
+
+it('accepts the current email again without changing anything', function () {
+    ($this->unlock)();
+
+    $original = $this->user->email;
+
+    $this->patch(route('diary.settings.email'), ['email' => $original])
+        ->assertRedirect(route('diary.settings'));
+
+    expect($this->user->refresh()->email)->toBe($original);
+});
+
+it('requires an email address on the settings page', function () {
+    ($this->unlock)();
+
+    $original = $this->user->email;
+
+    $this->patch(route('diary.settings.email'), [])
+        ->assertSessionHasErrors('email');
+
+    expect($this->user->refresh()->email)->toBe($original);
+});
+
+it('rejects an invalid email address', function () {
+    ($this->unlock)();
+
+    $original = $this->user->email;
+
+    $this->patch(route('diary.settings.email'), ['email' => 'not-an-email'])
+        ->assertSessionHasErrors('email');
+
+    expect($this->user->refresh()->email)->toBe($original);
+});
+
+it('rejects an email already used by another account', function () {
+    ($this->unlock)();
+
+    $taken = User::factory()->create();
+    $original = $this->user->email;
+
+    $this->patch(route('diary.settings.email'), ['email' => $taken->email])
+        ->assertSessionHasErrors('email');
+
+    expect($this->user->refresh()->email)->toBe($original);
+});
+
+it('blocks a locked user from changing their email', function () {
+    ($this->unlock)();
+    $this->post(route('diary.lock'));
+
+    $this->patch(route('diary.settings.email'), ['email' => 'new@example.com'])
+        ->assertRedirect(route('diary.unlock'));
+
+    expect($this->user->refresh()->email)->not->toBe('new@example.com');
+});
+
+it('redirects guests away from the email update', function () {
+    $this->patch(route('diary.settings.email'), ['email' => 'new@example.com'])
+        ->assertRedirect(route('login'));
+});

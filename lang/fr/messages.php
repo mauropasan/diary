@@ -27,10 +27,20 @@ return [
         'unwrap-failed' => 'Impossible de déchiffrer la clé du journal ; les données sont peut-être corrompues.',
     ],
 
+    'two_factor' => [
+        'ready' => 'Scannez le code QR et confirmez un code pour activer l\'authentification à deux facteurs.',
+        'enabled' => 'L\'authentification à deux facteurs est activée.',
+        'disabled' => 'L\'authentification à deux facteurs est désactivée.',
+        'codes-regenerated' => 'De nouveaux codes de récupération ont été générés. Les précédents ne fonctionnent plus.',
+        'invalid-code' => 'Ce code n\'est pas valide. Vérifiez votre application d\'authentification et réessayez.',
+    ],
+
     'admin' => [
         'created' => 'Compte de :name créé. Remettez le mot de passe et la clé de récupération au nouvel utilisateur.',
         'self-delete' => 'Vous ne pouvez pas supprimer votre propre compte.',
         'deleted' => 'Le compte de :name a été supprimé.',
+        'email-updated' => 'L\'adresse e-mail de :name a été mise à jour.',
+        'two-factor-disabled' => 'L\'authentification à deux facteurs a été désactivée pour :name.',
     ],
 
     'moods' => [
@@ -54,6 +64,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Arrière-plan mis à jour.',
+        'email-updated' => 'Adresse e-mail mise à jour.',
         'notifications-updated' => 'Notifications par e-mail mises à jour.',
     ],
 

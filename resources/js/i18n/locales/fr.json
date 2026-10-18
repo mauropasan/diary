@@ -9,6 +9,7 @@
         "confirmNewPassword": "Répétez le nouveau mot de passe",
         "close": "Fermer",
         "cancel": "Annuler",
+        "save": "Enregistrer",
         "language": "Langue",
         "backToLogin": "Retour à la connexion"
     },
@@ -70,6 +71,16 @@
         "subtitle": "Votre journal est verrouillé. Saisissez votre mot de passe pour le déchiffrer.",
         "submit": "Déverrouiller",
         "submitting": "Déchiffrement…"
+    },
+    "twoFactor": {
+        "title": "Authentification à deux facteurs",
+        "subtitle": "Saisissez le code de votre application d'authentification pour terminer la connexion. Un code de récupération enregistré fonctionne aussi.",
+        "code": "Code",
+        "submit": "Vérifier",
+        "submitting": "Vérification…",
+        "trust": "Faire confiance à ce navigateur pendant {{count}} jours",
+        "codesTitle": "Enregistrez vos codes de récupération",
+        "codesIntro": "Chaque code ne peut être utilisé qu'une seule fois si vous perdez l'accès à votre application d'authentification. Ils ne sont affichés qu'une fois."
     },
     "lock": {
         "heading": "Journal verrouillé",
@@ -173,8 +184,12 @@
         "entries_one": "{{count}} entrée",
         "entries_other": "{{count}} entrées",
         "since": "depuis le {{date}}",
+        "changeEmail": "Changer l'e-mail",
         "delete": "Supprimer",
-        "confirmDelete": "Supprimer le compte de {{name}} ? Toutes ses entrées seront effacées et ne pourront pas être récupérées. Cette action est irréversible."
+        "confirmDelete": "Supprimer le compte de {{name}} ? Toutes ses entrées seront effacées et ne pourront pas être récupérées. Cette action est irréversible.",
+        "twoFactorBadge": "2FA",
+        "turnOffTwoFactor": "Désactiver le 2FA",
+        "confirmTurnOffTwoFactor": "Désactiver l'authentification à deux facteurs de {{name}} ? Il ou elle n'aura besoin que de son mot de passe pour se connecter."
     },
     "notes": {
         "title": "Notes",
@@ -262,6 +277,10 @@
     "settings": {
         "title": "Paramètres",
         "subtitle": "Personnalisez votre journal.",
+        "account": "Compte",
+        "accountSubtitle": "L'adresse e-mail avec laquelle vous vous connectez. Les rappels y sont également envoyés.",
+        "emailSubmit": "Modifier l'e-mail",
+        "emailSubmitting": "Enregistrement…",
         "appearance": "Apparence",
         "appearanceSubtitle": "Thème, langue et arrière-plan du journal.",
         "background": "Arrière-plan",
@@ -288,7 +307,23 @@
         "notificationsSubtitle": "Recevez un e-mail lorsqu'un nouveau rappel est créé.",
         "emailNotifications": "Notifications par e-mail",
         "emailNotificationsOn": "Activé",
-        "emailNotificationsOff": "Désactivé"
+        "emailNotificationsOff": "Désactivé",
+        "twoFactor": "Authentification à deux facteurs",
+        "twoFactorSubtitle": "Demande un code de votre application d'authentification lors de la connexion.",
+        "twoFactorEnableHint": "Activez-la et vous aurez aussi besoin d'un code d'une application comme Google Authenticator, Authy ou 1Password à chaque connexion.",
+        "twoFactorEnable": "Activer",
+        "twoFactorQrHint": "Scannez le code avec votre application d'authentification ou saisissez la clé de configuration manuellement.",
+        "twoFactorQrAlt": "Code QR de configuration à deux facteurs",
+        "twoFactorSecret": "Clé de configuration",
+        "twoFactorCode": "Code",
+        "twoFactorConfirm": "Confirmer le code",
+        "twoFactorConfirming": "Confirmation…",
+        "twoFactorOnHint": "Un code de votre application d'authentification est requis lors de la connexion.",
+        "twoFactorCodesRemaining_one": "{{count}} code de récupération restant.",
+        "twoFactorCodesRemaining_other": "{{count}} codes de récupération restants.",
+        "twoFactorRegenerate": "Nouveaux codes de récupération",
+        "twoFactorDisable": "Désactiver",
+        "twoFactorDisableConfirm": "Désactiver l'authentification à deux facteurs ? La connexion ne demandera plus que votre mot de passe."
     },
     "error": {
         "boundary": "Une erreur s'est produite.",

@@ -27,10 +27,20 @@ return [
         'unwrap-failed' => 'Der Tagebuchschlüssel konnte nicht entschlüsselt werden; die Daten sind möglicherweise beschädigt.',
     ],
 
+    'two_factor' => [
+        'ready' => 'Scannen Sie den QR-Code und bestätigen Sie einen Code, um die Zwei-Faktor-Authentifizierung zu aktivieren.',
+        'enabled' => 'Die Zwei-Faktor-Authentifizierung ist aktiv.',
+        'disabled' => 'Die Zwei-Faktor-Authentifizierung ist deaktiviert.',
+        'codes-regenerated' => 'Neue Wiederherstellungscodes wurden erstellt. Die vorherigen funktionieren nicht mehr.',
+        'invalid-code' => 'Dieser Code ist nicht gültig. Prüfen Sie Ihre Authenticator-App und versuchen Sie es erneut.',
+    ],
+
     'admin' => [
         'created' => 'Konto für :name erstellt. Übergib das Passwort und den Wiederherstellungsschlüssel an den neuen Nutzer.',
         'self-delete' => 'Du kannst dein eigenes Konto nicht löschen.',
         'deleted' => 'Das Konto für :name wurde gelöscht.',
+        'email-updated' => 'Die E-Mail-Adresse von :name wurde aktualisiert.',
+        'two-factor-disabled' => 'Die Zwei-Faktor-Authentifizierung wurde für :name deaktiviert.',
     ],
 
     'moods' => [
@@ -54,6 +64,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Hintergrund aktualisiert.',
+        'email-updated' => 'E-Mail-Adresse aktualisiert.',
         'notifications-updated' => 'E-Mail-Benachrichtigungen aktualisiert.',
     ],
 

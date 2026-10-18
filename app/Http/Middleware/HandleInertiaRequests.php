@@ -56,6 +56,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'status' => $request->session()->get('status'),
                 'recoveryKey' => $request->session()->get('recoveryKey'),
+                'recoveryCodes' => $request->session()->get('recoveryCodes'),
             ],
         ];
     }

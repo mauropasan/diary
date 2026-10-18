@@ -196,3 +196,65 @@ it('throttles repeated admin user creation attempts', function () {
 
     $this->post(route('admin.users.store'), [])->assertStatus(429);
 });
+
+it('lets an admin change the email of another account', function () {
+    $admin = User::factory()->asAdmin()->create();
+    $victim = User::factory()->create();
+
+    $this->actingAs($admin)
+        ->patch(route('admin.users.email', $victim), ['email' => 'moved@example.com'])
+        ->assertRedirect(route('diary.settings'))
+        ->assertSessionHas('status', __('messages.admin.email-updated', ['name' => $victim->name]));
+
+    expect($victim->refresh()->email)->toBe('moved@example.com');
+
+    $this->assertAuthenticatedAs($admin);
+});
+
+it('keeps every other attribute of the edited account intact', function () {
+    $admin = User::factory()->asAdmin()->create();
+    $victim = User::factory()->withDiaryKey('secret')->create();
+
+    $this->actingAs($admin)
+        ->patch(route('admin.users.email', $victim), ['email' => 'moved@example.com'])
+        ->assertRedirect(route('diary.settings'));
+
+    $victim->refresh();
+
+    expect($victim->email)->toBe('moved@example.com')
+        ->and($victim->name)->not->toBeEmpty()
+        ->and($victim->wrapped_key)->not->toBeNull()
+        ->and($victim->kdf_salt)->not->toBeNull();
+});
+
+it('blocks non-admin users from changing another account email', function () {
+    $user = User::factory()->create();
+    $other = User::factory()->create();
+    $original = $other->email;
+
+    $this->actingAs($user)
+        ->patch(route('admin.users.email', $other), ['email' => 'moved@example.com'])
+        ->assertForbidden();
+
+    expect($other->refresh()->email)->toBe($original);
+});
+
+it('rejects an admin email change that duplicates another account', function () {
+    $admin = User::factory()->asAdmin()->create();
+    $taken = User::factory()->create();
+    $victim = User::factory()->create();
+    $original = $victim->email;
+
+    $this->actingAs($admin)
+        ->patch(route('admin.users.email', $victim), ['email' => $taken->email])
+        ->assertSessionHasErrors('email');
+
+    expect($victim->refresh()->email)->toBe($original);
+});
+
+it('redirects guests away from the admin email update', function () {
+    $victim = User::factory()->create();
+
+    $this->patch(route('admin.users.email', $victim), ['email' => 'moved@example.com'])
+        ->assertRedirect(route('login'));
+});

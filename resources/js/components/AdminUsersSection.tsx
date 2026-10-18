@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import {
     destroy as adminUsersDestroy,
+    email as adminEmailUpdate,
     store as adminUsersStore,
+    twoFactor as adminTwoFactorDisable,
 } from '@/routes/admin/users';
 
 export type AdminUser = {
@@ -12,6 +14,7 @@ export type AdminUser = {
     name: string;
     email: string;
     is_admin: boolean;
+    two_factor_enabled: boolean;
     entries_count: number;
     created_at: string;
 };
@@ -26,6 +29,9 @@ export default function AdminUsersSection({
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);
+    const [userToEdit, setUserToEdit] = useState<AdminUser | null>(null);
+    const [userToDisableTwoFactor, setUserToDisableTwoFactor] =
+        useState<AdminUser | null>(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
@@ -34,9 +40,40 @@ export default function AdminUsersSection({
         password_confirmation: '',
     });
 
+    const emailUpdate = useForm({ email: '' });
+
     function submit(event: React.FormEvent<HTMLFormElement>): void {
         event.preventDefault();
-        post(adminUsersStore.url(), { onSuccess: () => reset() });
+        post(adminUsersStore.url(), {
+            preserveScroll: true,
+            onSuccess: () => reset(),
+        });
+    }
+
+    function startEmailUpdate(user: AdminUser): void {
+        emailUpdate.clearErrors();
+        emailUpdate.setData('email', user.email);
+        setUserToEdit(user);
+    }
+
+    function cancelEmailUpdate(): void {
+        emailUpdate.clearErrors();
+        setUserToEdit(null);
+    }
+
+    function submitEmailUpdate(
+        user: AdminUser,
+        event: React.FormEvent<HTMLFormElement>,
+    ): void {
+        event.preventDefault();
+
+        emailUpdate.patch(adminEmailUpdate.url(user.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                emailUpdate.reset();
+                setUserToEdit(null);
+            },
+        });
     }
 
     function confirmRemoveUser(): void {
@@ -45,7 +82,19 @@ export default function AdminUsersSection({
         }
 
         router.delete(adminUsersDestroy.url(userToDelete.id), {
+            preserveScroll: true,
             onFinish: () => setUserToDelete(null),
+        });
+    }
+
+    function confirmDisableTwoFactor(): void {
+        if (!userToDisableTwoFactor) {
+            return;
+        }
+
+        router.delete(adminTwoFactorDisable.url(userToDisableTwoFactor.id), {
+            preserveScroll: true,
+            onFinish: () => setUserToDisableTwoFactor(null),
         });
     }
 
@@ -178,37 +227,124 @@ export default function AdminUsersSection({
                     {users.map((user) => (
                         <li
                             key={user.id}
-                            className="flex items-center justify-between gap-4 rounded-lg border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900"
+                            className="flex flex-col gap-3 rounded-lg border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900"
                         >
-                            <div className="min-w-0">
-                                <p className="truncate font-medium text-zinc-900 dark:text-zinc-50">
-                                    {user.name}
-                                    {user.is_admin && (
-                                        <span className="ml-2 rounded bg-zinc-900 px-1.5 py-0.5 text-[10px] font-medium text-zinc-50 uppercase dark:bg-zinc-100 dark:text-zinc-900">
-                                            {t('admin.badge')}
-                                        </span>
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="min-w-0">
+                                    <p className="truncate font-medium text-zinc-900 dark:text-zinc-50">
+                                        {user.name}
+                                        {user.is_admin && (
+                                            <span className="ml-2 rounded bg-zinc-900 px-1.5 py-0.5 text-[10px] font-medium text-zinc-50 uppercase dark:bg-zinc-100 dark:text-zinc-900">
+                                                {t('admin.badge')}
+                                            </span>
+                                        )}
+                                        {user.two_factor_enabled && (
+                                            <span className="ml-2 rounded border border-zinc-300 px-1.5 py-0.5 text-[10px] font-medium text-zinc-600 uppercase dark:border-zinc-700 dark:text-zinc-400">
+                                                {t('admin.twoFactorBadge')}
+                                            </span>
+                                        )}
+                                    </p>
+                                    <p className="truncate text-xs text-zinc-700 dark:text-zinc-300">
+                                        {user.email} ·{' '}
+                                        {t('admin.entries', {
+                                            count: user.entries_count,
+                                        })}{' '}
+                                        ·{' '}
+                                        {t('admin.since', {
+                                            date: user.created_at,
+                                        })}
+                                    </p>
+                                </div>
+
+                                <div className="flex shrink-0 items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => startEmailUpdate(user)}
+                                        className="shrink-0 rounded-md px-3 py-1.5 text-xs text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                                    >
+                                        {t('admin.changeEmail')}
+                                    </button>
+
+                                    {user.two_factor_enabled && (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setUserToDisableTwoFactor(user)
+                                            }
+                                            className="shrink-0 rounded-md px-3 py-1.5 text-xs text-red-600 transition hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950"
+                                        >
+                                            {t('admin.turnOffTwoFactor')}
+                                        </button>
                                     )}
-                                </p>
-                                <p className="truncate text-xs text-zinc-700 dark:text-zinc-300">
-                                    {user.email} ·{' '}
-                                    {t('admin.entries', {
-                                        count: user.entries_count,
-                                    })}{' '}
-                                    ·{' '}
-                                    {t('admin.since', {
-                                        date: user.created_at,
-                                    })}
-                                </p>
+
+                                    {user.id !== auth.user.id && (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setUserToDelete(user)
+                                            }
+                                            className="shrink-0 rounded-md px-3 py-1.5 text-xs text-red-600 transition hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950"
+                                        >
+                                            {t('admin.delete')}
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
-                            {user.id !== auth.user.id && (
-                                <button
-                                    type="button"
-                                    onClick={() => setUserToDelete(user)}
-                                    className="shrink-0 rounded-md px-3 py-1.5 text-xs text-red-600 transition hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950"
+                            {userToEdit?.id === user.id && (
+                                <form
+                                    onSubmit={(event) =>
+                                        submitEmailUpdate(user, event)
+                                    }
+                                    noValidate
+                                    className="flex flex-col gap-2 border-t border-zinc-100 pt-3 dark:border-zinc-800"
                                 >
-                                    {t('admin.delete')}
-                                </button>
+                                    <label
+                                        htmlFor={`settings-user-email-${user.id}`}
+                                        className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
+                                    >
+                                        {t('common.email')}
+                                    </label>
+                                    <input
+                                        id={`settings-user-email-${user.id}`}
+                                        type="email"
+                                        required
+                                        autoFocus
+                                        autoComplete="off"
+                                        value={emailUpdate.data.email}
+                                        onChange={(event) =>
+                                            emailUpdate.setData(
+                                                'email',
+                                                event.target.value,
+                                            )
+                                        }
+                                        className={fieldClass}
+                                    />
+                                    {emailUpdate.errors.email && (
+                                        <p className="text-xs text-red-600 dark:text-red-400">
+                                            {emailUpdate.errors.email}
+                                        </p>
+                                    )}
+
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            type="submit"
+                                            disabled={emailUpdate.processing}
+                                            className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-50 transition hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                                        >
+                                            {emailUpdate.processing
+                                                ? t('settings.emailSubmitting')
+                                                : t('common.save')}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={cancelEmailUpdate}
+                                            className="rounded-md px-3 py-1.5 text-xs text-zinc-600 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                                        >
+                                            {t('common.cancel')}
+                                        </button>
+                                    </div>
+                                </form>
                             )}
                         </li>
                     ))}
@@ -226,6 +362,19 @@ export default function AdminUsersSection({
                 cancelLabel={t('common.cancel')}
                 onConfirm={confirmRemoveUser}
                 onCancel={() => setUserToDelete(null)}
+            />
+
+            <ConfirmDialog
+                open={userToDisableTwoFactor !== null}
+                destructive
+                title={t('admin.turnOffTwoFactor')}
+                message={t('admin.confirmTurnOffTwoFactor', {
+                    name: userToDisableTwoFactor?.name ?? '',
+                })}
+                confirmLabel={t('admin.turnOffTwoFactor')}
+                cancelLabel={t('common.cancel')}
+                onConfirm={confirmDisableTwoFactor}
+                onCancel={() => setUserToDisableTwoFactor(null)}
             />
         </>
     );

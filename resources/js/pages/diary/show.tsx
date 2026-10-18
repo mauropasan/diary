@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next';
 import DiaryCalendar from '@/components/DiaryCalendar';
 import DiaryEditor, { type DiaryEditorHandle } from '@/components/DiaryEditor';
 import DiaryNav from '@/components/DiaryNav';
-import FlashBanner from '@/components/FlashBanner';
 import LockScreen from '@/components/LockScreen';
 import NoteCard from '@/components/NoteCard';
 import RecoveryKeyBanner from '@/components/RecoveryKeyBanner';
 import ScheduleGrid from '@/components/ScheduleGrid';
+import StatusFlyout from '@/components/StatusFlyout';
 import { formatLongDate, formatLongDay, formatMonthYear } from '@/lib/dates';
 import { lockDiary } from '@/lib/lockDiary';
 import { useInactivityLock } from '@/lib/useInactivityLock';
@@ -79,7 +79,6 @@ export default function Show({
     const { t, i18n } = useTranslation();
     const locale = i18n.language;
     const [locked, setLocked] = useState(false);
-    const [flashDismissed, setFlashDismissed] = useState(false);
     const [recoveryKeyDismissed, setRecoveryKeyDismissed] = useState(false);
     const { diary, flash } = usePage().props;
 
@@ -188,12 +187,7 @@ export default function Show({
                         />
                     )}
 
-                    {flash.status && !flashDismissed && (
-                        <FlashBanner
-                            message={flash.status}
-                            onClose={() => setFlashDismissed(true)}
-                        />
-                    )}
+                    <StatusFlyout message={flash.status} />
 
                     <header className="mb-8 flex items-start justify-between gap-4">
                         <div>

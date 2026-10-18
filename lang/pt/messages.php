@@ -27,10 +27,20 @@ return [
         'unwrap-failed' => 'Não foi possível desencriptar a chave do diário; os dados podem estar corrompidos.',
     ],
 
+    'two_factor' => [
+        'ready' => 'Escaneie o código QR e confirme um código para ativar a autenticação de dois fatores.',
+        'enabled' => 'A autenticação de dois fatores está ativa.',
+        'disabled' => 'A autenticação de dois fatores está desativada.',
+        'codes-regenerated' => 'Novos códigos de recuperação gerados. Os anteriores já não funcionam.',
+        'invalid-code' => 'Esse código não é válido. Verifica a tua aplicação de autenticação e tenta novamente.',
+    ],
+
     'admin' => [
         'created' => 'Conta de :name criada. Entrega a palavra-passe e a chave de recuperação ao novo utilizador.',
         'self-delete' => 'Não podes eliminar a tua própria conta.',
         'deleted' => 'A conta de :name foi eliminada.',
+        'email-updated' => 'O e-mail de :name foi atualizado.',
+        'two-factor-disabled' => 'A autenticação de dois fatores foi desativada para :name.',
     ],
 
     'moods' => [
@@ -54,6 +64,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Fundo atualizado.',
+        'email-updated' => 'E-mail atualizado.',
         'notifications-updated' => 'Notificações de e-mail atualizadas.',
     ],
 

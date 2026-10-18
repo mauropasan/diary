@@ -209,7 +209,12 @@ function BellIcon({ unread }: { unread: boolean }): React.JSX.Element {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={cn('h-4 w-4', unread ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400')}
+            className={cn(
+                'h-4 w-4',
+                unread
+                    ? 'text-zinc-900 dark:text-zinc-100'
+                    : 'text-zinc-500 dark:text-zinc-400',
+            )}
             aria-hidden="true"
         >
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -249,18 +254,40 @@ export default function DiaryNav({
             body: string | null;
             readAt: string | null;
             createdAt: string;
-        }
-    >>([]);
+        }>
+    >([]);
     const { t } = useTranslation();
     const pageUrl = usePage().url;
     const todayNumber = new Date().getDate();
+    const csrfToken =
+        (usePage().props as { csrfToken?: string }).csrfToken ?? '';
     const sharedCount =
         (usePage().props as { notificationCount?: number }).notificationCount ??
         0;
     const [unreadCount, setUnreadCount] = useState(sharedCount);
 
+    function csrfHeaders(): HeadersInit {
+        return {
+            'X-CSRF-TOKEN': csrfToken,
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        };
+    }
+
     async function loadNotifications(): Promise<void> {
-        const response = await fetch(notificationList.url());
+        const response = await fetch(notificationList.url(), {
+            headers: { Accept: 'application/json' },
+        });
+
+        // Expired sessions answer with a redirect to the login page, so only
+        // trust a JSON body before replacing the list.
+        if (
+            !response.ok ||
+            !(response.headers.get('content-type') ?? '').includes('json')
+        ) {
+            return;
+        }
+
         const list: Array<{
             id: number;
             title: string | null;
@@ -269,13 +296,19 @@ export default function DiaryNav({
             createdAt: string;
         }> = await response.json();
         setNotificationsList(list);
-        setUnreadCount(
-            list.filter((item) => item.readAt === null).length,
-        );
+        setUnreadCount(list.filter((item) => item.readAt === null).length);
     }
 
     async function markNotificationRead(id: number): Promise<void> {
-        await fetch(notificationMarkRead.url(id), { method: 'PATCH' });
+        const response = await fetch(notificationMarkRead.url(id), {
+            method: 'PATCH',
+            headers: csrfHeaders(),
+        });
+
+        if (!response.ok) {
+            return;
+        }
+
         setNotificationsList((list) =>
             list.map((notification) =>
                 notification.id === id
@@ -287,7 +320,15 @@ export default function DiaryNav({
     }
 
     async function markAllNotificationsRead(): Promise<void> {
-        await fetch(notificationMarkAllRead.url(), { method: 'PATCH' });
+        const response = await fetch(notificationMarkAllRead.url(), {
+            method: 'PATCH',
+            headers: csrfHeaders(),
+        });
+
+        if (!response.ok) {
+            return;
+        }
+
         setNotificationsList((list) =>
             list.map((notification) => ({
                 ...notification,
@@ -298,15 +339,24 @@ export default function DiaryNav({
     }
 
     async function removeNotification(id: number): Promise<void> {
-        await router.delete(notificationDestroy.url(id), {
-            preserveScroll: true,
-            onFinish: () => {
-                setNotificationsList((list) =>
-                    list.filter((notification) => notification.id !== id),
-                );
-                setUnreadCount((prev) => Math.max(prev - 1, 0));
-            },
+        const response = await fetch(notificationDestroy.url(id), {
+            method: 'DELETE',
+            headers: csrfHeaders(),
         });
+
+        if (!response.ok) {
+            return;
+        }
+
+        const removed = notificationsList.find(
+            (notification) => notification.id === id,
+        );
+        setNotificationsList((list) =>
+            list.filter((notification) => notification.id !== id),
+        );
+        if (removed?.readAt === null) {
+            setUnreadCount((prev) => Math.max(prev - 1, 0));
+        }
     }
 
     function isActive(href: string): boolean {
@@ -514,6 +564,15 @@ export default function DiaryNav({
                         </div>
                     </>
                 )}
+
+                <NotificationsPopup
+                    open={notificationsOpen}
+                    onClose={() => setNotificationsOpen(false)}
+                    list={notificationsList}
+                    onMarkRead={markNotificationRead}
+                    onMarkAllRead={markAllNotificationsRead}
+                    onDelete={removeNotification}
+                />
             </div>
         </nav>
     );

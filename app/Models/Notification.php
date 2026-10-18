@@ -48,7 +48,8 @@ class Notification extends Model
     /**
      * Scope for unread notifications.
      *
-     * @return Builder<static, static>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeUnread(Builder $query): Builder
     {
@@ -58,7 +59,8 @@ class Notification extends Model
     /**
      * Scope for read notifications.
      *
-     * @return Builder<static, static>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeRead(Builder $query): Builder
     {

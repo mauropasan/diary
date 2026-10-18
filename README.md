@@ -66,9 +66,9 @@ no way around this by design.
 - **Composer 2**.
 - **Node.js 20.19+** (or 22.12+) and **npm**.
 - **Database** — one of the following:
-  - **SQLite** (default): requires the `pdo_sqlite` extension (bundled with PHP).
-  - **MySQL / MariaDB**: requires the `pdo_mysql` extension and a running server.
-    The `mysqldump` binary must be in `PATH` for the backup command.
+    - **SQLite** (default): requires the `pdo_sqlite` extension (bundled with PHP).
+    - **MySQL / MariaDB**: requires the `pdo_mysql` extension and a running server.
+      The `mysqldump` binary must be in `PATH` for the backup command.
 
 Verify the PHP extensions:
 
@@ -180,20 +180,20 @@ php artisan diary:create-user
 
 ## Common commands
 
-| Command                                      | Purpose                                                     |
-| -------------------------------------------- | ----------------------------------------------------------- |
-| `composer run dev`                           | Run the full dev stack (server + queue + Vite)              |
-| `php artisan serve`                          | Serve the app only                                          |
-| `npm run dev`                                | Vite dev server with HMR                                    |
-| `npm run build`                              | Production frontend build                                   |
-| `php artisan diary:backup`                   | Write a consistent DB snapshot to `storage/app/backups`     |
-| `php artisan test`                           | Run the Pest test suite                                     |
-| `composer run test`                          | Clear config, lint, static analysis and run tests           |
-| `vendor/bin/pint`                            | Format PHP code (use `composer run lint`)                   |
-| `npm run types:check`                        | TypeScript type check (`tsc --noEmit`)                      |
-| `npm run check`                              | Frontend lint + format check (`npm run check:fix` to fix)   |
-| `php artisan migrate`                        | Run database migrations                                     |
-| `php artisan wayfinder:generate --with-form` | Regenerate typed TS route/action helpers                    |
+| Command                                      | Purpose                                                   |
+| -------------------------------------------- | --------------------------------------------------------- |
+| `composer run dev`                           | Run the full dev stack (server + queue + Vite)            |
+| `php artisan serve`                          | Serve the app only                                        |
+| `npm run dev`                                | Vite dev server with HMR                                  |
+| `npm run build`                              | Production frontend build                                 |
+| `php artisan diary:backup`                   | Write a consistent DB snapshot to `storage/app/backups`   |
+| `php artisan test`                           | Run the Pest test suite                                   |
+| `composer run test`                          | Clear config, lint, static analysis and run tests         |
+| `vendor/bin/pint`                            | Format PHP code (use `composer run lint`)                 |
+| `npm run types:check`                        | TypeScript type check (`tsc --noEmit`)                    |
+| `npm run check`                              | Frontend lint + format check (`npm run check:fix` to fix) |
+| `php artisan migrate`                        | Run database migrations                                   |
+| `php artisan wayfinder:generate --with-form` | Regenerate typed TS route/action helpers                  |
 
 Keep `diary:backup` scheduled in production (e.g. a cron entry or the scheduler)
 so snapshots are taken regularly.
@@ -206,7 +206,7 @@ Key environment variables (see `.env.example`):
 | -------------------------- | --------------- | --------------------------------------------- |
 | `APP_TIMEZONE`             | `Europe/Madrid` | Defines what "today" means; not UTC.          |
 | `APP_LOCALE`               | `es`            | UI language.                                  |
-| `DB_CONNECTION`            | `sqlite`        | `sqlite` (default), `mysql` or `mariadb`.    |
+| `DB_CONNECTION`            | `sqlite`        | `sqlite` (default), `mysql` or `mariadb`.     |
 | `SESSION_DRIVER`           | `database`      | Session storage.                              |
 | `SESSION_ENCRYPT`          | `true`          | Encrypts session data (the DEK lives here).   |
 | `SESSION_SECURE_COOKIE`    | `false`         | **Set to `true` in production (HTTPS).**      |

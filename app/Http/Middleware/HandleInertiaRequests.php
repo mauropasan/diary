@@ -35,17 +35,19 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'locale' => app()->getLocale(),
             'locales' => $this->locales(),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
-            'background' => $request->user()?->backgroundChoice(),
-            'backgroundVersion' => (string) ($request->user()?->background_version ?? 0),
-            'notificationCount' => (int) ($request->user()?->notifications()->whereNull('read_at')->count() ?? 0),
+            'background' => $user?->backgroundChoice(),
+            'backgroundVersion' => (string) ($user === null ? 0 : $user->background_version),
+            'notificationCount' => (int) ($user?->notifications()->whereNull('read_at')->count() ?? 0),
             'diary' => [
                 'lockAfterMinutes' => (int) config('diary.lock_after_minutes'),
                 'timezone' => config('app.timezone'),

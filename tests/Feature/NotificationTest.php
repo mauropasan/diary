@@ -130,7 +130,18 @@ it('deletes a notification', function () {
 
     $this->delete(route('diary.notifications.destroy', $notification))
         ->assertRedirect(route('diary.notifications'))
-        ->assertSessionHas('status');
+        ->assertSessionHas('status', __('messages.notifications.deleted'));
+
+    expect($this->user->fresh()->notifications)->toHaveCount(0);
+});
+
+it('deletes a notification in place for json clients', function () {
+    ($this->unlock)();
+
+    $notification = $this->user->notifications()->create(['title' => 'To delete']);
+
+    $this->deleteJson(route('diary.notifications.destroy', $notification))
+        ->assertNoContent();
 
     expect($this->user->fresh()->notifications)->toHaveCount(0);
 });

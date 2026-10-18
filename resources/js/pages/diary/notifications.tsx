@@ -38,19 +38,23 @@ export default function Notifications({
         };
     }
 
-    function markRead(id: number): void {
-        fetch(notificationMarkRead.url(id), {
+    async function markRead(id: number): Promise<void> {
+        const response = await fetch(notificationMarkRead.url(id), {
             method: 'PATCH',
             headers: csrfHeaders(),
-        }).then(() => {
-            setNotificationsList((list) =>
-                list.map((notification) =>
-                    notification.id === id
-                        ? { ...notification, readAt: new Date().toISOString() }
-                        : notification,
-                ),
-            );
         });
+
+        if (!response.ok) {
+            return;
+        }
+
+        setNotificationsList((list) =>
+            list.map((notification) =>
+                notification.id === id
+                    ? { ...notification, readAt: new Date().toISOString() }
+                    : notification,
+            ),
+        );
     }
 
     function remove(id: number): void {
@@ -102,7 +106,7 @@ export default function Notifications({
                     )}
 
                     <div className="m-auto">
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="mb-4 flex items-center justify-between">
                             <h2 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                                 {t('notifications.list')}
                                 {unreadCount > 0 ? (
@@ -135,16 +139,21 @@ export default function Notifications({
                                             )}
                                         >
                                             <div className="flex items-start justify-between gap-2">
-                                                <span className={cn(
-                                                    'rounded-full px-2 py-0.5 text-xs font-medium',
-                                                    isRead
-                                                        ? 'bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200',
-                                                )}
+                                                <span
+                                                    className={cn(
+                                                        'rounded-full px-2 py-0.5 text-xs font-medium',
+                                                        isRead
+                                                            ? 'bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300'
+                                                            : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200',
+                                                    )}
                                                 >
                                                     {isRead
-                                                        ? t('notifications.read')
-                                                        : t('notifications.unread')}
+                                                        ? t(
+                                                              'notifications.read',
+                                                          )
+                                                        : t(
+                                                              'notifications.unread',
+                                                          )}
                                                 </span>
                                                 <time className="text-xs text-zinc-500 dark:text-zinc-400">
                                                     {new Date(
@@ -153,18 +162,20 @@ export default function Notifications({
                                                 </time>
                                             </div>
 
-                                            <p className={cn(
-                                                'font-medium text-zinc-900 dark:text-zinc-50',
-                                                isRead
-                                                    ? 'opacity-75'
-                                                    : 'font-semibold',
-                                            )}>
+                                            <p
+                                                className={cn(
+                                                    'font-medium text-zinc-900 dark:text-zinc-50',
+                                                    isRead
+                                                        ? 'opacity-75'
+                                                        : 'font-semibold',
+                                                )}
+                                            >
                                                 {notification.title ??
                                                     t('notifications.untitled')}
                                             </p>
 
                                             {notification.body && (
-                                                <p className="text-sm whitespace-pre-wrap text-zinc-700 dark:text-zinc-200 opacity-80">
+                                                <p className="text-sm whitespace-pre-wrap text-zinc-700 opacity-80 dark:text-zinc-200">
                                                     {notification.body}
                                                 </p>
                                             )}
@@ -180,7 +191,9 @@ export default function Notifications({
                                                         }
                                                         className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
                                                     >
-                                                        {t('notifications.markRead')}
+                                                        {t(
+                                                            'notifications.markRead',
+                                                        )}
                                                     </button>
                                                 )}
                                                 <button
@@ -199,7 +212,6 @@ export default function Notifications({
                             </ul>
                         )}
                     </div>
-
                 </div>
             </div>
         </>

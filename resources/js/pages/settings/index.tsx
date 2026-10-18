@@ -53,11 +53,16 @@ export default function Settings({
         });
     }
 
-    function submitNotifications(event: React.FormEvent<HTMLFormElement>): void {
+    function submitNotifications(
+        event: React.FormEvent<HTMLFormElement>,
+    ): void {
         event.preventDefault();
         notifications.put(settingsUpdate.url(), {
             onSuccess: () => {
-                notifications.setData('email_notifications', notifications.data.email_notifications);
+                notifications.setData(
+                    'email_notifications',
+                    notifications.data.email_notifications,
+                );
             },
         });
     }
@@ -174,7 +179,9 @@ export default function Settings({
                                 <input
                                     id="email_notifications"
                                     type="checkbox"
-                                    checked={notifications.data.email_notifications}
+                                    checked={
+                                        notifications.data.email_notifications
+                                    }
                                     onChange={(event) =>
                                         notifications.setData(
                                             'email_notifications',
@@ -185,7 +192,7 @@ export default function Settings({
                                 />
                                 <label
                                     htmlFor="email_notifications"
-                                    className="text-sm font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer select-none"
+                                    className="cursor-pointer text-sm font-medium text-zinc-700 select-none dark:text-zinc-300"
                                 >
                                     {t('settings.emailNotifications')}
                                 </label>

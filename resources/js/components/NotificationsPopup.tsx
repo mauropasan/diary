@@ -1,12 +1,8 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { notifications as notificationsIndex } from '@/routes/diary';
-import {
-    destroy as notificationDestroy,
-    read as notificationMarkRead,
-} from '@/routes/diary/notifications';
 
 type Notification = {
     id: number;
@@ -34,20 +30,9 @@ export default function NotificationsPopup({
     onDelete,
 }: NotificationsPopupProps): React.JSX.Element | null {
     const { t } = useTranslation();
-    const csrfToken =
-        (usePage().props as { csrfToken?: string }).csrfToken ?? '';
-    const unreadNotifications = list.filter(
+    const unreadCount = list.filter(
         (notification) => notification.readAt === null,
-    );
-    const unreadCount = unreadNotifications.length;
-
-    function csrfHeaders(): HeadersInit {
-        return {
-            'X-CSRF-TOKEN': csrfToken,
-            Accept: 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-        };
-    }
+    ).length;
 
     // Close the popup when clicking outside of it.
     useEffect(() => {
@@ -63,24 +48,9 @@ export default function NotificationsPopup({
 
         document.addEventListener('mousedown', handleClickOutside);
 
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        return () =>
+            document.removeEventListener('mousedown', handleClickOutside);
     }, [open, onClose]);
-
-    async function markRead(id: number): Promise<void> {
-        await fetch(notificationMarkRead.url(id), {
-            method: 'PATCH',
-            headers: csrfHeaders(),
-        });
-        onMarkRead(id);
-    }
-
-    async function remove(id: number): Promise<void> {
-        await fetch(notificationDestroy.url(id), {
-            method: 'DELETE',
-            headers: csrfHeaders(),
-        });
-        onDelete(id);
-    }
 
     if (!open) {
         return null;
@@ -91,7 +61,7 @@ export default function NotificationsPopup({
             data-popup
             className="absolute top-full right-0 z-20 mt-2 w-72 rounded-md border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-800 dark:bg-zinc-900"
         >
-            <div className="px-3 py-2 flex items-center justify-between">
+            <div className="flex items-center justify-between px-3 py-2">
                 <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                     {t('notifications.title')}
                 </h2>
@@ -120,23 +90,21 @@ export default function NotificationsPopup({
                 </div>
             )}
 
-            {unreadNotifications.length > 0 && (
+            {list.length > 0 && (
                 <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                    {unreadNotifications.map((notification) => {
+                    {list.map((notification) => {
                         const isRead = notification.readAt !== null;
 
                         return (
-                            <li
-                                key={notification.id}
-                                className="px-3 py-3"
-                            >
+                            <li key={notification.id} className="px-3 py-3">
                                 <div className="flex items-start justify-between gap-2">
-                                    <span className={cn(
-                                        'rounded-full px-2 py-0.5 text-xs font-medium',
-                                        isRead
-                                            ? 'bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300'
-                                            : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200',
-                                    )}
+                                    <span
+                                        className={cn(
+                                            'rounded-full px-2 py-0.5 text-xs font-medium',
+                                            isRead
+                                                ? 'bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300'
+                                                : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200',
+                                        )}
                                     >
                                         {isRead
                                             ? t('notifications.read')
@@ -149,16 +117,18 @@ export default function NotificationsPopup({
                                     </time>
                                 </div>
 
-                                <p className={cn(
-                                    'font-medium text-zinc-900 dark:text-zinc-50',
-                                    isRead ? 'opacity-75' : 'font-semibold',
-                                )}>
+                                <p
+                                    className={cn(
+                                        'font-medium text-zinc-900 dark:text-zinc-50',
+                                        isRead ? 'opacity-75' : 'font-semibold',
+                                    )}
+                                >
                                     {notification.title ??
                                         t('notifications.untitled')}
                                 </p>
 
                                 {notification.body && (
-                                    <p className="mt-0.5 text-sm whitespace-pre-wrap text-zinc-700 dark:text-zinc-200 opacity-80">
+                                    <p className="mt-0.5 text-sm whitespace-pre-wrap text-zinc-700 opacity-80 dark:text-zinc-200">
                                         {notification.body}
                                     </p>
                                 )}
@@ -167,7 +137,9 @@ export default function NotificationsPopup({
                                     {!isRead && (
                                         <button
                                             type="button"
-                                            onClick={() => markRead(notification.id)}
+                                            onClick={() =>
+                                                onMarkRead(notification.id)
+                                            }
                                             className="text-xs text-zinc-600 underline-offset-2 transition hover:underline dark:text-zinc-300"
                                         >
                                             {t('notifications.markRead')}
@@ -175,7 +147,9 @@ export default function NotificationsPopup({
                                     )}
                                     <button
                                         type="button"
-                                        onClick={() => onDelete(notification.id)}
+                                        onClick={() =>
+                                            onDelete(notification.id)
+                                        }
                                         className="text-xs text-red-600 underline-offset-2 transition hover:underline dark:text-red-400"
                                     >
                                         {t('notifications.delete')}
@@ -187,10 +161,10 @@ export default function NotificationsPopup({
                 </ul>
             )}
 
-            <div className="px-3 py-2 border-t border-zinc-200 dark:border-zinc-800">
+            <div className="border-t border-zinc-200 px-3 py-2 dark:border-zinc-800">
                 <Link
                     href={notificationsIndex.url()}
-                    className="block w-full rounded-md px-3 py-2 text-sm text-left text-zinc-600 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                    className="block w-full rounded-md px-3 py-2 text-left text-sm text-zinc-600 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                     onClick={onClose}
                 >
                     {t('notifications.viewAll')}

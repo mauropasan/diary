@@ -3,43 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
 class NotificationController extends Controller
 {
     /**
-     * Show the user's notifications and the form to create a new reminder.
+     * Show the user's notifications, newest first.
      *
-     * Only the current user's notifications are listed, newest first. Title
-     * and body are decrypted on read with the diary key from the session.
+     * Title and body are decrypted on read with the diary key from the
+     * session, so this route stays behind the `diary.unlocked` middleware.
      */
     public function index(Request $request): InertiaResponse
     {
-        $notifications = $request->user()
-            ->notifications()
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(fn (Notification $notification): array => [
-                'id' => $notification->id,
-                'title' => $notification->title,
-                'body' => $notification->body,
-                'readAt' => $notification->read_at?->toISOString(),
-                'createdAt' => $notification->created_at->toISOString(),
-            ])
-            ->all();
-
         return Inertia::render('diary/notifications', [
-            'notifications' => $notifications,
+            'notifications' => $this->payload($request),
         ]);
     }
 
     /**
      * Mark a notification as read.
      */
-    public function markRead(Request $request, Notification $notification)
+    public function markRead(Request $request, Notification $notification): JsonResponse
     {
         if ($request->user()->id !== $notification->user_id) {
             abort(404);
@@ -56,7 +45,7 @@ class NotificationController extends Controller
     /**
      * Mark every notification of the user as read.
      */
-    public function readAll(Request $request)
+    public function readAll(Request $request): JsonResponse
     {
         $request->user()->notifications()->unread()->update(['read_at' => now()]);
 
@@ -66,9 +55,43 @@ class NotificationController extends Controller
     /**
      * List the user's notifications as JSON (used by the nav popup).
      */
-    public function list(Request $request)
+    public function list(Request $request): JsonResponse
     {
-        $notifications = $request->user()
+        return response()->json($this->payload($request));
+    }
+
+    /**
+     * Delete a notification.
+     *
+     * The nav popup deletes in place with a plain fetch and only needs the
+     * status code, while the notifications page deletes through Inertia and
+     * expects a redirect back to the list with a flash message.
+     */
+    public function destroy(Request $request, Notification $notification): RedirectResponse|Response
+    {
+        if ($request->user()->id !== $notification->user_id) {
+            abort(404);
+        }
+
+        $notification->delete();
+
+        if ($request->expectsJson()) {
+            return response()->noContent();
+        }
+
+        return redirect()
+            ->route('diary.notifications')
+            ->with('status', __('messages.notifications.deleted'));
+    }
+
+    /**
+     * Flatten the user's notifications, newest first, for the page and popup.
+     *
+     * @return array<int, array{id: int, title: string|null, body: string|null, readAt: string|null, createdAt: string}>
+     */
+    private function payload(Request $request): array
+    {
+        return $request->user()
             ->notifications()
             ->orderBy('created_at', 'desc')
             ->get()
@@ -80,23 +103,5 @@ class NotificationController extends Controller
                 'createdAt' => $notification->created_at->toISOString(),
             ])
             ->all();
-
-        return response()->json($notifications);
-    }
-
-    /**
-     * Delete a notification.
-     */
-    public function destroy(Request $request, Notification $notification): RedirectResponse
-    {
-        if ($request->user()->id !== $notification->user_id) {
-            abort(404);
-        }
-
-        $notification->delete();
-
-        return redirect()
-            ->route('diary.notifications')
-            ->with('status', __('messages.notification.deleted'));
     }
 }

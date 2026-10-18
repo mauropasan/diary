@@ -54,6 +54,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Fons actualitzat.',
+        'notifications-updated' => 'Notificacions per correu actualitzades.',
     ],
 
     'notifications' => [

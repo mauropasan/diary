@@ -53,16 +53,14 @@ export default function Settings({
         });
     }
 
-    function submitNotifications(
-        event: React.FormEvent<HTMLFormElement>,
-    ): void {
-        event.preventDefault();
+    function toggleEmailNotifications(enabled: boolean): void {
+        const previous = notifications.data.email_notifications;
+
+        notifications.setData('email_notifications', enabled);
         notifications.put(settingsUpdate.url(), {
-            onSuccess: () => {
-                notifications.setData(
-                    'email_notifications',
-                    notifications.data.email_notifications,
-                );
+            preserveScroll: true,
+            onError: () => {
+                notifications.setData('email_notifications', previous);
             },
         });
     }
@@ -171,11 +169,7 @@ export default function Settings({
                                 {t('settings.notificationsSubtitle')}
                             </p>
 
-                            <form
-                                onSubmit={submitNotifications}
-                                noValidate
-                                className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
-                            >
+                            <div className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
                                 <input
                                     id="email_notifications"
                                     type="checkbox"
@@ -183,8 +177,7 @@ export default function Settings({
                                         notifications.data.email_notifications
                                     }
                                     onChange={(event) =>
-                                        notifications.setData(
-                                            'email_notifications',
+                                        toggleEmailNotifications(
                                             event.target.checked,
                                         )
                                     }
@@ -201,7 +194,12 @@ export default function Settings({
                                         ? t('settings.emailNotificationsOn')
                                         : t('settings.emailNotificationsOff')}
                                 </span>
-                            </form>
+                            </div>
+                            {notifications.errors.email_notifications && (
+                                <p className="mt-2 text-xs text-red-600 dark:text-red-400">
+                                    {notifications.errors.email_notifications}
+                                </p>
+                            )}
                         </section>
 
                         <section className="w-full">

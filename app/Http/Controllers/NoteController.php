@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveNoteRequest;
-use App\Mail\ReminderNotification;
+use App\Jobs\SendReminderEmail;
 use App\Models\Note;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -40,15 +39,7 @@ class NoteController extends Controller
         $note = $request->user()->notes()->create($this->attributes($request));
 
         if (in_array($note->kind, Note::DATED_KINDS, true)) {
-            $notification = $request->user()->notifications()->create([
-                'title' => $note->title,
-                'body' => $note->body,
-            ]);
-
-            if ($request->user()->email_notifications) {
-                Mail::to($request->user()->email)
-                    ->send(new ReminderNotification($request->user()));
-            }
+            $this->syncNotification($note);
         }
 
         return redirect()->route('diary.notes');
@@ -63,6 +54,14 @@ class NoteController extends Controller
 
         $note->update($this->attributes($request));
 
+        if (in_array($note->kind, Note::DATED_KINDS, true)) {
+            $this->syncNotification($note);
+        } else {
+            // The note is plain now, so its pending reminder goes away too
+            // (the queued email notices the missing row and skips itself).
+            $note->notifications()->delete();
+        }
+
         return redirect()->route('diary.notes');
     }
 
@@ -73,6 +72,9 @@ class NoteController extends Controller
     {
         $this->authorizeNote($request, $note);
 
+        // Drop the pending reminder first so a queued email cancels itself
+        // even when the foreign key cascade is not enforced.
+        $note->notifications()->delete();
         $note->delete();
 
         return redirect()->route('diary.notes');
@@ -85,6 +87,53 @@ class NoteController extends Controller
     {
         if ($request->user()?->id !== $note->user_id) {
             abort(404);
+        }
+    }
+
+    /**
+     * Create or reschedule the pending notification for a dated note.
+     *
+     * The notification becomes visible the day before the note's date and
+     * the reminder email is queued for that same moment, so an event added
+     * more than a day ahead stays silent until it is actually due. Moving
+     * the date re-arms the notification: it should pop and mail again.
+     */
+    private function syncNotification(Note $note): void
+    {
+        if ($note->date === null) {
+            return;
+        }
+
+        $dueAt = $note->date->copy()->subDay();
+        $notification = $note->notifications()->first();
+
+        if ($notification === null) {
+            $notification = $note->user->notifications()->create([
+                'note_id' => $note->id,
+                'title' => $note->title,
+                'body' => $note->body,
+                'due_at' => $dueAt,
+            ]);
+
+            if ($note->user->email_notifications) {
+                SendReminderEmail::dispatch($notification->id)->delay($dueAt);
+            }
+
+            return;
+        }
+
+        $rescheduled = ! $notification->due_at->equalTo($dueAt);
+
+        $notification->forceFill([
+            'title' => $note->title,
+            'body' => $note->body,
+            'due_at' => $dueAt,
+            'read_at' => $rescheduled ? null : $notification->read_at,
+            'emailed_at' => $rescheduled ? null : $notification->emailed_at,
+        ])->save();
+
+        if ($rescheduled && $note->user->email_notifications) {
+            SendReminderEmail::dispatch($notification->id)->delay($dueAt);
         }
     }
 

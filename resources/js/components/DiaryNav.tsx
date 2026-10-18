@@ -1,6 +1,6 @@
 import type { PendingVisit } from '@inertiajs/core';
 import { Link, router, usePage } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { home, logout } from '@/routes';
 import { cn } from '@/lib/utils';
@@ -274,7 +274,7 @@ export default function DiaryNav({
         };
     }
 
-    async function loadNotifications(): Promise<void> {
+    const loadNotifications = useCallback(async (): Promise<void> => {
         const response = await fetch(notificationList.url(), {
             headers: { Accept: 'application/json' },
         });
@@ -297,7 +297,7 @@ export default function DiaryNav({
         }> = await response.json();
         setNotificationsList(list);
         setUnreadCount(list.filter((item) => item.readAt === null).length);
-    }
+    }, []);
 
     async function markNotificationRead(id: number): Promise<void> {
         const response = await fetch(notificationMarkRead.url(id), {
@@ -418,6 +418,19 @@ export default function DiaryNav({
 
         return () => window.removeEventListener('keydown', closeOnEscape);
     }, [open]);
+
+    // Refresh the badge while the page stays open so a notification pops at
+    // its trigger moment without waiting for a navigation. Hidden tabs are
+    // skipped to avoid pointless polling.
+    useEffect(() => {
+        const interval = window.setInterval(() => {
+            if (!document.hidden) {
+                void loadNotifications();
+            }
+        }, 60_000);
+
+        return () => window.clearInterval(interval);
+    }, [loadNotifications]);
 
     return (
         <nav className="flex items-center">

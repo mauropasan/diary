@@ -108,6 +108,24 @@ it('persists the email notifications toggle', function () {
     expect($this->user->refresh()->email_notifications)->toBeTrue();
 });
 
+it('keeps the background and its version when only the email notifications toggle changes', function () {
+    ($this->unlock)();
+
+    $this->put(route('diary.settings.update'), ['background' => 'sky']);
+
+    $before = $this->user->refresh();
+
+    $this->put(route('diary.settings.update'), ['email_notifications' => false])
+        ->assertRedirect(route('diary.settings'))
+        ->assertSessionHas('status', __('messages.settings.notifications-updated'));
+
+    $after = $this->user->refresh();
+
+    expect($after->background)->toBe($before->background)
+        ->and($after->background_version)->toBe($before->background_version)
+        ->and($after->email_notifications)->toBeFalse();
+});
+
 it('rejects a non boolean email notifications value', function () {
     ($this->unlock)();
 

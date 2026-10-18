@@ -198,6 +198,11 @@ php artisan diary:create-user
 Keep `diary:backup` scheduled in production (e.g. a cron entry or the scheduler)
 so snapshots are taken regularly.
 
+Reminder emails are queued and delivered on the day before the related note's
+date, so a queue worker must be running: `composer run dev` starts one, otherwise
+run `php artisan queue:work` next to `php artisan serve`. In-app notifications
+do not depend on the worker — they appear on their own at the same moment.
+
 ## Configuration
 
 Key environment variables (see `.env.example`):

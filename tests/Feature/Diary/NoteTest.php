@@ -1,8 +1,10 @@
 <?php
 
+use App\Jobs\SendReminderEmail;
 use App\Mail\ReminderNotification;
 use App\Models\Note;
 use App\Models\User;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia;
 
@@ -31,8 +33,8 @@ it('creates a note and encrypts its text', function () {
         ->and($note->kind)->toBe('note');
 });
 
-it('sends a reminder email by default when a dated reminder note is created', function () {
-    Mail::fake();
+it('queues the reminder email by default when a dated reminder note is created', function () {
+    Bus::fake();
 
     $this->post(route('diary.notes.store'), [
         'title' => 'Renew passport',
@@ -41,10 +43,11 @@ it('sends a reminder email by default when a dated reminder note is created', fu
         'date' => now()->addDays(3)->toDateString(),
     ])->assertRedirect(route('diary.notes'));
 
-    Mail::assertSent(ReminderNotification::class, 1);
+    Bus::assertDispatched(SendReminderEmail::class);
 });
 
-it('does not send a reminder email when email notifications are disabled', function () {
+it('does not queue a reminder email when email notifications are disabled', function () {
+    Bus::fake();
     Mail::fake();
 
     $this->user->forceFill(['email_notifications' => false])->save();
@@ -56,6 +59,7 @@ it('does not send a reminder email when email notifications are disabled', funct
         'date' => now()->addDays(3)->toDateString(),
     ])->assertRedirect(route('diary.notes'));
 
+    Bus::assertNotDispatched(SendReminderEmail::class);
     Mail::assertNotSent(ReminderNotification::class);
 });
 

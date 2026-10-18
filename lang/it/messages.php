@@ -54,6 +54,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Sfondo aggiornato.',
+        'notifications-updated' => 'Notifiche email aggiornate.',
     ],
 
     'notifications' => [

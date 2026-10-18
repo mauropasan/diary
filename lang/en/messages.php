@@ -54,6 +54,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Background updated.',
+        'notifications-updated' => 'Email notifications updated.',
         'notifications' => 'Email notifications',
         'notificationsSubtitle' => 'Receive an email when a new reminder is created.',
         'emailNotifications' => 'Email notifications',

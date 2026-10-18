@@ -47,7 +47,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'background' => $user?->backgroundChoice(),
             'backgroundVersion' => (string) ($user === null ? 0 : $user->background_version),
-            'notificationCount' => (int) ($user?->notifications()->whereNull('read_at')->count() ?? 0),
+            'notificationCount' => (int) ($user?->notifications()->unread()->due()->count() ?? 0),
             'diary' => [
                 'lockAfterMinutes' => (int) config('diary.lock_after_minutes'),
                 'timezone' => config('app.timezone'),

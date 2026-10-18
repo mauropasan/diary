@@ -47,7 +47,9 @@ class NotificationController extends Controller
      */
     public function readAll(Request $request): JsonResponse
     {
-        $request->user()->notifications()->unread()->update(['read_at' => now()]);
+        // Only the due ones: notifications that have not popped yet must
+        // arrive unread when their trigger moment comes.
+        $request->user()->notifications()->unread()->due()->update(['read_at' => now()]);
 
         return response()->json(['ok' => true]);
     }
@@ -93,6 +95,7 @@ class NotificationController extends Controller
     {
         return $request->user()
             ->notifications()
+            ->due()
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(fn (Notification $notification): array => [

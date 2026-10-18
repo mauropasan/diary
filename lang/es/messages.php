@@ -54,6 +54,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Fondo actualizado.',
+        'notifications-updated' => 'Notificaciones por correo actualizadas.',
         'notifications' => 'Notificaciones por correo',
         'notificationsSubtitle' => 'Recibe un correo cuando se cree un nuevo recordatorio.',
         'emailNotifications' => 'Notificaciones por correo',

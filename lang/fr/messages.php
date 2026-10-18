@@ -54,6 +54,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Arrière-plan mis à jour.',
+        'notifications-updated' => 'Notifications par e-mail mises à jour.',
     ],
 
     'notifications' => [

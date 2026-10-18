@@ -104,22 +104,38 @@ class SettingsController extends Controller
             'email_notifications' => ['nullable', 'boolean'],
         ]);
 
-        $background = $validated['background'] ?? null;
+        // Only touch the columns the request actually carries, so saving the
+        // notification toggle never resets the chosen background.
+        $attributes = [];
 
-        $request->user()->forceFill([
-            'background' => $background === null || $background === 'default'
+        if (array_key_exists('background', $validated)) {
+            $background = $validated['background'];
+            $attributes['background'] = $background === null || $background === 'default'
                 ? null
-                : $background,
-            'email_notifications' => (bool) ($validated['email_notifications'] ?? $request->user()->email_notifications),
-        ])->save();
+                : $background;
+        }
 
-        // Bump the dedicated background version so the client-side cache-busting
-        // token changes on every upload, even within the same second.
-        $request->user()->increment('background_version');
+        if (array_key_exists('email_notifications', $validated)) {
+            $attributes['email_notifications'] = (bool) $validated['email_notifications'];
+        }
+
+        if ($attributes !== []) {
+            $request->user()->forceFill($attributes)->save();
+        }
+
+        $updatesBackground = array_key_exists('background', $validated);
+
+        if ($updatesBackground) {
+            // Bump the dedicated background version so the client-side cache-busting
+            // token changes on every upload, even within the same second.
+            $request->user()->increment('background_version');
+        }
 
         return redirect()
             ->route('diary.settings')
-            ->with('status', __('messages.settings.background-updated'));
+            ->with('status', __($updatesBackground
+                ? 'messages.settings.background-updated'
+                : 'messages.settings.notifications-updated'));
     }
 
     /**

@@ -9,6 +9,7 @@
         "confirmNewPassword": "Repite la nueva contraseña",
         "close": "Cerrar",
         "cancel": "Cancelar",
+        "save": "Guardar",
         "language": "Idioma",
         "backToLogin": "Volver a iniciar sesión"
     },
@@ -70,6 +71,16 @@
         "subtitle": "Tu diario está bloqueado. Introduce tu contraseña para descifrarlo.",
         "submit": "Desbloquear",
         "submitting": "Descifrando…"
+    },
+    "twoFactor": {
+        "title": "Autenticación de dos factores",
+        "subtitle": "Introduce el código de tu aplicación de autenticación para terminar de iniciar sesión. También vale un código de recuperación que hayas guardado.",
+        "code": "Código",
+        "submit": "Verificar",
+        "submitting": "Verificando…",
+        "trust": "Confiar en este navegador durante {{count}} días",
+        "codesTitle": "Guarda tus códigos de recuperación",
+        "codesIntro": "Cada código puede usarse una sola vez si pierdes el acceso a tu aplicación de autenticación. Solo se muestran una vez."
     },
     "lock": {
         "heading": "Diario bloqueado",
@@ -173,8 +184,12 @@
         "entries_one": "{{count}} entrada",
         "entries_other": "{{count}} entradas",
         "since": "desde {{date}}",
+        "changeEmail": "Cambiar correo",
         "delete": "Eliminar",
-        "confirmDelete": "¿Eliminar la cuenta de {{name}}? Se borrarán todas sus entradas y no se podrán recuperar. Esta acción no se puede deshacer."
+        "confirmDelete": "¿Eliminar la cuenta de {{name}}? Se borrarán todas sus entradas y no se podrán recuperar. Esta acción no se puede deshacer.",
+        "twoFactorBadge": "2FA",
+        "turnOffTwoFactor": "Desactivar 2FA",
+        "confirmTurnOffTwoFactor": "¿Desactivar la autenticación de dos factores de {{name}}? Solo necesitará su contraseña para iniciar sesión."
     },
     "notes": {
         "title": "Notas",
@@ -262,6 +277,10 @@
     "settings": {
         "title": "Ajustes",
         "subtitle": "Personaliza tu diario.",
+        "account": "Cuenta",
+        "accountSubtitle": "La dirección de correo con la que inicias sesión. También allí llegan los recordatorios.",
+        "emailSubmit": "Actualizar correo",
+        "emailSubmitting": "Guardando…",
         "appearance": "Apariencia",
         "appearanceSubtitle": "Tema, idioma y fondo del diario.",
         "background": "Fondo",
@@ -288,7 +307,23 @@
         "notificationsSubtitle": "Recibe un correo cuando se cree un nuevo recordatorio.",
         "emailNotifications": "Notificaciones por correo",
         "emailNotificationsOn": "Activado",
-        "emailNotificationsOff": "Desactivado"
+        "emailNotificationsOff": "Desactivado",
+        "twoFactor": "Autenticación de dos factores",
+        "twoFactorSubtitle": "Pide un código de tu aplicación de autenticación al iniciar sesión.",
+        "twoFactorEnableHint": "Actívala y también necesitarás un código de una aplicación como Google Authenticator, Authy o 1Password cada vez que inicies sesión.",
+        "twoFactorEnable": "Activar",
+        "twoFactorQrHint": "Escanea el código con tu aplicación de autenticación o introduce la clave de configuración manualmente.",
+        "twoFactorQrAlt": "Código QR de configuración de dos factores",
+        "twoFactorSecret": "Clave de configuración",
+        "twoFactorCode": "Código",
+        "twoFactorConfirm": "Confirmar código",
+        "twoFactorConfirming": "Confirmando…",
+        "twoFactorOnHint": "Se requiere un código de tu aplicación de autenticación al iniciar sesión.",
+        "twoFactorCodesRemaining_one": "Queda {{count}} código de recuperación.",
+        "twoFactorCodesRemaining_other": "Quedan {{count}} códigos de recuperación.",
+        "twoFactorRegenerate": "Códigos de recuperación nuevos",
+        "twoFactorDisable": "Desactivar",
+        "twoFactorDisableConfirm": "¿Desactivar la autenticación de dos factores? Para iniciar sesión solo se requerirá tu contraseña."
     },
     "error": {
         "boundary": "Algo salió mal.",

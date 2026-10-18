@@ -9,6 +9,7 @@
         "confirmNewPassword": "Neues Passwort wiederholen",
         "close": "Schließen",
         "cancel": "Abbrechen",
+        "save": "Speichern",
         "language": "Sprache",
         "backToLogin": "Zurück zur Anmeldung"
     },
@@ -70,6 +71,16 @@
         "subtitle": "Ihr Tagebuch ist gesperrt. Geben Sie Ihr Passwort ein, um es zu entschlüsseln.",
         "submit": "Entsperren",
         "submitting": "Entschlüsselung…"
+    },
+    "twoFactor": {
+        "title": "Zwei-Faktor-Authentifizierung",
+        "subtitle": "Geben Sie den Code aus Ihrer Authenticator-App ein, um die Anmeldung abzuschließen. Ein gespeicherter Wiederherstellungscode funktioniert auch.",
+        "code": "Code",
+        "submit": "Bestätigen",
+        "submitting": "Wird bestätigt…",
+        "trust": "Diesem Browser {{count}} Tage lang vertrauen",
+        "codesTitle": "Speichern Sie Ihre Wiederherstellungscodes",
+        "codesIntro": "Jeder Code kann einmal verwendet werden, falls der Zugriff auf Ihre Authenticator-App verloren geht. Sie werden nur einmal angezeigt."
     },
     "lock": {
         "heading": "Tagebuch gesperrt",
@@ -173,8 +184,12 @@
         "entries_one": "{{count}} Eintrag",
         "entries_other": "{{count}} Einträge",
         "since": "seit {{date}}",
+        "changeEmail": "E-Mail ändern",
         "delete": "Löschen",
-        "confirmDelete": "Konto von {{name}} löschen? Alle Einträge werden gelöscht und können nicht wiederhergestellt werden. Diese Aktion kann nicht rückgängig gemacht werden."
+        "confirmDelete": "Konto von {{name}} löschen? Alle Einträge werden gelöscht und können nicht wiederhergestellt werden. Diese Aktion kann nicht rückgängig gemacht werden.",
+        "twoFactorBadge": "2FA",
+        "turnOffTwoFactor": "2FA deaktivieren",
+        "confirmTurnOffTwoFactor": "Zwei-Faktor-Authentifizierung für {{name}} deaktivieren? Zum Anmelden wird nur noch das Passwort benötigt."
     },
     "notes": {
         "title": "Notizen",
@@ -262,6 +277,10 @@
     "settings": {
         "title": "Einstellungen",
         "subtitle": "Personalisiere dein Tagebuch.",
+        "account": "Konto",
+        "accountSubtitle": "Die E-Mail-Adresse, mit der du dich anmeldest. An sie gehen auch die Erinnerungen.",
+        "emailSubmit": "E-Mail-Adresse ändern",
+        "emailSubmitting": "Speichern…",
         "appearance": "Erscheinungsbild",
         "appearanceSubtitle": "Thema, Sprache und Hintergrund des Tagebuchs.",
         "background": "Hintergrund",
@@ -288,7 +307,23 @@
         "notificationsSubtitle": "Erhalten Sie eine E-Mail, wenn eine neue Erinnerung erstellt wird.",
         "emailNotifications": "E-Mail-Benachrichtigungen",
         "emailNotificationsOn": "An",
-        "emailNotificationsOff": "Aus"
+        "emailNotificationsOff": "Aus",
+        "twoFactor": "Zwei-Faktor-Authentifizierung",
+        "twoFactorSubtitle": "Fordert beim Anmelden einen Code aus Ihrer Authenticator-App an.",
+        "twoFactorEnableHint": "Schalten Sie sie ein und Sie benötigen bei jeder Anmeldung zusätzlich einen Code aus einer App wie Google Authenticator, Authy oder 1Password.",
+        "twoFactorEnable": "Aktivieren",
+        "twoFactorQrHint": "Scannen Sie den Code mit Ihrer Authenticator-App oder geben Sie den Einrichtungsschlüssel manuell ein.",
+        "twoFactorQrAlt": "QR-Code für die Zwei-Faktor-Einrichtung",
+        "twoFactorSecret": "Einrichtungsschlüssel",
+        "twoFactorCode": "Code",
+        "twoFactorConfirm": "Code bestätigen",
+        "twoFactorConfirming": "Wird bestätigt…",
+        "twoFactorOnHint": "Beim Anmelden wird ein Code aus Ihrer Authenticator-App benötigt.",
+        "twoFactorCodesRemaining_one": "Noch {{count}} Wiederherstellungscode verfügbar.",
+        "twoFactorCodesRemaining_other": "Noch {{count}} Wiederherstellungscodes verfügbar.",
+        "twoFactorRegenerate": "Neue Wiederherstellungscodes",
+        "twoFactorDisable": "Deaktivieren",
+        "twoFactorDisableConfirm": "Zwei-Faktor-Authentifizierung deaktivieren? Zum Anmelden wird nur noch Ihr Passwort benötigt."
     },
     "error": {
         "boundary": "Etwas ist schiefgelaufen.",

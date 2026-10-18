@@ -2,7 +2,7 @@ import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DiaryNav from '@/components/DiaryNav';
-import FlashBanner from '@/components/FlashBanner';
+import StatusFlyout from '@/components/StatusFlyout';
 import { cn } from '@/lib/utils';
 import {
     destroy as notificationDestroy,
@@ -28,7 +28,6 @@ export default function Notifications({
     const csrfToken =
         (usePage().props as { csrfToken?: string }).csrfToken ?? '';
     const [notificationsList, setNotificationsList] = useState(notifications);
-    const [flashDismissed, setFlashDismissed] = useState(false);
 
     function csrfHeaders(): HeadersInit {
         return {
@@ -98,12 +97,7 @@ export default function Notifications({
                         <DiaryNav />
                     </header>
 
-                    {flash?.status && !flashDismissed && (
-                        <FlashBanner
-                            message={flash.status}
-                            onClose={() => setFlashDismissed(true)}
-                        />
-                    )}
+                    <StatusFlyout message={flash?.status ?? null} />
 
                     <div className="m-auto">
                         <div className="mb-4 flex items-center justify-between">

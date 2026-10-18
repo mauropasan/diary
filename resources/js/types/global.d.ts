@@ -18,6 +18,7 @@ declare module '@inertiajs/core' {
             flash: {
                 status: string | null;
                 recoveryKey: string | null;
+                recoveryCodes: string[] | null;
             };
             sidebarOpen: boolean;
             [key: string]: unknown;

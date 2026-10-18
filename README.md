@@ -26,9 +26,15 @@ your entries in plaintext once they are saved.
   `VACUUM INTO` or MySQL `mysqldump`, depending on the configured driver).
 - **One-time registration** for the very first user, then a locked login screen.
 - **Inactivity lock**: the encryption key is dropped from the session after
-  `DIARY_LOCK_AFTER_MINUTES` (default 15) of inactivity; re-unlock asking only
-  for the password.
+  `DIARY_LOCK_AFTER_MINUTES` (default 15) of inactivity; re-unlock asks only
+  for the password, never a two-factor code.
 - **Password change** re-wraps the key without ever re-encrypting entries.
+- **Email change** from the settings page; an admin can also update the email
+  of any other account from the same screen.
+- **Two-factor authentication** (opt-in, TOTP): scan the setup key with an
+  authenticator app, save one-time recovery codes and trust a browser for 30
+  days so the code is asked only once. The recovery key still bypasses the
+  challenge, and an admin can turn the second factor off if the device is lost.
 
 ## How encryption works
 
@@ -226,6 +232,10 @@ Key environment variables (see `.env.example`):
 - The database (SQLite file or MySQL tables) and session storage contain only
   ciphertext for entry text; back them up, but remember the recovery key is the
   only way back in if the password is lost.
+- Two-factor authentication stores the TOTP secret encrypted with `APP_KEY` and
+  the recovery codes as one-way hashes. The password-only inactivity unlock and
+  the one-time recovery key never ask for a code, so a lost device never locks
+  you out of your own diary.
 
 ## Project structure
 
@@ -234,8 +244,9 @@ app/
   Casts/        EncryptedEntryText        # Eloquent cast for encrypted columns
   Console/      CreateDiaryUser, BackupDiary
   Crypto/       DiaryCrypto, DiaryKeyManager, DiaryKeyStore, DiaryUnlocker, TagNameIndex
+  Security/     Totp, RecoveryCodes, TrustedDevices   # two-factor authentication
   Http/         Controllers, Middleware, Requests
-  Models/       User, Entry, Tag, Schedule
+  Models/       User, Entry, Tag, Schedule, TwoFactorDevice
 resources/js/
   pages/        auth/* and diary/* (Inertia React pages)
   components/   DiaryEditor, DiaryCalendar, TagInput, LockScreen, DiaryNav
@@ -253,5 +264,6 @@ vendor/bin/pest --filter=diary
 ```
 
 The suite covers the encryption round-trip, wrong-password handling, password
-change with key re-wrap, inactivity lock, future-date rejection and the
-one-time registration flow.
+change with key re-wrap, inactivity lock, future-date rejection, the one-time
+registration flow and the two-factor flows (enrolment, challenge, single-use
+recovery codes and trusted browsers).

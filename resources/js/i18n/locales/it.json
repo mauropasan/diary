@@ -9,6 +9,7 @@
         "confirmNewPassword": "Ripeti la nuova password",
         "close": "Chiudi",
         "cancel": "Annulla",
+        "save": "Salva",
         "language": "Lingua",
         "backToLogin": "Torna all'accesso"
     },
@@ -70,6 +71,16 @@
         "subtitle": "Il tuo diario è bloccato. Inserisci la password per decifrarlo.",
         "submit": "Sblocca",
         "submitting": "Decifratura…"
+    },
+    "twoFactor": {
+        "title": "Autenticazione a due fattori",
+        "subtitle": "Inserisci il codice della tua app di autenticazione per terminare l'accesso. Funziona anche un codice di recupero salvato.",
+        "code": "Codice",
+        "submit": "Verifica",
+        "submitting": "Verificando…",
+        "trust": "Considera attendibile questo browser per {{count}} giorni",
+        "codesTitle": "Salva i tuoi codici di recupero",
+        "codesIntro": "Ogni codice può essere usato una sola volta se perdi l'accesso alla tua app di autenticazione. Vengono mostrati una sola volta."
     },
     "lock": {
         "heading": "Diario bloccato",
@@ -173,8 +184,12 @@
         "entries_one": "{{count}} voce",
         "entries_other": "{{count}} voci",
         "since": "dal {{date}}",
+        "changeEmail": "Cambia email",
         "delete": "Elimina",
-        "confirmDelete": "Eliminare l'account di {{name}}? Tutte le sue voci saranno cancellate e non potranno essere recuperate. Questa azione non può essere annullata."
+        "confirmDelete": "Eliminare l'account di {{name}}? Tutte le sue voci saranno cancellate e non potranno essere recuperate. Questa azione non può essere annullata.",
+        "twoFactorBadge": "2FA",
+        "turnOffTwoFactor": "Disattiva 2FA",
+        "confirmTurnOffTwoFactor": "Disattivare l'autenticazione a due fattori di {{name}}? Servirà solo la sua password per accedere."
     },
     "notes": {
         "title": "Note",
@@ -262,6 +277,10 @@
     "settings": {
         "title": "Impostazioni",
         "subtitle": "Personalizza il tuo diario.",
+        "account": "Account",
+        "accountSubtitle": "L'indirizzo email con cui accedi. Anche i promemoria arrivano qui.",
+        "emailSubmit": "Aggiorna email",
+        "emailSubmitting": "Salvataggio…",
         "appearance": "Aspetto",
         "appearanceSubtitle": "Tema, lingua e sfondo del diario.",
         "background": "Sfondo",
@@ -288,7 +307,23 @@
         "notificationsSubtitle": "Ricevi un'email quando viene creato un nuovo promemoria.",
         "emailNotifications": "Notifiche email",
         "emailNotificationsOn": "Attivo",
-        "emailNotificationsOff": "Disattivo"
+        "emailNotificationsOff": "Disattivo",
+        "twoFactor": "Autenticazione a due fattori",
+        "twoFactorSubtitle": "Chiede un codice della tua app di autenticazione all'accesso.",
+        "twoFactorEnableHint": "Attivala e avrai anche bisogno di un codice di un'app come Google Authenticator, Authy o 1Password a ogni accesso.",
+        "twoFactorEnable": "Attiva",
+        "twoFactorQrHint": "Scansiona il codice con la tua app di autenticazione o inserisci la chiave di configurazione manualmente.",
+        "twoFactorQrAlt": "Codice QR di configurazione a due fattori",
+        "twoFactorSecret": "Chiave di configurazione",
+        "twoFactorCode": "Codice",
+        "twoFactorConfirm": "Conferma codice",
+        "twoFactorConfirming": "Confermando…",
+        "twoFactorOnHint": "All'accesso è richiesto un codice della tua app di autenticazione.",
+        "twoFactorCodesRemaining_one": "Resta {{count}} codice di recupero.",
+        "twoFactorCodesRemaining_other": "Restano {{count}} codici di recupero.",
+        "twoFactorRegenerate": "Nuovi codici di recupero",
+        "twoFactorDisable": "Disattiva",
+        "twoFactorDisableConfirm": "Disattivare l'autenticazione a due fattori? All'accesso sarà richiesta solo la tua password."
     },
     "error": {
         "boundary": "Qualcosa è andato storto.",

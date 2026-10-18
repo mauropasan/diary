@@ -9,6 +9,7 @@
         "confirmNewPassword": "Repeteix la nova contrasenya",
         "close": "Tanca",
         "cancel": "Cancel·la",
+        "save": "Desa",
         "language": "Idioma",
         "backToLogin": "Torna a l'inici de sessió"
     },
@@ -70,6 +71,16 @@
         "subtitle": "El teu diari està bloquejat. Introdueix la teva contrasenya per desxifrar-lo.",
         "submit": "Desbloqueja",
         "submitting": "S'està desxifrant…"
+    },
+    "twoFactor": {
+        "title": "Autenticació de dos factors",
+        "subtitle": "Introduïu el codi de l'aplicació d'autenticació per acabar d'iniciar sessió. També serveix un codi de recuperació que hàgiu desat.",
+        "code": "Codi",
+        "submit": "Verificar",
+        "submitting": "Verificant…",
+        "trust": "Confiar en aquest navegador durant {{count}} dies",
+        "codesTitle": "Desa els vostres codis de recuperació",
+        "codesIntro": "Cada codi es pot fer servir una sola vegada si perdeu l'accés a l'aplicació d'autenticació. Es mostren una sola vegada."
     },
     "lock": {
         "heading": "Diari bloquejat",
@@ -173,8 +184,12 @@
         "entries_one": "{{count}} entrada",
         "entries_other": "{{count}} entrades",
         "since": "des del {{date}}",
+        "changeEmail": "Canvia el correu",
         "delete": "Elimina",
-        "confirmDelete": "Vols eliminar el compte de {{name}}? S'esborraran totes les seves entrades i no es podran recuperar. Aquesta acció no es pot desfer."
+        "confirmDelete": "Vols eliminar el compte de {{name}}? S'esborraran totes les seves entrades i no es podran recuperar. Aquesta acció no es pot desfer.",
+        "twoFactorBadge": "2FA",
+        "turnOffTwoFactor": "Desactivar 2FA",
+        "confirmTurnOffTwoFactor": "Voleu desactivar l'autenticació de dos factors de {{name}}? Només necessitarà la seva contrasenya per iniciar sessió."
     },
     "notes": {
         "title": "Notes",
@@ -262,6 +277,10 @@
     "settings": {
         "title": "Configuració",
         "subtitle": "Personalitza el teu diari.",
+        "account": "Compte",
+        "accountSubtitle": "L'adreça electrònica amb quin inicies sessió. També hi arriben els recordatoris.",
+        "emailSubmit": "Actualitza el correu",
+        "emailSubmitting": "S'està desant…",
         "appearance": "Aparença",
         "appearanceSubtitle": "Tema, idioma i fons del diari.",
         "background": "Fons",
@@ -288,7 +307,23 @@
         "notificationsSubtitle": "Rep un correu quan es crei un nou recordatori.",
         "emailNotifications": "Notificacions per correu",
         "emailNotificationsOn": "Activat",
-        "emailNotificationsOff": "Desactivat"
+        "emailNotificationsOff": "Desactivat",
+        "twoFactor": "Autenticació de dos factors",
+        "twoFactorSubtitle": "Demana un codi de l'aplicació d'autenticació en iniciar sessió.",
+        "twoFactorEnableHint": "Activeu-la i també necessitareu un codi d'una aplicació com Google Authenticator, Authy o 1Password cada vegada que inicieu sessió.",
+        "twoFactorEnable": "Activar",
+        "twoFactorQrHint": "Escanegeu el codi amb l'aplicació d'autenticació o introduïu la clau de configuració manualment.",
+        "twoFactorQrAlt": "Codi QR de configuració de dos factors",
+        "twoFactorSecret": "Clau de configuració",
+        "twoFactorCode": "Codi",
+        "twoFactorConfirm": "Confirmar el codi",
+        "twoFactorConfirming": "Confirmant…",
+        "twoFactorOnHint": "Es requereix un codi de l'aplicació d'autenticació en iniciar sessió.",
+        "twoFactorCodesRemaining_one": "Queda {{count}} codi de recuperació.",
+        "twoFactorCodesRemaining_other": "Queden {{count}} codis de recuperació.",
+        "twoFactorRegenerate": "Codis de recuperació nous",
+        "twoFactorDisable": "Desactivar",
+        "twoFactorDisableConfirm": "Voleu desactivar l'autenticació de dos factors? Per iniciar sessió només es requerirà la vostra contrasenya."
     },
     "error": {
         "boundary": "Alguna cosa ha anat malament.",

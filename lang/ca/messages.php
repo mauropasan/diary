@@ -27,10 +27,20 @@ return [
         'unwrap-failed' => 'No s\'ha pogut desxifrar la clau del diari; les dades poden estar danyades.',
     ],
 
+    'two_factor' => [
+        'ready' => 'Escaneja el codi QR i confirma un codi per activar l\'autenticació de dos factors.',
+        'enabled' => 'L\'autenticació de dos factors està activada.',
+        'disabled' => 'L\'autenticació de dos factors està desactivada.',
+        'codes-regenerated' => 'S\'han generat codis de recuperació nous. Els anteriors ja no funcionen.',
+        'invalid-code' => 'Aquest codi no és vàlid. Comproveu l\'aplicació d\'autenticació i torneu-ho a provar.',
+    ],
+
     'admin' => [
         'created' => 'Compte de :name creat. Entrega la contrasenya i la clau de recuperació al nou usuari.',
         'self-delete' => 'No pots eliminar el teu propi compte.',
         'deleted' => 'El compte de :name ha estat eliminat.',
+        'email-updated' => 'El correu electrònic de :name s\'ha actualitzat.',
+        'two-factor-disabled' => 'L\'autenticació de dos factors s\'ha desactivat per a :name.',
     ],
 
     'moods' => [
@@ -54,6 +64,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Fons actualitzat.',
+        'email-updated' => 'Correu electrònic actualitzat.',
         'notifications-updated' => 'Notificacions per correu actualitzades.',
     ],
 

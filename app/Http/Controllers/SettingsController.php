@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateEmailRequest;
 use App\Models\User;
+use App\Security\Totp;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -15,12 +17,13 @@ class SettingsController extends Controller
     /**
      * Show the settings page.
      */
-    public function index(Request $request): InertiaResponse
+    public function index(Request $request, Totp $totp): InertiaResponse
     {
         return Inertia::render('settings/index', [
             'background' => $request->user()->backgroundChoice(),
             'backgrounds' => array_values(config('diary.backgrounds', [])),
             'emailNotifications' => (bool) $request->user()->email_notifications,
+            'twoFactor' => $this->twoFactor($request->user(), $totp),
             'users' => $request->user()->is_admin
                 ? $this->users()
                 : null,
@@ -139,11 +142,56 @@ class SettingsController extends Controller
     }
 
     /**
+     * Save the new sign-in email of the authenticated user.
+     *
+     * The address is the login and account recovery identifier, so it has to
+     * stay unique across every account. Nothing else changes: the diary key
+     * is wrapped by the password, never by the email.
+     */
+    public function updateEmail(UpdateEmailRequest $request): RedirectResponse
+    {
+        $request->user()->forceFill([
+            'email' => $request->string('email')->toString(),
+        ])->save();
+
+        return redirect()
+            ->route('diary.settings')
+            ->with('status', __('messages.settings.email-updated'));
+    }
+
+    /**
+     * The two-factor state for the settings page.
+     *
+     * The QR code and the setup key are only exposed while enrolment is
+     * pending, and never again once the code has been confirmed.
+     *
+     * @return array{enabled: bool, pending: bool, secret: string|null, qr: string|null, recoveryCodesRemaining: int}
+     */
+    private function twoFactor(User $user, Totp $totp): array
+    {
+        $secret = $user->two_factor_secret;
+        $enabled = $user->twoFactorEnabled();
+        $pending = ! $enabled && is_string($secret) && $secret !== '';
+
+        return [
+            'enabled' => $enabled,
+            'pending' => $pending,
+            'secret' => $pending ? $secret : null,
+            'qr' => $pending
+                ? $totp->qrCodeDataUri($totp->otpauthUrl((string) config('app.name'), $user->email, $secret))
+                : null,
+            'recoveryCodesRemaining' => is_array($user->two_factor_recovery_codes)
+                ? count($user->two_factor_recovery_codes)
+                : 0,
+        ];
+    }
+
+    /**
      * List every diary account for the admin section of the settings page.
      *
      * Only plaintext information is shown; entry content is never decrypted here.
      *
-     * @return array<int, array{id: int, name: string, email: string, is_admin: bool, entries_count: int, created_at: string}>
+     * @return array<int, array{id: int, name: string, email: string, is_admin: bool, two_factor_enabled: bool, entries_count: int, created_at: string}>
      */
     private function users(): array
     {
@@ -156,6 +204,7 @@ class SettingsController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'is_admin' => $user->is_admin,
+                'two_factor_enabled' => $user->twoFactorEnabled(),
                 'entries_count' => (int) $user->entries_count,
                 'created_at' => $user->created_at->toDateString(),
             ])

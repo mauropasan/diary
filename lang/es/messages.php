@@ -27,10 +27,20 @@ return [
         'unwrap-failed' => 'No se pudo descifrar la clave del diario; los datos pueden estar dañados.',
     ],
 
+    'two_factor' => [
+        'ready' => 'Escanea el código QR y confirma un código para activar la autenticación de dos factores.',
+        'enabled' => 'La autenticación de dos factores está activada.',
+        'disabled' => 'La autenticación de dos factores está desactivada.',
+        'codes-regenerated' => 'Se han generado códigos de recuperación nuevos. Los anteriores ya no funcionan.',
+        'invalid-code' => 'Ese código no es válido. Comprueba tu aplicación de autenticación e inténtalo de nuevo.',
+    ],
+
     'admin' => [
         'created' => 'Cuenta de :name creada. Entrega la contraseña y la clave de recuperación al nuevo usuario.',
         'self-delete' => 'No puedes eliminar tu propia cuenta.',
         'deleted' => 'La cuenta de :name ha sido eliminada.',
+        'email-updated' => 'El correo electrónico de :name ha sido actualizado.',
+        'two-factor-disabled' => 'La autenticación de dos factores se ha desactivado para :name.',
     ],
 
     'moods' => [
@@ -54,6 +64,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Fondo actualizado.',
+        'email-updated' => 'Correo electrónico actualizado.',
         'notifications-updated' => 'Notificaciones por correo actualizadas.',
         'notifications' => 'Notificaciones por correo',
         'notificationsSubtitle' => 'Recibe un correo cuando se cree un nuevo recordatorio.',

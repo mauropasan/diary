@@ -27,10 +27,20 @@ return [
         'unwrap-failed' => 'Could not decrypt the diary key; the data may be corrupted.',
     ],
 
+    'two_factor' => [
+        'ready' => 'Scan the QR code and confirm a code to turn two-factor authentication on.',
+        'enabled' => 'Two-factor authentication is on.',
+        'disabled' => 'Two-factor authentication is off.',
+        'codes-regenerated' => 'New recovery codes generated. The previous codes no longer work.',
+        'invalid-code' => 'That code is not valid. Check your authenticator app and try again.',
+    ],
+
     'admin' => [
         'created' => 'Account for :name created. Hand the password and recovery key to the new user.',
         'self-delete' => 'You cannot delete your own account.',
         'deleted' => 'The account for :name has been deleted.',
+        'email-updated' => 'The email for :name has been updated.',
+        'two-factor-disabled' => 'Two-factor authentication has been turned off for :name.',
     ],
 
     'moods' => [
@@ -54,6 +64,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Background updated.',
+        'email-updated' => 'Email updated.',
         'notifications-updated' => 'Email notifications updated.',
         'notifications' => 'Email notifications',
         'notificationsSubtitle' => 'Receive an email when a new reminder is created.',

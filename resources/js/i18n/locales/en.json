@@ -9,6 +9,7 @@
         "confirmNewPassword": "Repeat new password",
         "close": "Close",
         "cancel": "Cancel",
+        "save": "Save",
         "language": "Language",
         "backToLogin": "Back to sign in"
     },
@@ -70,6 +71,16 @@
         "subtitle": "Your diary is locked. Enter your password to decrypt it.",
         "submit": "Unlock",
         "submitting": "Decrypting…"
+    },
+    "twoFactor": {
+        "title": "Two-factor authentication",
+        "subtitle": "Enter the code from your authenticator app to finish signing in. A recovery code you saved works too.",
+        "code": "Code",
+        "submit": "Verify",
+        "submitting": "Verifying…",
+        "trust": "Trust this browser for {{count}} days",
+        "codesTitle": "Save your recovery codes",
+        "codesIntro": "Each code can be used once if you lose access to your authenticator app. They are shown only once."
     },
     "lock": {
         "heading": "Diary locked",
@@ -173,8 +184,12 @@
         "entries_one": "{{count}} entry",
         "entries_other": "{{count}} entries",
         "since": "since {{date}}",
+        "changeEmail": "Change email",
         "delete": "Delete",
-        "confirmDelete": "Delete the account for {{name}}? All their entries will be erased and cannot be recovered. This action cannot be undone."
+        "confirmDelete": "Delete the account for {{name}}? All their entries will be erased and cannot be recovered. This action cannot be undone.",
+        "twoFactorBadge": "2FA",
+        "turnOffTwoFactor": "Turn off 2FA",
+        "confirmTurnOffTwoFactor": "Turn off two-factor authentication for {{name}}? They will only need their password to sign in."
     },
     "notes": {
         "title": "Notes",
@@ -262,6 +277,10 @@
     "settings": {
         "title": "Settings",
         "subtitle": "Personalize your diary.",
+        "account": "Account",
+        "accountSubtitle": "The email address you sign in with. Reminders are also sent there.",
+        "emailSubmit": "Update email",
+        "emailSubmitting": "Saving…",
         "appearance": "Appearance",
         "appearanceSubtitle": "Theme, language and diary background.",
         "background": "Background",
@@ -288,7 +307,23 @@
         "notificationsSubtitle": "Receive an email when a new reminder is created.",
         "emailNotifications": "Email notifications",
         "emailNotificationsOn": "On",
-        "emailNotificationsOff": "Off"
+        "emailNotificationsOff": "Off",
+        "twoFactor": "Two-factor authentication",
+        "twoFactorSubtitle": "Ask for a code from your authenticator app when you sign in.",
+        "twoFactorEnableHint": "Turn it on and you will also need a code from an authenticator app, like Google Authenticator, Authy or 1Password, every time you sign in.",
+        "twoFactorEnable": "Turn on",
+        "twoFactorQrHint": "Scan the code with your authenticator app, or enter the setup key by hand.",
+        "twoFactorQrAlt": "Two-factor setup QR code",
+        "twoFactorSecret": "Setup key",
+        "twoFactorCode": "Code",
+        "twoFactorConfirm": "Confirm code",
+        "twoFactorConfirming": "Confirming…",
+        "twoFactorOnHint": "A code from your authenticator app is required when you sign in.",
+        "twoFactorCodesRemaining_one": "{{count}} recovery code remaining.",
+        "twoFactorCodesRemaining_other": "{{count}} recovery codes remaining.",
+        "twoFactorRegenerate": "New recovery codes",
+        "twoFactorDisable": "Turn off",
+        "twoFactorDisableConfirm": "Turn off two-factor authentication? Signing in will only require your password again."
     },
     "error": {
         "boundary": "Something went wrong.",

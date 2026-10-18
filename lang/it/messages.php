@@ -27,10 +27,20 @@ return [
         'unwrap-failed' => 'Impossibile decifrare la chiave del diario; i dati potrebbero essere danneggiati.',
     ],
 
+    'two_factor' => [
+        'ready' => 'Scansiona il codice QR e conferma un codice per attivare l\'autenticazione a due fattori.',
+        'enabled' => 'L\'autenticazione a due fattori è attiva.',
+        'disabled' => 'L\'autenticazione a due fattori è disattivata.',
+        'codes-regenerated' => 'Sono stati generati nuovi codici di recupero. I precedenti non funzionano più.',
+        'invalid-code' => 'Quel codice non è valido. Controlla la tua app di autenticazione e riprova.',
+    ],
+
     'admin' => [
         'created' => 'Account di :name creato. Consegna la password e la chiave di recupero al nuovo utente.',
         'self-delete' => 'Non puoi eliminare il tuo account.',
         'deleted' => 'L\'account di :name è stato eliminato.',
+        'email-updated' => 'L\'email di :name è stata aggiornata.',
+        'two-factor-disabled' => 'L\'autenticazione a due fattori è stata disattivata per :name.',
     ],
 
     'moods' => [
@@ -54,6 +64,7 @@ return [
 
     'settings' => [
         'background-updated' => 'Sfondo aggiornato.',
+        'email-updated' => 'Email aggiornata.',
         'notifications-updated' => 'Notifiche email aggiornate.',
     ],
 

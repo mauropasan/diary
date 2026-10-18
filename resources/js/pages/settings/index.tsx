@@ -1,24 +1,44 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AdminUsersSection, {
     type AdminUser,
 } from '@/components/AdminUsersSection';
 import BackgroundPicker from '@/components/BackgroundPicker';
+import ConfirmDialog from '@/components/ConfirmDialog';
 import DiaryNav from '@/components/DiaryNav';
-import FlashBanner from '@/components/FlashBanner';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import RecoveryCodesBanner from '@/components/RecoveryCodesBanner';
 import RecoveryKeyBanner from '@/components/RecoveryKeyBanner';
+import StatusFlyout from '@/components/StatusFlyout';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { Link } from '@inertiajs/react';
 import { exportMethod as diaryExport } from '@/routes/diary';
 import { update as passwordUpdate } from '@/routes/diary/password';
-import { update as settingsUpdate } from '@/routes/diary/settings';
+import {
+    confirm as twoFactorConfirm,
+    disable as twoFactorDisable,
+    enable as twoFactorEnable,
+    recoveryCodes as twoFactorRecoveryCodes,
+} from '@/routes/diary/settings/two-factor';
+import {
+    email as settingsEmailUpdate,
+    update as settingsUpdate,
+} from '@/routes/diary/settings';
+
+export type TwoFactorState = {
+    enabled: boolean;
+    pending: boolean;
+    secret: string | null;
+    qr: string | null;
+    recoveryCodesRemaining: number;
+};
 
 type SettingsProps = {
     background: string | null;
     backgrounds: string[];
     emailNotifications: boolean;
+    twoFactor: TwoFactorState;
     users: AdminUser[] | null;
 };
 
@@ -29,12 +49,18 @@ export default function Settings({
     background,
     backgrounds,
     emailNotifications,
+    twoFactor,
     users,
 }: SettingsProps) {
     const { t } = useTranslation();
-    const { flash } = usePage().props;
+    const { auth, flash } = usePage().props;
     const [recoveryKeyDismissed, setRecoveryKeyDismissed] = useState(false);
-    const [flashDismissed, setFlashDismissed] = useState(false);
+    const [codesDismissed, setCodesDismissed] = useState(false);
+    const [disableTwoFactorOpen, setDisableTwoFactorOpen] = useState(false);
+
+    const account = useForm({
+        email: auth.user.email,
+    });
 
     const password = useForm({
         current_password: '',
@@ -46,9 +72,21 @@ export default function Settings({
         email_notifications: emailNotifications,
     });
 
+    const twoFactorCode = useForm({
+        code: '',
+    });
+
+    function submitAccount(event: React.FormEvent<HTMLFormElement>): void {
+        event.preventDefault();
+        account.patch(settingsEmailUpdate.url(), {
+            preserveScroll: true,
+        });
+    }
+
     function submitPassword(event: React.FormEvent<HTMLFormElement>): void {
         event.preventDefault();
         password.put(passwordUpdate.url(), {
+            preserveScroll: true,
             onSuccess: () => password.reset(),
         });
     }
@@ -62,6 +100,50 @@ export default function Settings({
             onError: () => {
                 notifications.setData('email_notifications', previous);
             },
+        });
+    }
+
+    function enableTwoFactor(): void {
+        router.post(
+            twoFactorEnable.url(),
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
+    }
+
+    function submitTwoFactorConfirm(
+        event: React.FormEvent<HTMLFormElement>,
+    ): void {
+        event.preventDefault();
+        twoFactorCode.post(twoFactorConfirm.url(), {
+            preserveScroll: true,
+            onSuccess: () => twoFactorCode.reset(),
+        });
+    }
+
+    function cancelTwoFactor(): void {
+        twoFactorCode.reset();
+        router.delete(twoFactorDisable.url(), {
+            preserveScroll: true,
+        });
+    }
+
+    function regenerateRecoveryCodes(): void {
+        router.post(
+            twoFactorRecoveryCodes.url(),
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
+    }
+
+    function confirmDisableTwoFactor(): void {
+        router.delete(twoFactorDisable.url(), {
+            preserveScroll: true,
+            onFinish: () => setDisableTwoFactorOpen(false),
         });
     }
 
@@ -97,12 +179,7 @@ export default function Settings({
                         />
                     )}
 
-                    {flash.status && !flashDismissed && (
-                        <FlashBanner
-                            message={flash.status}
-                            onClose={() => setFlashDismissed(true)}
-                        />
-                    )}
+                    <StatusFlyout message={flash.status} />
 
                     <div className="flex flex-col gap-8">
                         <section className="w-full">
@@ -200,6 +277,59 @@ export default function Settings({
                                     {notifications.errors.email_notifications}
                                 </p>
                             )}
+                        </section>
+
+                        <section className="w-full">
+                            <h2 className="mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                                {t('settings.account')}
+                            </h2>
+                            <p className="mb-4 text-xs text-zinc-700 dark:text-zinc-300">
+                                {t('settings.accountSubtitle')}
+                            </p>
+
+                            <form
+                                onSubmit={submitAccount}
+                                noValidate
+                                className="flex flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
+                            >
+                                <div className="flex flex-col gap-1">
+                                    <label
+                                        htmlFor="settings-account-email"
+                                        className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                                    >
+                                        {t('common.email')}
+                                    </label>
+                                    <input
+                                        id="settings-account-email"
+                                        type="email"
+                                        required
+                                        autoComplete="email"
+                                        value={account.data.email}
+                                        onChange={(event) =>
+                                            account.setData(
+                                                'email',
+                                                event.target.value,
+                                            )
+                                        }
+                                        className={fieldClass}
+                                    />
+                                    {account.errors.email && (
+                                        <p className="text-xs text-red-600 dark:text-red-400">
+                                            {account.errors.email}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={account.processing}
+                                    className="self-start rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 transition hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                                >
+                                    {account.processing
+                                        ? t('settings.emailSubmitting')
+                                        : t('settings.emailSubmit')}
+                                </button>
+                            </form>
                         </section>
 
                         <section className="w-full">
@@ -306,6 +436,188 @@ export default function Settings({
                                         : t('password.submit')}
                                 </button>
                             </form>
+                        </section>
+
+                        <section className="w-full">
+                            <h2 className="mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                                {t('settings.twoFactor')}
+                            </h2>
+                            <p className="mb-4 text-xs text-zinc-700 dark:text-zinc-300">
+                                {t('settings.twoFactorSubtitle')}
+                            </p>
+
+                            {flash.recoveryCodes && !codesDismissed && (
+                                <RecoveryCodesBanner
+                                    codes={flash.recoveryCodes}
+                                    onClose={() => setCodesDismissed(true)}
+                                />
+                            )}
+
+                            <div className="flex flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+                                {!twoFactor.enabled && !twoFactor.pending && (
+                                    <>
+                                        <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                                            {t('settings.twoFactorEnableHint')}
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={enableTwoFactor}
+                                            className="self-start rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 transition hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                                        >
+                                            {t('settings.twoFactorEnable')}
+                                        </button>
+                                    </>
+                                )}
+
+                                {twoFactor.pending && (
+                                    <>
+                                        <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                                            {t('settings.twoFactorQrHint')}
+                                        </p>
+
+                                        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+                                            {twoFactor.qr !== null && (
+                                                <img
+                                                    src={twoFactor.qr}
+                                                    alt={t(
+                                                        'settings.twoFactorQrAlt',
+                                                    )}
+                                                    className="h-40 w-40 rounded-md bg-white p-2"
+                                                />
+                                            )}
+                                            <div className="flex flex-col gap-1">
+                                                <p className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                                                    {t(
+                                                        'settings.twoFactorSecret',
+                                                    )}
+                                                </p>
+                                                <code className="rounded bg-zinc-100 px-2 py-1 font-mono text-xs break-all dark:bg-zinc-800">
+                                                    {twoFactor.secret}
+                                                </code>
+                                            </div>
+                                        </div>
+
+                                        <form
+                                            onSubmit={submitTwoFactorConfirm}
+                                            noValidate
+                                            className="flex flex-col gap-3"
+                                        >
+                                            <div className="flex flex-col gap-1">
+                                                <label
+                                                    htmlFor="settings-two-factor-code"
+                                                    className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                                                >
+                                                    {t(
+                                                        'settings.twoFactorCode',
+                                                    )}
+                                                </label>
+                                                <input
+                                                    id="settings-two-factor-code"
+                                                    type="text"
+                                                    required
+                                                    autoFocus
+                                                    autoComplete="one-time-code"
+                                                    inputMode="numeric"
+                                                    value={
+                                                        twoFactorCode.data.code
+                                                    }
+                                                    onChange={(event) =>
+                                                        twoFactorCode.setData(
+                                                            'code',
+                                                            event.target.value,
+                                                        )
+                                                    }
+                                                    className={fieldClass}
+                                                />
+                                                {twoFactorCode.errors.code && (
+                                                    <p className="text-xs text-red-600 dark:text-red-400">
+                                                        {
+                                                            twoFactorCode.errors
+                                                                .code
+                                                        }
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    type="submit"
+                                                    disabled={
+                                                        twoFactorCode.processing
+                                                    }
+                                                    className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 transition hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                                                >
+                                                    {twoFactorCode.processing
+                                                        ? t(
+                                                              'settings.twoFactorConfirming',
+                                                          )
+                                                        : t(
+                                                              'settings.twoFactorConfirm',
+                                                          )}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={cancelTwoFactor}
+                                                    className="rounded-md px-4 py-2 text-sm text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                                                >
+                                                    {t('common.cancel')}
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </>
+                                )}
+
+                                {twoFactor.enabled && (
+                                    <>
+                                        <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                                            {t('settings.twoFactorOnHint')}
+                                        </p>
+                                        <p className="text-xs text-zinc-700 dark:text-zinc-300">
+                                            {t(
+                                                'settings.twoFactorCodesRemaining',
+                                                {
+                                                    count: twoFactor.recoveryCodesRemaining,
+                                                },
+                                            )}
+                                        </p>
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={
+                                                    regenerateRecoveryCodes
+                                                }
+                                                className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
+                                            >
+                                                {t(
+                                                    'settings.twoFactorRegenerate',
+                                                )}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setDisableTwoFactorOpen(
+                                                        true,
+                                                    )
+                                                }
+                                                className="rounded-md px-3 py-1.5 text-sm text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
+                                            >
+                                                {t('settings.twoFactorDisable')}
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            <ConfirmDialog
+                                open={disableTwoFactorOpen}
+                                destructive
+                                title={t('settings.twoFactorDisable')}
+                                message={t('settings.twoFactorDisableConfirm')}
+                                confirmLabel={t('settings.twoFactorDisable')}
+                                cancelLabel={t('common.cancel')}
+                                onConfirm={confirmDisableTwoFactor}
+                                onCancel={() => setDisableTwoFactorOpen(false)}
+                            />
                         </section>
 
                         {users !== null && (

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Crypto\DiaryKeyManager;
 use App\Http\Requests\Auth\AdminCreateUserRequest;
+use App\Http\Requests\UpdateEmailRequest;
 use App\Models\User;
+use App\Security\TrustedDevices;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +39,45 @@ class AdminUsersController extends Controller
             ->route('diary.settings')
             ->with('status', __('messages.admin.created', ['name' => $user->name]))
             ->with('recoveryKey', $recoveryKey);
+    }
+
+    /**
+     * Change the sign-in email of any account from the admin list.
+     *
+     * Only the address is touched: entries stay encrypted under the target
+     * user's own key, which the email plays no part in.
+     */
+    public function updateEmail(UpdateEmailRequest $request, User $user): RedirectResponse
+    {
+        $user->forceFill([
+            'email' => $request->string('email')->toString(),
+        ])->save();
+
+        return redirect()
+            ->route('diary.settings')
+            ->with('status', __('messages.admin.email-updated', ['name' => $user->name]));
+    }
+
+    /**
+     * Turn two-factor authentication off for any account from the admin list.
+     *
+     * A lost authenticator device must never lock the owner out of their own
+     * diary, so an administrator can always restore password-only sign-in:
+     * the secret, the recovery codes and every trusted browser are removed.
+     */
+    public function disableTwoFactor(User $user, TrustedDevices $trusted): RedirectResponse
+    {
+        $user->forceFill([
+            'two_factor_secret' => null,
+            'two_factor_confirmed_at' => null,
+            'two_factor_recovery_codes' => null,
+        ])->save();
+
+        $trusted->revoke($user);
+
+        return redirect()
+            ->route('diary.settings')
+            ->with('status', __('messages.admin.two-factor-disabled', ['name' => $user->name]));
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RecoveryController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Auth\UnlockController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ExportController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\TwoFactorController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -22,6 +24,15 @@ Route::middleware('guest')->group(function () {
     Route::post('login', [LoginController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('login.store');
+
+    // Second step of the sign-in for accounts with two-factor authentication:
+    // the password is already checked and parked in the session, so the guest
+    // here only has to prove possession of the authenticator device.
+    Route::get('two-factor', [TwoFactorChallengeController::class, 'create'])
+        ->name('two-factor');
+    Route::post('two-factor', [TwoFactorChallengeController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('two-factor.store');
 
     Route::get('recover', [RecoveryController::class, 'create'])->name('diary.recovery');
     Route::post('recover', [RecoveryController::class, 'store'])
@@ -46,6 +57,10 @@ Route::middleware('auth')->group(function () {
         Route::post('admin/users', [AdminUsersController::class, 'store'])
             ->middleware('throttle:10,1')
             ->name('admin.users.store');
+        Route::patch('admin/users/{user}/email', [AdminUsersController::class, 'updateEmail'])
+            ->name('admin.users.email');
+        Route::delete('admin/users/{user}/two-factor', [AdminUsersController::class, 'disableTwoFactor'])
+            ->name('admin.users.two-factor');
         Route::delete('admin/users/{user}', [AdminUsersController::class, 'destroy'])
             ->name('admin.users.destroy');
     });
@@ -79,6 +94,17 @@ Route::middleware('auth')->group(function () {
 
         Route::get('settings', [SettingsController::class, 'index'])->name('diary.settings');
         Route::put('settings', [SettingsController::class, 'update'])->name('diary.settings.update');
+        Route::patch('settings/email', [SettingsController::class, 'updateEmail'])
+            ->name('diary.settings.email');
+
+        Route::post('settings/two-factor', [TwoFactorController::class, 'enable'])
+            ->name('diary.settings.two-factor.enable');
+        Route::post('settings/two-factor/confirm', [TwoFactorController::class, 'confirm'])
+            ->name('diary.settings.two-factor.confirm');
+        Route::post('settings/two-factor/recovery-codes', [TwoFactorController::class, 'recoveryCodes'])
+            ->name('diary.settings.two-factor.recovery-codes');
+        Route::delete('settings/two-factor', [TwoFactorController::class, 'disable'])
+            ->name('diary.settings.two-factor.disable');
 
         Route::get('export', [ExportController::class, 'index'])->name('diary.export');
         Route::get('export/markdown', [ExportController::class, 'markdown'])->name('diary.export.markdown');

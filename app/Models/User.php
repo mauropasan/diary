@@ -26,12 +26,15 @@ use Illuminate\Support\Carbon;
  * @property string|null $kdf_salt
  * @property string|null $wrapped_key
  * @property string|null $recovery_wrapped_key
+ * @property string|null $two_factor_secret
+ * @property Carbon|null $two_factor_confirmed_at
+ * @property array<int, string>|null $two_factor_recovery_codes
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
 #[Fillable(['name', 'email', 'password', 'is_admin', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background', 'email_notifications'])]
-#[Hidden(['password', 'remember_token', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background'])]
+#[Hidden(['password', 'remember_token', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -50,7 +53,21 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'background' => EncryptedEntryText::class,
             'email_notifications' => 'boolean',
+            'two_factor_secret' => 'encrypted',
+            'two_factor_confirmed_at' => 'datetime',
+            'two_factor_recovery_codes' => 'array',
         ];
+    }
+
+    /**
+     * Whether signing in requires a code from an authenticator app.
+     *
+     * The secret alone only means enrolment is in progress; the account starts
+     * requiring a code once a valid code has been confirmed.
+     */
+    public function twoFactorEnabled(): bool
+    {
+        return $this->two_factor_confirmed_at !== null;
     }
 
     /**

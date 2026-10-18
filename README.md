@@ -196,6 +196,7 @@ php artisan diary:create-user
 | `npm run dev`                                | Vite dev server with HMR                                  |
 | `npm run build`                              | Production frontend build                                 |
 | `php artisan diary:backup`                   | Write a consistent DB snapshot to `storage/app/backups`   |
+| `php artisan diary:remind`                   | Send the reminder emails whose moment has come            |
 | `php artisan test`                           | Run the Pest test suite                                   |
 | `composer run test`                          | Clear config, lint, static analysis and run tests         |
 | `vendor/bin/pint`                            | Format PHP code (use `composer run lint`)                 |
@@ -207,10 +208,25 @@ php artisan diary:create-user
 Keep `diary:backup` scheduled in production (e.g. a cron entry or the scheduler)
 so snapshots are taken regularly.
 
-Reminder emails are queued and delivered on the day before the related note's
-date, so a queue worker must be running: `composer run dev` starts one, otherwise
-run `php artisan queue:work` next to `php artisan serve`. In-app notifications
-do not depend on the worker — they appear on their own at the same moment.
+## Reminder schedule
+
+Each account decides when its reminders ring: Settings → Reminder schedule
+configures how many days before the note's date (0 to 30, 0 meaning the day
+itself only) and up to three daily hours. Every configured moment becomes its
+own in-app notification, so the existing popup, read state and history keep
+working; the first ping of a day is also emailed, so several daily hours never
+turn into several daily emails.
+
+Emails are not queued: the `php artisan diary:remind` sweep sends the ones whose
+moment has come, and the scheduler runs it every minute. Production therefore
+needs the usual scheduler cron entry, and no queue worker for reminders:
+
+```cron
+* * * * * cd /path-to-diary && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Changing the schedule (or a note's date) only re-arms the pings still ahead:
+what already popped, was read or was emailed stays behind as history.
 
 ## Configuration
 
@@ -257,8 +273,9 @@ Key environment variables (see `.env.example`):
 ```
 app/
   Casts/        EncryptedEntryText        # Eloquent cast for encrypted columns
-  Console/      CreateDiaryUser, BackupDiary
+  Console/      CreateDiaryUser, BackupDiary, SendReminders
   Crypto/       DiaryCrypto, DiaryKeyManager, DiaryKeyStore, DiaryUnlocker, TagNameIndex
+  Reminders/    ReminderSchedule, ReminderScheduler
   Security/     Totp, RecoveryCodes, TrustedDevices, TwoFactorNotifier
   Http/         Controllers, Middleware, Requests
   Models/       User, Entry, Tag, Schedule, TwoFactorDevice

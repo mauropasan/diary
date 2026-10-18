@@ -68,6 +68,10 @@ return [
         'background-updated' => 'Hintergrund aktualisiert.',
         'email-updated' => 'E-Mail-Adresse aktualisiert.',
         'notifications-updated' => 'E-Mail-Benachrichtigungen aktualisiert.',
+        'reminder-updated' => 'Erinnerungsplan aktualisiert.',
+        'reminder-days-invalid' => 'Wähle, wie viele Tage im Voraus erinnert wird, zwischen 0 und :max.',
+        'reminder-times-invalid' => 'Wähle zwischen 1 und :max Erinnerungen pro Tag.',
+        'reminder-time-invalid' => 'Jede Erinnerungszeit muss im Format HH:mm angegeben werden.',
     ],
 
     'notifications' => [

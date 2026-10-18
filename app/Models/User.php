@@ -21,6 +21,8 @@ use Illuminate\Support\Carbon;
  * @property bool $is_admin
  * @property string|null $background
  * @property bool $email_notifications
+ * @property int $reminder_days_before
+ * @property array<int, mixed>|null $reminder_times
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $kdf_salt
@@ -33,7 +35,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'is_admin', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background', 'email_notifications'])]
+#[Fillable(['name', 'email', 'password', 'is_admin', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background', 'email_notifications', 'reminder_days_before', 'reminder_times'])]
 #[Hidden(['password', 'remember_token', 'kdf_salt', 'wrapped_key', 'recovery_wrapped_key', 'background', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class User extends Authenticatable
 {
@@ -53,6 +55,8 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'background' => EncryptedEntryText::class,
             'email_notifications' => 'boolean',
+            'reminder_days_before' => 'integer',
+            'reminder_times' => 'array',
             'two_factor_secret' => 'encrypted',
             'two_factor_confirmed_at' => 'datetime',
             'two_factor_recovery_codes' => 'array',
@@ -99,6 +103,57 @@ class User extends Authenticatable
         }
 
         return $background;
+    }
+
+    /**
+     * The hours at which the account's reminders pop each day.
+     *
+     * Stored as `HH:mm` strings, sorted and without duplicates, and capped at
+     * the configured maximum. Anything unexpected in the column is discarded
+     * and the configured default is used instead, so a corrupted value can
+     * never silence every reminder.
+     *
+     * @return array<int, string>
+     */
+    public function reminderTimes(): array
+    {
+        $configured = $this->reminder_times;
+
+        $times = is_array($configured)
+            ? array_values(array_filter(
+                $configured,
+                fn (mixed $time): bool => is_string($time) && preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $time) === 1,
+            ))
+            : [];
+
+        $times = array_values(array_unique($times));
+        sort($times);
+        $times = array_slice($times, 0, (int) config('diary.reminder.times_max', 3));
+
+        if ($times === []) {
+            /** @var array<int, string> $default */
+            $default = config('diary.reminder.times.default', ['09:00']);
+
+            return $default;
+        }
+
+        return $times;
+    }
+
+    /**
+     * How many days before the note's own date the reminders start.
+     *
+     * Zero means "on the day itself". The value is clamped to the configured
+     * range so a hand-edited column cannot schedule a reminder a year ahead.
+     */
+    public function reminderDaysBefore(): int
+    {
+        $configured = (int) ($this->reminder_days_before ?? config('diary.reminder.days_before.default', 1));
+
+        return max(
+            0,
+            min((int) config('diary.reminder.days_before.max', 30), $configured),
+        );
     }
 
     /**

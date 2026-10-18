@@ -68,6 +68,10 @@ return [
         'background-updated' => 'Fons actualitzat.',
         'email-updated' => 'Correu electrònic actualitzat.',
         'notifications-updated' => 'Notificacions per correu actualitzades.',
+        'reminder-updated' => 'Programació de recordatoris actualitzada.',
+        'reminder-days-invalid' => 'Tria amb quants dies d\'antelació avisar, entre 0 i :max.',
+        'reminder-times-invalid' => 'Tria entre 1 i :max avisos al dia.',
+        'reminder-time-invalid' => 'Cada hora d\'avís s\'ha d\'escriure com a HH:mm.',
     ],
 
     'notifications' => [

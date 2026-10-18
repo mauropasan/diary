@@ -75,6 +75,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Reminder schedule
+    |--------------------------------------------------------------------------
+    |
+    | How a dated note or event announces itself. A reminder runs once per
+    | configured time, each day, from `days_before` days ahead up to and
+    | including the note's own day. Times are `HH:mm` in the application
+    | timezone, kept sorted, without duplicates and capped at `times_max`.
+    |
+    | The defaults keep the original behaviour except for the hour: the old
+    | schedule was a single ping at midnight the day before the date.
+    |
+    */
+
+    'reminder' => [
+        'times_max' => 3,
+        'days_before' => [
+            'default' => 1,
+            'max' => 30,
+        ],
+        'times' => [
+            'default' => ['09:00'],
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Attachments
     |--------------------------------------------------------------------------
     |

@@ -68,6 +68,10 @@ return [
         'background-updated' => 'Arrière-plan mis à jour.',
         'email-updated' => 'Adresse e-mail mise à jour.',
         'notifications-updated' => 'Notifications par e-mail mises à jour.',
+        'reminder-updated' => 'Programme des rappels mis à jour.',
+        'reminder-days-invalid' => 'Choisissez le nombre de jours d\'avance pour le rappel, entre 0 et :max.',
+        'reminder-times-invalid' => 'Choisissez entre 1 et :max rappels par jour.',
+        'reminder-time-invalid' => 'Chaque heure de rappel doit être au format HH:mm.',
     ],
 
     'notifications' => [

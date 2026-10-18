@@ -1,12 +1,9 @@
 <?php
 
-use App\Jobs\SendReminderEmail;
 use App\Mail\ReminderNotification;
 use App\Models\Note;
 use App\Models\User;
 use App\Security\TwoFactorNotifier;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia;
@@ -42,32 +39,32 @@ it('renders the notifications page', function () {
         );
 });
 
-it('creates a hidden notification queued for the day before the note date', function () {
+it('creates hidden notification rows for the reminder schedule', function () {
     ($this->unlock)();
-    Bus::fake();
-
-    $dueAt = Carbon::parse(now()->addDays(3)->toDateString())->subDay();
+    $this->travelTo('2026-03-10 08:00:00');
 
     $this->post(route('diary.notes.store'), [
         'title' => 'Renew passport',
         'body' => 'Go to the city hall.',
         'kind' => 'reminder',
-        'date' => now()->addDays(3)->toDateString(),
+        'date' => '2026-03-13',
     ])->assertRedirect(route('diary.notes'));
 
-    Bus::assertDispatched(
-        SendReminderEmail::class,
-        fn (SendReminderEmail $job): bool => $job->delay->eq($dueAt),
-    );
+    $notifications = $this->user->fresh()->notifications()->orderBy('due_at')->get();
 
-    $notification = $this->user->fresh()->notifications()->first();
+    // One row per slot of the default schedule: the day before and the day
+    // itself, at 09:00.
+    expect($notifications->pluck('due_at')->map(fn ($due) => $due->toDateTimeString())->toArray())
+        ->toBe(['2026-03-12 09:00:00', '2026-03-13 09:00:00'])
+        ->and($notifications->pluck('note_id')->unique()->toArray())->toBe([Note::firstOrFail()->id])
+        ->and($notifications->whereNotNull('read_at'))->toHaveCount(0)
+        ->and($notifications->whereNotNull('emailed_at'))->toHaveCount(0);
 
-    expect($notification->title)->toBe('Renew passport')
-        ->and($notification->body)->toBe('Go to the city hall.')
-        ->and($notification->read_at)->toBeNull()
-        ->and($notification->due_at->equalTo($dueAt))->toBeTrue()
-        ->and($notification->note_id)->toBe(Note::firstOrFail()->id)
-        ->and(DB::table('notifications')->where('id', $notification->id)->value('title'))->not->toBe('Renew passport');
+    $first = $notifications->first();
+
+    expect($first->title)->toBe('Renew passport')
+        ->and($first->body)->toBe('Go to the city hall.')
+        ->and(DB::table('notifications')->where('id', $first->id)->value('title'))->not->toBe('Renew passport');
 
     // Still hidden: neither the popup list nor the badge show it yet.
     $this->get(route('diary.notifications.list'))->assertExactJson([]);
@@ -79,19 +76,18 @@ it('creates a hidden notification queued for the day before the note date', func
         );
 });
 
-it('reveals the notification only from the day before the note date', function () {
+it('reveals a notification only when its slot comes due', function () {
     ($this->unlock)();
+    $this->travelTo('2026-03-10 08:00:00');
 
     $this->post(route('diary.notes.store'), [
         'title' => 'Renew passport',
         'body' => 'Go to the city hall.',
         'kind' => 'reminder',
-        'date' => now()->addDays(3)->toDateString(),
+        'date' => '2026-03-13',
     ])->assertRedirect(route('diary.notes'));
 
-    // The day before arrives: the notification pops into view. Travelling
-    // forward re-locks the diary, so unlock again before reading.
-    $this->travelTo(now()->addDays(2)->startOfDay());
+    $this->travelTo('2026-03-12 09:00:00');
     ($this->unlock)();
 
     $this->get(route('diary.notifications.list'))
@@ -135,113 +131,174 @@ it('shows application notifications translated without leaking their key', funct
 it('sends the reminder email when the trigger moment arrives and only once', function () {
     ($this->unlock)();
     Mail::fake();
+    $this->travelTo('2026-03-10 08:00:00');
 
     $this->post(route('diary.notes.store'), [
         'title' => 'Renew passport',
         'kind' => 'reminder',
-        'date' => now()->addDays(3)->toDateString(),
+        'date' => '2026-03-13',
     ])->assertRedirect(route('diary.notes'));
 
-    $notification = $this->user->fresh()->notifications()->firstOrFail();
-
-    $this->travelTo($notification->due_at);
-
-    (new SendReminderEmail($notification->id))->handle();
-    (new SendReminderEmail($notification->id))->handle();
+    $first = $this->user->notifications()->whereDate('due_at', '2026-03-12')->firstOrFail();
+    $this->travelTo($first->due_at);
+    $this->artisan('diary:remind');
+    $this->artisan('diary:remind');
 
     Mail::assertSent(ReminderNotification::class, 1);
-    expect($notification->fresh()->emailed_at)->not->toBeNull();
+    expect($first->fresh()->emailed_at)->not->toBeNull();
 });
 
-it('does not send the reminder email when the preference was switched off after queueing', function () {
+it('does not send the reminder email when the preference was switched off after creating', function () {
     ($this->unlock)();
     Mail::fake();
+    $this->travelTo('2026-03-10 08:00:00');
 
     $this->post(route('diary.notes.store'), [
         'title' => 'Renew passport',
         'kind' => 'reminder',
-        'date' => now()->addDays(3)->toDateString(),
+        'date' => '2026-03-13',
     ])->assertRedirect(route('diary.notes'));
 
     $this->user->forceFill(['email_notifications' => false])->save();
 
-    $notification = $this->user->fresh()->notifications()->firstOrFail();
-
-    $this->travelTo($notification->due_at);
-
-    (new SendReminderEmail($notification->id))->handle();
+    $first = $this->user->fresh()->notifications()->whereDate('due_at', '2026-03-12')->firstOrFail();
+    $this->travelTo($first->due_at);
+    $this->artisan('diary:remind');
 
     Mail::assertNotSent(ReminderNotification::class);
-    expect($notification->fresh()->emailed_at)->toBeNull();
+    expect($first->fresh()->emailed_at)->toBeNull();
 });
 
-it('re-arms the pending notification when the note date changes', function () {
+it('emails at most one reminder per note per day', function () {
     ($this->unlock)();
-    Bus::fake();
+    $this->travelTo('2026-03-10 08:00:00');
+    Mail::fake();
+
+    $this->user->forceFill(['reminder_times' => ['08:00', '20:00']])->save();
 
     $this->post(route('diary.notes.store'), [
         'title' => 'Renew passport',
         'kind' => 'reminder',
-        'date' => now()->addDays(3)->toDateString(),
+        'date' => '2026-03-13',
+    ])->assertRedirect(route('diary.notes'));
+
+    expect($this->user->notifications()->count())->toBe(4);
+
+    // Two slots a day over two days: two emails, not four.
+    foreach (['2026-03-12 08:00:00', '2026-03-12 20:00:00', '2026-03-13 08:00:00', '2026-03-13 20:00:00'] as $moment) {
+        $this->travelTo($moment);
+        $this->artisan('diary:remind')->assertSuccessful();
+    }
+
+    Mail::assertSent(ReminderNotification::class, 2);
+    expect($this->user->fresh()->notifications()->whereNotNull('emailed_at')->count())->toBe(4);
+});
+
+it('retries a reminder whose email could not be sent', function () {
+    ($this->unlock)();
+    $this->travelTo('2026-03-12 08:00:00');
+
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Renew passport',
+        'kind' => 'reminder',
+        'date' => '2026-03-13',
+    ])->assertRedirect(route('diary.notes'));
+
+    $first = $this->user->notifications()->whereDate('due_at', '2026-03-12')->firstOrFail();
+
+    $this->travelTo($first->due_at);
+
+    // The mail server is down: the row must stay unstamped so the next sweep
+    // tries again. Keep the reported failure out of the log files.
+    $manager = Mail::getFacadeRoot();
+    config(['logging.default' => 'null']);
+    Mail::shouldReceive('to')->once()->andThrow(new RuntimeException('SMTP down'));
+
+    $this->artisan('diary:remind')->assertSuccessful();
+
+    expect($first->fresh()->emailed_at)->toBeNull();
+
+    // The mail server is back: swap the real manager in again and the
+    // unstamped row is picked up by the next sweep.
+    Mail::swap($manager);
+    Mail::fake();
+    $this->artisan('diary:remind')->assertSuccessful();
+
+    Mail::assertSent(ReminderNotification::class, 1);
+    expect($first->fresh()->emailed_at)->not->toBeNull();
+});
+
+it('re-arms the pending notifications when the note date changes', function () {
+    ($this->unlock)();
+    $this->travelTo('2026-03-10 08:00:00');
+
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Renew passport',
+        'kind' => 'reminder',
+        'date' => '2026-03-13',
     ])->assertRedirect(route('diary.notes'));
 
     $note = Note::firstOrFail();
-    $note->notifications()->firstOrFail()->markAsRead();
+    $note->notifications()->orderBy('due_at')->firstOrFail()->markAsRead();
 
     $this->put(route('diary.notes.update', $note), [
         'title' => 'Renew passport',
         'kind' => 'reminder',
-        'date' => now()->addDays(10)->toDateString(),
+        'date' => '2026-03-20',
     ])->assertRedirect(route('diary.notes'));
 
-    $notification = $this->user->fresh()->notifications()->firstOrFail();
+    $notifications = $this->user->fresh()->notifications()->orderBy('due_at')->get();
 
-    expect($notification->due_at->equalTo(Carbon::parse(now()->addDays(9)->toDateString())))->toBeTrue()
-        ->and($notification->read_at)->toBeNull()
-        ->and($notification->note_id)->toBe($note->id);
-
-    Bus::assertDispatchedTimes(SendReminderEmail::class, 2);
+    // The ping that already popped stays behind as history; the pending one
+    // follows the note to its new date.
+    expect($notifications->pluck('due_at')->map(fn ($due) => $due->toDateTimeString())->toArray())
+        ->toBe(['2026-03-12 09:00:00', '2026-03-19 09:00:00', '2026-03-20 09:00:00'])
+        ->and($notifications->pluck('note_id')->unique()->toArray())->toBe([$note->id])
+        ->and($notifications->whereNull('read_at'))->toHaveCount(2)
+        ->and($notifications->first()->read_at)->not->toBeNull();
 });
 
 it('keeps the trigger and read state when only the note content changes', function () {
     ($this->unlock)();
-    Bus::fake();
+    $this->travelTo('2026-03-10 08:00:00');
 
     $this->post(route('diary.notes.store'), [
         'title' => 'Renew passport',
         'kind' => 'reminder',
-        'date' => now()->addDays(3)->toDateString(),
+        'date' => '2026-03-13',
     ])->assertRedirect(route('diary.notes'));
 
     $note = Note::firstOrFail();
-    $notification = $note->notifications()->firstOrFail();
+    $notification = $note->notifications()->orderBy('due_at')->firstOrFail();
     $notification->markAsRead();
 
     $this->put(route('diary.notes.update', $note), [
         'title' => 'Renew passport tomorrow',
         'kind' => 'reminder',
-        'date' => now()->addDays(3)->toDateString(),
+        'date' => '2026-03-13',
     ])->assertRedirect(route('diary.notes'));
 
     $notification = $notification->fresh();
-    $expectedDueAt = Carbon::parse(now()->addDays(3)->toDateString())->subDay();
 
+    // Nothing moves: the same two slots, the delivered one still delivered,
+    // now carrying the note's new text.
     expect($notification->title)->toBe('Renew passport tomorrow')
-        ->and($notification->due_at->equalTo($expectedDueAt))->toBeTrue()
-        ->and($notification->read_at)->not->toBeNull();
-
-    Bus::assertDispatchedTimes(SendReminderEmail::class, 1);
+        ->and($notification->due_at->toDateTimeString())->toBe('2026-03-12 09:00:00')
+        ->and($notification->read_at)->not->toBeNull()
+        ->and($note->notifications()->count())->toBe(2);
 });
 
-it('drops the pending notification when the note is deleted or turned into a plain note', function () {
+it('drops the pending notifications when the note is deleted or turned into a plain note', function () {
     ($this->unlock)();
-    Bus::fake();
+    $this->travelTo('2026-03-10 08:00:00');
 
     $this->post(route('diary.notes.store'), [
         'title' => 'Renew passport',
         'kind' => 'reminder',
-        'date' => now()->addDays(3)->toDateString(),
+        'date' => '2026-03-13',
     ]);
+
+    expect($this->user->fresh()->notifications)->toHaveCount(2);
 
     $note = Note::firstOrFail();
     $this->delete(route('diary.notes.destroy', $note));
@@ -251,7 +308,7 @@ it('drops the pending notification when the note is deleted or turned into a pla
     $this->post(route('diary.notes.store'), [
         'title' => 'Second chance',
         'kind' => 'reminder',
-        'date' => now()->addDays(5)->toDateString(),
+        'date' => '2026-03-15',
     ]);
 
     $note = Note::orderByDesc('id')->firstOrFail();
@@ -266,15 +323,12 @@ it('drops the pending notification when the note is deleted or turned into a pla
 
 it('does not create a notification for a plain note', function () {
     ($this->unlock)();
-    Mail::fake();
 
     $this->post(route('diary.notes.store'), [
         'title' => 'Loose note',
         'body' => 'Just a thought.',
         'kind' => 'note',
     ])->assertRedirect(route('diary.notes'));
-
-    Mail::assertNotSent(ReminderNotification::class);
 
     expect($this->user->fresh()->notifications)->toHaveCount(0);
 });

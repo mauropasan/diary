@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateEmailRequest;
 use App\Models\User;
+use App\Reminders\ReminderScheduler;
 use App\Security\Totp;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,6 +24,12 @@ class SettingsController extends Controller
             'background' => $request->user()->backgroundChoice(),
             'backgrounds' => array_values(config('diary.backgrounds', [])),
             'emailNotifications' => (bool) $request->user()->email_notifications,
+            'reminderSchedule' => [
+                'daysBefore' => $request->user()->reminderDaysBefore(),
+                'times' => $request->user()->reminderTimes(),
+                'daysBeforeMax' => (int) config('diary.reminder.days_before.max', 30),
+                'timesMax' => (int) config('diary.reminder.times_max', 3),
+            ],
             'twoFactor' => $this->twoFactor($request->user(), $totp),
             'users' => $request->user()->is_admin
                 ? $this->users()
@@ -67,9 +74,11 @@ class SettingsController extends Controller
      * The value is either a preset key from the config, a `data:image/...`
      * URI produced by the picker, or null to restore the default.
      */
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, ReminderScheduler $scheduler): RedirectResponse
     {
         $maxBytes = (int) config('diary.background.max_size_kb') * 1024;
+        $maxDaysBefore = (int) config('diary.reminder.days_before.max', 30);
+        $maxTimes = (int) config('diary.reminder.times_max', 3);
 
         $validated = $request->validate([
             'background' => [
@@ -105,6 +114,16 @@ class SettingsController extends Controller
                 },
             ],
             'email_notifications' => ['nullable', 'boolean'],
+            'reminder_days_before' => ['nullable', 'integer', 'between:0,'.$maxDaysBefore],
+            'reminder_times' => ['nullable', 'array', 'min:1', 'max:'.$maxTimes],
+            'reminder_times.*' => ['required', 'string', 'date_format:H:i'],
+        ], [
+            'reminder_days_before.integer' => __('messages.settings.reminder-days-invalid', ['max' => $maxDaysBefore]),
+            'reminder_days_before.between' => __('messages.settings.reminder-days-invalid', ['max' => $maxDaysBefore]),
+            'reminder_times.min' => __('messages.settings.reminder-times-invalid', ['max' => $maxTimes]),
+            'reminder_times.max' => __('messages.settings.reminder-times-invalid', ['max' => $maxTimes]),
+            'reminder_times.*.required' => __('messages.settings.reminder-time-invalid'),
+            'reminder_times.*.date_format' => __('messages.settings.reminder-time-invalid'),
         ]);
 
         // Only touch the columns the request actually carries, so saving the
@@ -122,11 +141,25 @@ class SettingsController extends Controller
             $attributes['email_notifications'] = (bool) $validated['email_notifications'];
         }
 
+        if (array_key_exists('reminder_days_before', $validated)) {
+            $attributes['reminder_days_before'] = (int) $validated['reminder_days_before'];
+        }
+
+        if (array_key_exists('reminder_times', $validated)) {
+            /** @var array<int, string> $times */
+            $times = array_values(array_unique($validated['reminder_times']));
+            sort($times);
+
+            $attributes['reminder_times'] = $times;
+        }
+
         if ($attributes !== []) {
             $request->user()->forceFill($attributes)->save();
         }
 
         $updatesBackground = array_key_exists('background', $validated);
+        $updatesSchedule = array_key_exists('reminder_days_before', $validated)
+            || array_key_exists('reminder_times', $validated);
 
         if ($updatesBackground) {
             // Bump the dedicated background version so the client-side cache-busting
@@ -134,11 +167,20 @@ class SettingsController extends Controller
             $request->user()->increment('background_version');
         }
 
+        if ($updatesSchedule) {
+            // The reminders already queued follow the old hours, so move the
+            // ones still ahead onto the new schedule. What was already
+            // delivered stays as history.
+            $scheduler->syncAll($request->user());
+        }
+
         return redirect()
             ->route('diary.settings')
-            ->with('status', __($updatesBackground
-                ? 'messages.settings.background-updated'
-                : 'messages.settings.notifications-updated'));
+            ->with('status', __(match (true) {
+                $updatesBackground => 'messages.settings.background-updated',
+                $updatesSchedule => 'messages.settings.reminder-updated',
+                default => 'messages.settings.notifications-updated',
+            }));
     }
 
     /**

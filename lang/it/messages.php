@@ -68,6 +68,10 @@ return [
         'background-updated' => 'Sfondo aggiornato.',
         'email-updated' => 'Email aggiornata.',
         'notifications-updated' => 'Notifiche email aggiornate.',
+        'reminder-updated' => 'Programmazione dei promemoria aggiornata.',
+        'reminder-days-invalid' => 'Scegli quanti giorni prima avvisare, tra 0 e :max.',
+        'reminder-times-invalid' => 'Scegli tra 1 e :max promemoria al giorno.',
+        'reminder-time-invalid' => 'Ogni orario del promemoria deve essere scritto come HH:mm.',
     ],
 
     'notifications' => [

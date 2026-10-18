@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia;
@@ -143,6 +144,110 @@ it('blocks a locked user from saving the email notifications toggle', function (
         ->assertRedirect(route('diary.unlock'));
 
     expect($this->user->refresh()->email_notifications)->toBeTrue();
+});
+
+it('shares the default reminder schedule on the settings page', function () {
+    ($this->unlock)();
+
+    $this->get(route('diary.settings'))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('settings/index')
+            ->where('reminderSchedule', [
+                'daysBefore' => 1,
+                'times' => ['09:00'],
+                'daysBeforeMax' => 30,
+                'timesMax' => 3,
+            ])
+        );
+});
+
+it('persists the reminder schedule sorted and without repeats', function () {
+    ($this->unlock)();
+
+    $this->put(route('diary.settings.update'), [
+        'reminder_days_before' => 0,
+        'reminder_times' => ['20:00', '08:00', '08:00'],
+    ])->assertRedirect(route('diary.settings'))
+        ->assertSessionHas('status', __('messages.settings.reminder-updated'));
+
+    $user = $this->user->refresh();
+
+    expect($user->reminder_days_before)->toBe(0)
+        ->and($user->reminder_times)->toBe(['08:00', '20:00']);
+});
+
+it('rejects a days-before window over the limit', function () {
+    ($this->unlock)();
+
+    $this->put(route('diary.settings.update'), ['reminder_days_before' => 31])
+        ->assertSessionHasErrors([
+            'reminder_days_before' => __('messages.settings.reminder-days-invalid', ['max' => '30']),
+        ]);
+
+    expect($this->user->refresh()->reminder_days_before)->toBe(1);
+});
+
+it('rejects more daily times than allowed', function () {
+    ($this->unlock)();
+
+    $this->put(route('diary.settings.update'), [
+        'reminder_times' => ['08:00', '12:00', '16:00', '20:00'],
+    ])->assertSessionHasErrors([
+        'reminder_times' => __('messages.settings.reminder-times-invalid', ['max' => '3']),
+    ]);
+
+    expect($this->user->refresh()->reminder_times)->toBeNull();
+});
+
+it('rejects a daily time that is not an HH:mm clock time', function () {
+    ($this->unlock)();
+
+    $this->put(route('diary.settings.update'), ['reminder_times' => ['9am']])
+        ->assertSessionHasErrors('reminder_times.0');
+
+    expect($this->user->refresh()->reminder_times)->toBeNull();
+});
+
+it('falls back to the default daily time when the stored times are unusable', function () {
+    $this->user->forceFill(['reminder_times' => ['9am', '', '25:00']])->save();
+
+    expect($this->user->refresh()->reminderTimes())->toBe(['09:00']);
+});
+
+it('clamps the days-before window to the configured limit', function () {
+    $this->user->forceFill(['reminder_days_before' => 999])->save();
+
+    expect($this->user->refresh()->reminderDaysBefore())->toBe(30);
+});
+
+it('re-arms the pending reminders when the schedule changes', function () {
+    $this->travelTo('2026-03-10 08:00:00');
+    ($this->unlock)();
+
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Renew passport',
+        'kind' => 'reminder',
+        'date' => '2026-03-13',
+    ]);
+
+    // The default schedule armed 2026-03-12 09:00 and 2026-03-13 09:00.
+    $this->user->notifications()->whereDate('due_at', '2026-03-12')->firstOrFail()->markAsRead();
+
+    $this->put(route('diary.settings.update'), [
+        'reminder_days_before' => 0,
+        'reminder_times' => ['20:00'],
+    ])->assertRedirect(route('diary.settings'))
+        ->assertSessionHas('status', __('messages.settings.reminder-updated'));
+
+    $due = $this->user->fresh()->notifications()
+        ->orderBy('due_at')
+        ->get()
+        ->map(fn (Notification $notification): string => $notification->due_at->toDateTimeString());
+
+    // The ping already delivered stays behind; the pending one follows the
+    // new window and hours.
+    expect($due->all())->toBe(['2026-03-12 09:00:00', '2026-03-13 20:00:00']);
 });
 
 it('rejects an unknown preset background', function () {

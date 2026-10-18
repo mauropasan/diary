@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveNoteRequest;
-use App\Jobs\SendReminderEmail;
 use App\Models\Note;
+use App\Reminders\ReminderScheduler;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -34,12 +34,12 @@ class NoteController extends Controller
     /**
      * Create a new note for the user.
      */
-    public function store(SaveNoteRequest $request): RedirectResponse
+    public function store(SaveNoteRequest $request, ReminderScheduler $scheduler): RedirectResponse
     {
         $note = $request->user()->notes()->create($this->attributes($request));
 
         if (in_array($note->kind, Note::DATED_KINDS, true)) {
-            $this->syncNotification($note);
+            $scheduler->sync($note);
         }
 
         return redirect()->route('diary.notes');
@@ -48,17 +48,17 @@ class NoteController extends Controller
     /**
      * Update an existing note owned by the user.
      */
-    public function update(SaveNoteRequest $request, Note $note): RedirectResponse
+    public function update(SaveNoteRequest $request, Note $note, ReminderScheduler $scheduler): RedirectResponse
     {
         $this->authorizeNote($request, $note);
 
         $note->update($this->attributes($request));
 
         if (in_array($note->kind, Note::DATED_KINDS, true)) {
-            $this->syncNotification($note);
+            $scheduler->sync($note);
         } else {
-            // The note is plain now, so its pending reminder goes away too
-            // (the queued email notices the missing row and skips itself).
+            // The note is plain now, so its reminders go away too: there is
+            // nothing left for the sweep to email.
             $note->notifications()->delete();
         }
 
@@ -72,8 +72,8 @@ class NoteController extends Controller
     {
         $this->authorizeNote($request, $note);
 
-        // Drop the pending reminder first so a queued email cancels itself
-        // even when the foreign key cascade is not enforced.
+        // Drop the pending reminders first so the sweep has nothing left to
+        // email, even when the foreign key cascade is not enforced.
         $note->notifications()->delete();
         $note->delete();
 
@@ -87,53 +87,6 @@ class NoteController extends Controller
     {
         if ($request->user()?->id !== $note->user_id) {
             abort(404);
-        }
-    }
-
-    /**
-     * Create or reschedule the pending notification for a dated note.
-     *
-     * The notification becomes visible the day before the note's date and
-     * the reminder email is queued for that same moment, so an event added
-     * more than a day ahead stays silent until it is actually due. Moving
-     * the date re-arms the notification: it should pop and mail again.
-     */
-    private function syncNotification(Note $note): void
-    {
-        if ($note->date === null) {
-            return;
-        }
-
-        $dueAt = $note->date->copy()->subDay();
-        $notification = $note->notifications()->first();
-
-        if ($notification === null) {
-            $notification = $note->user->notifications()->create([
-                'note_id' => $note->id,
-                'title' => $note->title,
-                'body' => $note->body,
-                'due_at' => $dueAt,
-            ]);
-
-            if ($note->user->email_notifications) {
-                SendReminderEmail::dispatch($notification->id)->delay($dueAt);
-            }
-
-            return;
-        }
-
-        $rescheduled = ! $notification->due_at->equalTo($dueAt);
-
-        $notification->forceFill([
-            'title' => $note->title,
-            'body' => $note->body,
-            'due_at' => $dueAt,
-            'read_at' => $rescheduled ? null : $notification->read_at,
-            'emailed_at' => $rescheduled ? null : $notification->emailed_at,
-        ])->save();
-
-        if ($rescheduled && $note->user->email_notifications) {
-            SendReminderEmail::dispatch($notification->id)->delay($dueAt);
         }
     }
 

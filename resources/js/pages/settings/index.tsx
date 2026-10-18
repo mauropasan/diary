@@ -34,10 +34,18 @@ export type TwoFactorState = {
     recoveryCodesRemaining: number;
 };
 
+export type ReminderSchedule = {
+    daysBefore: number;
+    times: string[];
+    daysBeforeMax: number;
+    timesMax: number;
+};
+
 type SettingsProps = {
     background: string | null;
     backgrounds: string[];
     emailNotifications: boolean;
+    reminderSchedule: ReminderSchedule;
     twoFactor: TwoFactorState;
     users: AdminUser[] | null;
 };
@@ -49,6 +57,7 @@ export default function Settings({
     background,
     backgrounds,
     emailNotifications,
+    reminderSchedule,
     twoFactor,
     users,
 }: SettingsProps) {
@@ -80,6 +89,11 @@ export default function Settings({
         current_password: '',
     });
 
+    const reminderScheduleForm = useForm({
+        reminder_days_before: reminderSchedule.daysBefore,
+        reminder_times: reminderSchedule.times,
+    });
+
     function submitAccount(event: React.FormEvent<HTMLFormElement>): void {
         event.preventDefault();
         account.patch(settingsEmailUpdate.url(), {
@@ -104,6 +118,55 @@ export default function Settings({
             onError: () => {
                 notifications.setData('email_notifications', previous);
             },
+        });
+    }
+
+    const reminderTimes = reminderScheduleForm.data.reminder_times;
+    const reminderTimesLabel = reminderTimes.join(', ');
+    const reminderErrors = reminderScheduleForm.errors as Record<
+        string,
+        string | undefined
+    >;
+    const reminderTimeError =
+        reminderErrors.reminder_times ??
+        Object.entries(reminderErrors).find(([key]) =>
+            key.startsWith('reminder_times.'),
+        )?.[1];
+    const reminderPreview =
+        reminderScheduleForm.data.reminder_days_before === 0
+            ? t('settings.reminderPreviewToday', { times: reminderTimesLabel })
+            : t('settings.reminderPreview', {
+                  count: reminderScheduleForm.data.reminder_days_before,
+                  times: reminderTimesLabel,
+              });
+
+    /**
+     * Show one more or one fewer time field, giving a new slot a sensible hour
+     * instead of leaving it empty (the server needs a full set of hours).
+     */
+    function changeReminderFrequency(count: number): void {
+        const slots = ['09:00', '13:00', '20:00'];
+        const times = [...reminderTimes];
+
+        while (times.length < count) {
+            times.push(slots[times.length] ?? '09:00');
+        }
+
+        reminderScheduleForm.setData('reminder_times', times.slice(0, count));
+    }
+
+    function changeReminderTime(index: number, value: string): void {
+        const times = [...reminderTimes];
+        times[index] = value;
+        reminderScheduleForm.setData('reminder_times', times);
+    }
+
+    function submitReminderSchedule(
+        event: React.FormEvent<HTMLFormElement>,
+    ): void {
+        event.preventDefault();
+        reminderScheduleForm.put(settingsUpdate.url(), {
+            preserveScroll: true,
         });
     }
 
@@ -296,6 +359,139 @@ export default function Settings({
                                     {notifications.errors.email_notifications}
                                 </p>
                             )}
+
+                            <form
+                                onSubmit={submitReminderSchedule}
+                                noValidate
+                                className="mt-4 flex flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
+                            >
+                                <div>
+                                    <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                                        {t('settings.reminderSchedule')}
+                                    </h3>
+                                    <p className="mt-1 text-xs text-zinc-700 dark:text-zinc-300">
+                                        {t('settings.reminderScheduleSubtitle')}
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-wrap gap-4">
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="reminder_days_before"
+                                            className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
+                                        >
+                                            {t('settings.reminderDaysBefore')}
+                                        </label>
+                                        <input
+                                            id="reminder_days_before"
+                                            type="number"
+                                            min={0}
+                                            max={reminderSchedule.daysBeforeMax}
+                                            value={
+                                                reminderScheduleForm.data
+                                                    .reminder_days_before
+                                            }
+                                            onChange={(event) =>
+                                                reminderScheduleForm.setData(
+                                                    'reminder_days_before',
+                                                    Number(event.target.value),
+                                                )
+                                            }
+                                            className={`${fieldClass} w-24`}
+                                        />
+                                        <p className="max-w-xs text-[11px] text-zinc-500 dark:text-zinc-500">
+                                            {t(
+                                                'settings.reminderDaysBeforeHint',
+                                            )}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="reminder_frequency"
+                                            className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
+                                        >
+                                            {t('settings.reminderFrequency')}
+                                        </label>
+                                        <select
+                                            id="reminder_frequency"
+                                            value={reminderTimes.length}
+                                            onChange={(event) =>
+                                                changeReminderFrequency(
+                                                    Number(event.target.value),
+                                                )
+                                            }
+                                            className={`${fieldClass} w-24`}
+                                        >
+                                            {Array.from(
+                                                {
+                                                    length: reminderSchedule.timesMax,
+                                                },
+                                                (_, index) => index + 1,
+                                            ).map((count) => (
+                                                <option
+                                                    key={count}
+                                                    value={count}
+                                                >
+                                                    {count}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-wrap gap-4">
+                                    {reminderTimes.map((time, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex flex-col gap-1"
+                                        >
+                                            <label
+                                                htmlFor={`reminder_time_${index}`}
+                                                className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
+                                            >
+                                                {t('settings.reminderTime', {
+                                                    index: index + 1,
+                                                })}
+                                            </label>
+                                            <input
+                                                id={`reminder_time_${index}`}
+                                                type="time"
+                                                value={time}
+                                                onChange={(event) =>
+                                                    changeReminderTime(
+                                                        index,
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                className={`${fieldClass} w-28`}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                                    {reminderPreview}
+                                </p>
+
+                                {(reminderErrors.reminder_days_before ??
+                                    reminderTimeError) && (
+                                    <p className="text-xs text-red-600 dark:text-red-400">
+                                        {reminderErrors.reminder_days_before ??
+                                            reminderTimeError}
+                                    </p>
+                                )}
+
+                                <button
+                                    type="submit"
+                                    disabled={reminderScheduleForm.processing}
+                                    className="self-start rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-50 transition hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                                >
+                                    {reminderScheduleForm.processing
+                                        ? t('settings.reminderSubmitting')
+                                        : t('settings.reminderSubmit')}
+                                </button>
+                            </form>
                         </section>
 
                         <section className="w-full">

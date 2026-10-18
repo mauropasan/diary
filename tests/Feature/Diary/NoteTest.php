@@ -1,11 +1,8 @@
 <?php
 
-use App\Jobs\SendReminderEmail;
-use App\Mail\ReminderNotification;
 use App\Models\Note;
+use App\Models\Notification;
 use App\Models\User;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia;
 
 beforeEach(function () {
@@ -14,6 +11,18 @@ beforeEach(function () {
     $this->actingAs($this->user)
         ->post(route('diary.unlock.store'), ['password' => 'secret-password']);
 });
+
+/**
+ * The moment of every armed reminder of a user, oldest first.
+ */
+function dueDates(User $user): array
+{
+    return $user->notifications()
+        ->orderBy('due_at')
+        ->get()
+        ->map(fn (Notification $notification): string => $notification->due_at->toDateTimeString())
+        ->all();
+}
 
 it('creates a note and encrypts its text', function () {
     $this->post(route('diary.notes.store'), [
@@ -33,22 +42,22 @@ it('creates a note and encrypts its text', function () {
         ->and($note->kind)->toBe('note');
 });
 
-it('queues the reminder email by default when a dated reminder note is created', function () {
-    Bus::fake();
+it('arms the reminder notifications for a dated reminder note', function () {
+    $this->travelTo('2026-03-10 08:00:00');
 
     $this->post(route('diary.notes.store'), [
         'title' => 'Renew passport',
         'body' => 'Go to the city hall.',
         'kind' => 'reminder',
-        'date' => now()->addDays(3)->toDateString(),
+        'date' => '2026-03-13',
     ])->assertRedirect(route('diary.notes'));
 
-    Bus::assertDispatched(SendReminderEmail::class);
+    // The default schedule is the day before and the day itself, at 09:00.
+    expect(dueDates($this->user))->toBe(['2026-03-12 09:00:00', '2026-03-13 09:00:00']);
 });
 
-it('does not queue a reminder email when email notifications are disabled', function () {
-    Bus::fake();
-    Mail::fake();
+it('still arms the reminder notifications when email notifications are disabled', function () {
+    $this->travelTo('2026-03-10 08:00:00');
 
     $this->user->forceFill(['email_notifications' => false])->save();
 
@@ -56,23 +65,21 @@ it('does not queue a reminder email when email notifications are disabled', func
         'title' => 'Renew passport',
         'body' => 'Go to the city hall.',
         'kind' => 'reminder',
-        'date' => now()->addDays(3)->toDateString(),
+        'date' => '2026-03-13',
     ])->assertRedirect(route('diary.notes'));
 
-    Bus::assertNotDispatched(SendReminderEmail::class);
-    Mail::assertNotSent(ReminderNotification::class);
+    // Only the email is optional; the reminder still pops in the app.
+    expect($this->user->notifications()->count())->toBe(2);
 });
 
-it('does not send a reminder email for a plain note', function () {
-    Mail::fake();
-
+it('does not arm any reminder notification for a plain note', function () {
     $this->post(route('diary.notes.store'), [
         'title' => 'Loose note',
         'body' => 'Just a thought.',
         'kind' => 'note',
     ])->assertRedirect(route('diary.notes'));
 
-    Mail::assertNotSent(ReminderNotification::class);
+    expect($this->user->notifications()->count())->toBe(0);
 });
 
 it('attaches a note to a day and shows it on the entry page', function () {

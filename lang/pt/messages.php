@@ -68,6 +68,10 @@ return [
         'background-updated' => 'Fundo atualizado.',
         'email-updated' => 'E-mail atualizado.',
         'notifications-updated' => 'Notificações de e-mail atualizadas.',
+        'reminder-updated' => 'Agenda de lembretes atualizada.',
+        'reminder-days-invalid' => 'Escolhe quantos dias antes avisar, entre 0 e :max.',
+        'reminder-times-invalid' => 'Escolhe entre 1 e :max lembretes por dia.',
+        'reminder-time-invalid' => 'Cada hora de lembrete deve ser escrita como HH:mm.',
     ],
 
     'notifications' => [

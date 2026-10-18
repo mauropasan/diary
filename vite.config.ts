@@ -21,9 +21,35 @@ function devServerHost(appUrl: string | undefined): string {
     }
 }
 
+/**
+ * Page origins allowed to load development assets.
+ *
+ * Vite serves `<script type="module">`, which browsers fetch in CORS mode, so
+ * the *page* origin (APP_URL, e.g. http://192.168.1.4:8000, also used by the
+ * Capacitor shell) has to be answered with `Access-Control-Allow-Origin`
+ * otherwise React/Inertia never boots and every form silently falls back to a
+ * plain HTML submit. Keep Vite's defaults (loopback and *.test) and add every
+ * address of the local network.
+ */
+const localNetworkOrigin =
+    /^https?:\/\/(?:(?:[^:]+\.)?localhost|127\.0\.0\.1|\[::1\]|10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){3}|172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2})(?::\d+)?$/;
+
+/**
+ * Normalized origin (scheme://host[:port]) of APP_URL, or an empty string when
+ * it cannot be parsed.
+ */
+function appUrlOrigin(appUrl: string | undefined): string {
+    try {
+        return new URL(appUrl ?? '').origin;
+    } catch {
+        return '';
+    }
+}
+
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), '');
     const host = devServerHost(env.APP_URL);
+    const appOrigin = appUrlOrigin(env.APP_URL);
 
     return {
         plugins: lazyPlugins(() => [
@@ -50,6 +76,14 @@ export default defineConfig(({ mode }) => {
             host: '0.0.0.0',
             port: 5173,
             strictPort: true,
+            cors: {
+                origin: [
+                    ...(appOrigin ? [appOrigin] : []),
+                    localNetworkOrigin,
+                    // Valet / Herd    (SCHEME://*.test:PORT)
+                    /^https?:\/\/.*\.test(:\d+)?$/,
+                ],
+            },
             hmr: {
                 host,
             },

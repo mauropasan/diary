@@ -13,6 +13,23 @@
 }
 
 /*
+| The Android shell lets the page draw behind the system bars so its own
+| background reaches the status bar edge. The content is then pushed clear of
+| them: `--app-status-bar-height` is published by `lib/statusBar.ts` because a
+| WebView may report no `env(safe-area-inset-top)` of its own, and the bottom
+| inset comes from the WebView. Browsers have no insets to report, so nothing
+| moves outside the app.
+*/
+body {
+    padding-top: var(--app-status-bar-height, 0px);
+    padding-top: max(
+        env(safe-area-inset-top),
+        var(--app-status-bar-height, 0px)
+    );
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/*
 | Custom diary backgrounds. Each `bg-{key}` class sets the light-mode color
 | and, under `.dark`, the dark-mode color. Keys must stay in sync with
 | `config('diary.backgrounds')`. A custom image is applied through the

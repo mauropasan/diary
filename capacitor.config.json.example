@@ -6,5 +6,10 @@
         "url": "https://your-diary-host",
         "androidScheme": "https",
         "cleartext": false
+    },
+    "plugins": {
+        "StatusBar": {
+            "overlaysWebView": true
+        }
     }
 }

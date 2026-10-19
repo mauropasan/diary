@@ -3,10 +3,12 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import UpdateBanner from '@/components/UpdateBanner';
 import LocaleGate from '@/i18n/LocaleGate';
 import { registerBodyBackgroundSync } from '@/lib/background';
+import { registerNativeStatusBar } from '@/lib/statusBar';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 registerBodyBackgroundSync();
+registerNativeStatusBar();
 
 void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

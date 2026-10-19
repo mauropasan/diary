@@ -192,6 +192,10 @@ The diary can be installed on Android through a Capacitor shell that loads the
 hosted app, so content updates never need a new APK — only changes to the
 native shell itself do.
 
+The shell's server URL lives in `capacitor.config.json`, which is
+per-environment and gitignored: copy `capacitor.config.json.example` to
+`capacitor.config.json` and set `server.url` to the address serving the app.
+
 ```bash
 npm run apk:release
 ```

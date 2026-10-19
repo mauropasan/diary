@@ -12,6 +12,8 @@
 /storage/pail
 /vendor
 /android
+# Environment-specific Capacitor config; copy capacitor.config.json.example.
+/capacitor.config.json
 .env
 .env.backup
 .env.production

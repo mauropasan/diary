@@ -24,7 +24,8 @@
         "openMenu": "Abrir menú",
         "closeMenu": "Cerrar menú",
         "schedule": "Horario",
-        "settings": "Ajustes"
+        "settings": "Ajustes",
+        "users": "Usuarios"
     },
     "theme": {
         "label": "Tema",
@@ -172,6 +173,7 @@
     "admin": {
         "title": "Usuarios",
         "heading": "Usuarios",
+        "subtitle": "Crea y elimina cuentas del diario.",
         "recoveryTitle": "Clave de recuperación del nuevo usuario",
         "recoveryIntro": "Se muestra una sola vez. Entrégasela al usuario junto con la contraseña; con ella puede recuperar su diario si olvida la contraseña.",
         "createTitle": "Crear cuenta",
@@ -301,8 +303,6 @@
         "exportSubtitle": "Descarga o imprime tu diario.",
         "password": "Cambiar contraseña",
         "passwordSubtitle": "Se protegerá de nuevo la clave del diario con la nueva contraseña.",
-        "users": "Usuarios",
-        "usersSubtitle": "Crea y elimina cuentas del diario.",
         "notifications": "Notificaciones por correo",
         "notificationsSubtitle": "Recibe un correo cuando se cree un nuevo recordatorio.",
         "emailNotifications": "Notificaciones por correo",

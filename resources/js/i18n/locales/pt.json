@@ -24,7 +24,8 @@
         "openMenu": "Abrir menu",
         "closeMenu": "Fechar menu",
         "schedule": "Horário",
-        "settings": "Definições"
+        "settings": "Definições",
+        "users": "Utilizadores"
     },
     "theme": {
         "label": "Tema",
@@ -172,6 +173,7 @@
     "admin": {
         "title": "Utilizadores",
         "heading": "Utilizadores",
+        "subtitle": "Cria e elimina contas do diário.",
         "recoveryTitle": "Chave de recuperação do novo utilizador",
         "recoveryIntro": "É mostrada apenas uma vez. Entregue-a ao utilizador junto com a palavra-passe; com ela pode recuperar o diário se se esquecer da palavra-passe.",
         "createTitle": "Criar conta",
@@ -301,8 +303,6 @@
         "exportSubtitle": "Descarrega ou imprime o teu diário.",
         "password": "Alterar palavra-passe",
         "passwordSubtitle": "A chave do diário será reprotetida com a nova palavra-passe.",
-        "users": "Utilizadores",
-        "usersSubtitle": "Cria e elimina contas do diário.",
         "notifications": "Notificações por email",
         "notificationsSubtitle": "Receba um email quando um novo lembrete for criado.",
         "emailNotifications": "Notificações por email",

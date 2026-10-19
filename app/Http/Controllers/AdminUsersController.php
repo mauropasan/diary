@@ -13,9 +13,26 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class AdminUsersController extends Controller
 {
+    /**
+     * Show the administration page: every diary account in plaintext,
+     * plus the tools to create, edit and remove them.
+     *
+     * Nothing here needs the diary key, so the page also works while the
+     * diary itself is locked; only plaintext account data is shown, entry
+     * content is never decrypted on this path.
+     */
+    public function index(): InertiaResponse
+    {
+        return Inertia::render('admin/users', [
+            'users' => $this->users(),
+        ]);
+    }
+
     /**
      * Create a diary account with a password chosen by the admin.
      *
@@ -39,7 +56,7 @@ class AdminUsersController extends Controller
         });
 
         return redirect()
-            ->route('diary.settings')
+            ->route('admin.users.index')
             ->with('status', __('messages.admin.created', ['name' => $user->name]))
             ->with('recoveryKey', $recoveryKey);
     }
@@ -57,7 +74,7 @@ class AdminUsersController extends Controller
         ])->save();
 
         return redirect()
-            ->route('diary.settings')
+            ->route('admin.users.index')
             ->with('status', __('messages.admin.email-updated', ['name' => $user->name]));
     }
 
@@ -92,7 +109,7 @@ class AdminUsersController extends Controller
         $notifier->disabled($user, $actor);
 
         return redirect()
-            ->route('diary.settings')
+            ->route('admin.users.index')
             ->with('status', __('messages.admin.two-factor-disabled', ['name' => $user->name]));
     }
 
@@ -122,14 +139,39 @@ class AdminUsersController extends Controller
     {
         if ($user->is($request->user())) {
             return redirect()
-                ->route('diary.settings')
+                ->route('admin.users.index')
                 ->with('status', __('messages.admin.self-delete'));
         }
 
         $user->delete();
 
         return redirect()
-            ->route('diary.settings')
+            ->route('admin.users.index')
             ->with('status', __('messages.admin.deleted', ['name' => $user->name]));
+    }
+
+    /**
+     * List every diary account for the administration page.
+     *
+     * Only plaintext information is shown; entry content is never decrypted here.
+     *
+     * @return array<int, array{id: int, name: string, email: string, is_admin: bool, two_factor_enabled: bool, entries_count: int, created_at: string}>
+     */
+    private function users(): array
+    {
+        return User::query()
+            ->withCount('entries')
+            ->orderBy('created_at')
+            ->get()
+            ->map(fn (User $user): array => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'is_admin' => $user->is_admin,
+                'two_factor_enabled' => $user->twoFactorEnabled(),
+                'entries_count' => (int) $user->entries_count,
+                'created_at' => $user->created_at->toDateString(),
+            ])
+            ->all();
     }
 }

@@ -24,7 +24,8 @@
         "openMenu": "Obre el menú",
         "closeMenu": "Tanca el menú",
         "schedule": "Horari",
-        "settings": "Configuració"
+        "settings": "Configuració",
+        "users": "Usuaris"
     },
     "theme": {
         "label": "Tema",
@@ -172,6 +173,7 @@
     "admin": {
         "title": "Usuaris",
         "heading": "Usuaris",
+        "subtitle": "Crea i elimina comptes del diari.",
         "recoveryTitle": "Clau de recuperació del nou usuari",
         "recoveryIntro": "Es mostra només una vegada. Lliura-la a l'usuari juntament amb la contrasenya; amb ella pot recuperar el seu diari si oblida la contrasenya.",
         "createTitle": "Crea un compte",
@@ -301,8 +303,6 @@
         "exportSubtitle": "Descarrega o imprimeix el teu diari.",
         "password": "Canvia la contrasenya",
         "passwordSubtitle": "Es tornarà a protegir la clau del diari amb la nova contrasenya.",
-        "users": "Usuaris",
-        "usersSubtitle": "Crea i elimina comptes del diari.",
         "notifications": "Notificacions per correu",
         "notificationsSubtitle": "Rep un correu quan es crei un nou recordatori.",
         "emailNotifications": "Notificacions per correu",

@@ -59,9 +59,8 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::middleware('admin')->group(function () {
-        Route::get('admin/users', function () {
-            return redirect()->route('diary.settings');
-        })->name('admin.users.index');
+        Route::get('admin/users', [AdminUsersController::class, 'index'])
+            ->name('admin.users.index');
         Route::post('admin/users', [AdminUsersController::class, 'store'])
             ->middleware('throttle:10,1')
             ->name('admin.users.store');

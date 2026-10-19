@@ -1,9 +1,6 @@
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AdminUsersSection, {
-    type AdminUser,
-} from '@/components/AdminUsersSection';
 import BackgroundPicker from '@/components/BackgroundPicker';
 import DiaryNav from '@/components/DiaryNav';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -47,7 +44,6 @@ type SettingsProps = {
     emailNotifications: boolean;
     reminderSchedule: ReminderSchedule;
     twoFactor: TwoFactorState;
-    users: AdminUser[] | null;
 };
 
 const fieldClass =
@@ -59,7 +55,6 @@ export default function Settings({
     emailNotifications,
     reminderSchedule,
     twoFactor,
-    users,
 }: SettingsProps) {
     const { t } = useTranslation();
     const { auth, flash } = usePage().props;
@@ -843,19 +838,6 @@ export default function Settings({
                                 onCancel={cancelDisableTwoFactor}
                             />
                         </section>
-
-                        {users !== null && (
-                            <section className="w-full">
-                                <h2 className="mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-200">
-                                    {t('settings.users')}
-                                </h2>
-                                <p className="mb-4 text-xs text-zinc-700 dark:text-zinc-300">
-                                    {t('settings.usersSubtitle')}
-                                </p>
-
-                                <AdminUsersSection users={users} />
-                            </section>
-                        )}
                     </div>
                 </div>
             </div>

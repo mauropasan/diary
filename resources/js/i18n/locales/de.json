@@ -24,7 +24,8 @@
         "openMenu": "Menü öffnen",
         "closeMenu": "Menü schließen",
         "schedule": "Stundenplan",
-        "settings": "Einstellungen"
+        "settings": "Einstellungen",
+        "users": "Benutzer"
     },
     "theme": {
         "label": "Design",
@@ -172,6 +173,7 @@
     "admin": {
         "title": "Benutzer",
         "heading": "Benutzer",
+        "subtitle": "Tagebuchkonten erstellen und löschen.",
         "recoveryTitle": "Wiederherstellungsschlüssel des neuen Benutzers",
         "recoveryIntro": "Er wird nur einmal angezeigt. Händigen Sie ihn dem Benutzer zusammen mit dem Passwort aus; damit kann er sein Tagebuch wiederherstellen, wenn er das Passwort vergisst.",
         "createTitle": "Konto erstellen",
@@ -301,8 +303,6 @@
         "exportSubtitle": "Lade dein Tagebuch herunter oder drucke es.",
         "password": "Passwort ändern",
         "passwordSubtitle": "Der Tagebuchschlüssel wird mit dem neuen Passwort neu geschützt.",
-        "users": "Benutzer",
-        "usersSubtitle": "Tagebuchkonten erstellen und löschen.",
         "notifications": "E-Mail-Benachrichtigungen",
         "notificationsSubtitle": "Erhalten Sie eine E-Mail, wenn eine neue Erinnerung erstellt wird.",
         "emailNotifications": "E-Mail-Benachrichtigungen",

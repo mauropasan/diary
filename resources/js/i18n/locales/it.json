@@ -24,7 +24,8 @@
         "openMenu": "Apri menu",
         "closeMenu": "Chiudi menu",
         "schedule": "Orario",
-        "settings": "Impostazioni"
+        "settings": "Impostazioni",
+        "users": "Utenti"
     },
     "theme": {
         "label": "Tema",
@@ -172,6 +173,7 @@
     "admin": {
         "title": "Utenti",
         "heading": "Utenti",
+        "subtitle": "Crea ed elimina account del diario.",
         "recoveryTitle": "Chiave di recupero del nuovo utente",
         "recoveryIntro": "Viene mostrata una sola volta. Consegnale all'utente insieme alla password; con essa può recuperare il diario se dimentica la password.",
         "createTitle": "Crea account",
@@ -301,8 +303,6 @@
         "exportSubtitle": "Scarica o stampa il tuo diario.",
         "password": "Cambia password",
         "passwordSubtitle": "La chiave del diario sarà riproteggeta con la nuova password.",
-        "users": "Utenti",
-        "usersSubtitle": "Crea ed elimina account del diario.",
         "notifications": "Notifiche email",
         "notificationsSubtitle": "Ricevi un'email quando viene creato un nuovo promemoria.",
         "emailNotifications": "Notifiche email",

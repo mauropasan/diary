@@ -24,7 +24,8 @@
         "openMenu": "Ouvrir le menu",
         "closeMenu": "Fermer le menu",
         "schedule": "Emploi du temps",
-        "settings": "Paramètres"
+        "settings": "Paramètres",
+        "users": "Utilisateurs"
     },
     "theme": {
         "label": "Thème",
@@ -172,6 +173,7 @@
     "admin": {
         "title": "Utilisateurs",
         "heading": "Utilisateurs",
+        "subtitle": "Créez et supprimez des comptes du journal.",
         "recoveryTitle": "Clé de récupération du nouvel utilisateur",
         "recoveryIntro": "Elle n'est affichée qu'une seule fois. Remettez-la à l'utilisateur avec le mot de passe ; avec elle, il peut récupérer son journal s'il oublie le mot de passe.",
         "createTitle": "Créer un compte",
@@ -301,8 +303,6 @@
         "exportSubtitle": "Téléchargez ou imprimez votre journal.",
         "password": "Changer le mot de passe",
         "passwordSubtitle": "La clé du journal sera re-protégée avec le nouveau mot de passe.",
-        "users": "Utilisateurs",
-        "usersSubtitle": "Créez et supprimez des comptes du journal.",
         "notifications": "Notifications par e-mail",
         "notificationsSubtitle": "Recevez un e-mail lorsqu'un nouveau rappel est créé.",
         "emailNotifications": "Notifications par e-mail",

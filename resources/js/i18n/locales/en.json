@@ -24,7 +24,8 @@
         "openMenu": "Open menu",
         "closeMenu": "Close menu",
         "schedule": "Schedule",
-        "settings": "Settings"
+        "settings": "Settings",
+        "users": "Users"
     },
     "theme": {
         "label": "Theme",
@@ -172,6 +173,7 @@
     "admin": {
         "title": "Users",
         "heading": "Users",
+        "subtitle": "Create and delete diary accounts.",
         "recoveryTitle": "Recovery key for the new user",
         "recoveryIntro": "It is shown only once. Hand it to the user along with the password; with it they can recover their diary if they forget the password.",
         "createTitle": "Create account",
@@ -301,8 +303,6 @@
         "exportSubtitle": "Download or print your diary.",
         "password": "Change password",
         "passwordSubtitle": "The diary key will be re-protected with the new password.",
-        "users": "Users",
-        "usersSubtitle": "Create and delete diary accounts.",
         "notifications": "Email notifications",
         "notificationsSubtitle": "Receive an email when a new reminder is created.",
         "emailNotifications": "Email notifications",

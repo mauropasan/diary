@@ -20,6 +20,7 @@ declare module '@inertiajs/core' {
                 recoveryKey: string | null;
                 recoveryCodes: string[] | null;
             };
+            notificationCount: number;
             sidebarOpen: boolean;
             [key: string]: unknown;
         };

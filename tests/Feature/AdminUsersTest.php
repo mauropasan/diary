@@ -17,27 +17,15 @@ it('blocks non-admin users from the admin panel', function () {
         ->assertForbidden();
 });
 
-it('redirects the old admin users page to settings', function () {
-    $admin = User::factory()->asAdmin()->withDiaryKey('secret')->create();
-
-    $this->actingAs($admin)
-        ->post(route('diary.unlock.store'), ['password' => 'secret'])
-        ->assertRedirect(route('diary.show', now()->toDateString()));
-
-    $this->get(route('admin.users.index'))->assertRedirect(route('diary.settings'));
-});
-
-it('shows the list of users in the settings page for an admin', function () {
-    $admin = User::factory()->asAdmin()->withDiaryKey('secret')->create();
+it('renders the admin page with every account for an admin', function () {
+    $admin = User::factory()->asAdmin()->create();
     User::factory()->count(2)->create();
 
     $this->actingAs($admin)
-        ->post(route('diary.unlock.store'), ['password' => 'secret']);
-
-    $this->get(route('diary.settings'))
+        ->get(route('admin.users.index'))
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->component('settings/index')
+            ->component('admin/users')
             ->has('users', 3)
         );
 });
@@ -52,7 +40,7 @@ it('lets an admin create a user without giving up their own session', function (
             'password' => 'super-secret-1',
             'password_confirmation' => 'super-secret-1',
         ])
-        ->assertRedirect(route('diary.settings'))
+        ->assertRedirect(route('admin.users.index'))
         ->assertSessionHas('recoveryKey');
 
     $bob = User::query()->where('email', 'bob@example.com')->firstOrFail();
@@ -155,7 +143,7 @@ it('lets an admin remove a user and all of their encrypted data', function () {
 
     $this->actingAs($admin)
         ->delete(route('admin.users.destroy', $victim))
-        ->assertRedirect(route('diary.settings'))
+        ->assertRedirect(route('admin.users.index'))
         ->assertSessionHas('status');
 
     expect(User::query()->whereKey($victim->id)->exists())->toBeFalse()
@@ -169,7 +157,7 @@ it('prevents an admin from deleting their own account', function () {
 
     $this->actingAs($admin)
         ->delete(route('admin.users.destroy', $admin))
-        ->assertRedirect(route('diary.settings'));
+        ->assertRedirect(route('admin.users.index'));
 
     expect(User::query()->whereKey($admin->id)->exists())->toBeTrue();
 });
@@ -203,7 +191,7 @@ it('lets an admin change the email of another account', function () {
 
     $this->actingAs($admin)
         ->patch(route('admin.users.email', $victim), ['email' => 'moved@example.com'])
-        ->assertRedirect(route('diary.settings'))
+        ->assertRedirect(route('admin.users.index'))
         ->assertSessionHas('status', __('messages.admin.email-updated', ['name' => $victim->name]));
 
     expect($victim->refresh()->email)->toBe('moved@example.com');
@@ -217,7 +205,7 @@ it('keeps every other attribute of the edited account intact', function () {
 
     $this->actingAs($admin)
         ->patch(route('admin.users.email', $victim), ['email' => 'moved@example.com'])
-        ->assertRedirect(route('diary.settings'));
+        ->assertRedirect(route('admin.users.index'));
 
     $victim->refresh();
 

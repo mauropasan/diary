@@ -370,9 +370,10 @@ it('lets an administrator turn off two factor authentication for another account
         'expires_at' => now()->addDays(30),
     ]);
 
-    $this->get(route('diary.settings'))
+    $this->get(route('admin.users.index'))
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('admin/users')
             ->has('users', 2)
             ->where('users', fn (Collection $users) => $users->firstWhere('id', $victim->id)['two_factor_enabled'] === true)
         );
@@ -380,7 +381,7 @@ it('lets an administrator turn off two factor authentication for another account
     $this->delete(route('admin.users.two-factor', $victim), [
         'current_password' => 'secret-password',
     ])
-        ->assertRedirect(route('diary.settings'))
+        ->assertRedirect(route('admin.users.index'))
         ->assertSessionHas('status', __('messages.admin.two-factor-disabled', ['name' => $victim->name]));
 
     $victim->refresh();
@@ -439,7 +440,7 @@ it('signs the account out everywhere when an administrator turns two factor off'
 
     $this->delete(route('admin.users.two-factor', $victim), [
         'current_password' => 'secret-password',
-    ])->assertRedirect(route('diary.settings'));
+    ])->assertRedirect(route('admin.users.index'));
 
     $victim->refresh();
 

@@ -124,6 +124,10 @@ export default function AdminUsersSection({
 
     return (
         <>
+            <h2 className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                {t('admin.createTitle')}
+            </h2>
+
             <form
                 onSubmit={submit}
                 noValidate
@@ -233,9 +237,9 @@ export default function AdminUsersSection({
                 </button>
             </form>
 
-            <h3 className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+            <h2 className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-200">
                 {t('admin.accounts', { count: users.length })}
-            </h3>
+            </h2>
 
             {users.length === 0 && (
                 <p className="text-sm text-zinc-600 dark:text-zinc-400">

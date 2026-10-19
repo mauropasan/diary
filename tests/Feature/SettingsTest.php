@@ -25,7 +25,7 @@ it('blocks a locked user from the settings page', function () {
     $this->get(route('diary.settings'))->assertRedirect(route('diary.unlock'));
 });
 
-it('renders the settings page with the default background and no users for a non-admin', function () {
+it('renders the settings page with the default background for a non-admin', function () {
     ($this->unlock)();
 
     User::factory()->create();
@@ -36,21 +36,7 @@ it('renders the settings page with the default background and no users for a non
             ->component('settings/index')
             ->where('background', null)
             ->where('backgrounds', ['default', 'paper', 'sky', 'sage', 'peach', 'slate'])
-            ->where('users', null)
-        );
-});
-
-it('lists every account for an admin', function () {
-    ($this->unlock)();
-
-    $this->user->forceFill(['is_admin' => true])->save();
-    User::factory()->create();
-
-    $this->get(route('diary.settings'))
-        ->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page
-            ->component('settings/index')
-            ->has('users', 2)
+            ->missing('users')
         );
 });
 
@@ -58,14 +44,6 @@ it('redirects the old password page to settings', function () {
     ($this->unlock)();
 
     $this->get(route('diary.password'))->assertRedirect(route('diary.settings'));
-});
-
-it('redirects the old admin users page to settings', function () {
-    ($this->unlock)();
-
-    $this->user->forceFill(['is_admin' => true])->save();
-
-    $this->get(route('admin.users.index'))->assertRedirect(route('diary.settings'));
 });
 
 it('persists a preset background encrypted at rest', function () {

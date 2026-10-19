@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { home, logout } from '@/routes';
 import { cn } from '@/lib/utils';
 import NotificationsPopup from '@/components/NotificationsPopup';
+import { index as adminUsersIndex } from '@/routes/admin/users';
 import {
     destroy as notificationDestroy,
     read as notificationMarkRead,
@@ -199,6 +200,27 @@ function LogoutIcon(): React.JSX.Element {
     );
 }
 
+function UsersIcon(): React.JSX.Element {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4"
+            aria-hidden="true"
+        >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+    );
+}
+
 function BellIcon({ unread }: { unread: boolean }): React.JSX.Element {
     return (
         <svg
@@ -258,6 +280,7 @@ export default function DiaryNav({
     >([]);
     const { t } = useTranslation();
     const pageUrl = usePage().url;
+    const { auth } = usePage().props;
     const todayNumber = new Date().getDate();
     const csrfToken =
         (usePage().props as { csrfToken?: string }).csrfToken ?? '';
@@ -449,6 +472,21 @@ export default function DiaryNav({
                     </Link>
                 ))}
 
+                {auth.user.is_admin && (
+                    <Link
+                        href={adminUsersIndex.url()}
+                        onBefore={onBeforeNavigate}
+                        aria-current={
+                            isActive(adminUsersIndex.url()) ? 'page' : undefined
+                        }
+                        aria-label={t('nav.users')}
+                        title={t('nav.users')}
+                        className={iconButtonClass}
+                    >
+                        <UsersIcon />
+                    </Link>
+                )}
+
                 <div className="relative">
                     <button
                         type="button"
@@ -538,6 +576,21 @@ export default function DiaryNav({
                                     {link.label}
                                 </Link>
                             ))}
+                            {auth.user.is_admin && (
+                                <Link
+                                    href={adminUsersIndex.url()}
+                                    onBefore={onBeforeNavigate}
+                                    onClick={() => setOpen(false)}
+                                    aria-current={
+                                        isActive(adminUsersIndex.url())
+                                            ? 'page'
+                                            : undefined
+                                    }
+                                    className={mobileLinkClass}
+                                >
+                                    {t('nav.users')}
+                                </Link>
+                            )}
                             <button
                                 type="button"
                                 onClick={() => {

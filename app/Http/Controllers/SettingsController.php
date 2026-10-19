@@ -31,9 +31,6 @@ class SettingsController extends Controller
                 'timesMax' => (int) config('diary.reminder.times_max', 3),
             ],
             'twoFactor' => $this->twoFactor($request->user(), $totp),
-            'users' => $request->user()->is_admin
-                ? $this->users()
-                : null,
         ]);
     }
 
@@ -226,30 +223,5 @@ class SettingsController extends Controller
                 ? count($user->two_factor_recovery_codes)
                 : 0,
         ];
-    }
-
-    /**
-     * List every diary account for the admin section of the settings page.
-     *
-     * Only plaintext information is shown; entry content is never decrypted here.
-     *
-     * @return array<int, array{id: int, name: string, email: string, is_admin: bool, two_factor_enabled: bool, entries_count: int, created_at: string}>
-     */
-    private function users(): array
-    {
-        return User::query()
-            ->withCount('entries')
-            ->orderBy('created_at')
-            ->get()
-            ->map(fn (User $user): array => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'is_admin' => $user->is_admin,
-                'two_factor_enabled' => $user->twoFactorEnabled(),
-                'entries_count' => (int) $user->entries_count,
-                'created_at' => $user->created_at->toDateString(),
-            ])
-            ->all();
     }
 }

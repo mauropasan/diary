@@ -18,7 +18,6 @@ your entries in plaintext once they are saved.
   "on this day" memories work without decrypting anything.
 - **Calendar** highlighting days with content, plus previous/next day navigation.
 - **Tags** with a blind index for lookup.
-- **Search** that decrypts and filters in memory (the data volume is small).
 - **Mood tracking** with chart/table views and summary stats.
 - **Schedules** (editable weekly grid per schedule, stored as JSON).
 - **Daily prompts**, **streaks** and **"on this day"** memories.
@@ -187,6 +186,42 @@ password and prints the recovery key):
 php artisan diary:create-user
 ```
 
+## Android app
+
+The diary can be installed on Android through a Capacitor shell that loads the
+hosted app, so content updates never need a new APK — only changes to the
+native shell itself do.
+
+```bash
+npm run apk:release
+```
+
+The script (`scripts/apk.sh`):
+
+1. regenerates the native `android/` project when it is missing
+   (`npm run cap:init` on first use);
+2. signs the release build with `storage/app/diary-release.keystore`
+   (passwords come from `.env`: `DIARY_KEYSTORE_PASSWORD`, `DIARY_KEY_ALIAS`
+   and optionally `DIARY_KEY_PASSWORD`);
+3. stamps the APK with the git commit count as `versionCode`, so every build
+   installs as an update of the previous one;
+4. publishes the result to `storage/app/apk/diary.apk`.
+
+The published APK is served by the public `GET /download` route (throttled,
+and the APK carries no diary data), so the install link is always:
+
+```
+https://your-diary-host/download
+```
+
+nothing to copy around after a build.
+
+> Back up `storage/app/diary-release.keystore` outside the machine: losing it
+> makes future APKs uninstallable as updates of the already-installed ones.
+
+Requirements: Node.js 22+ (Capacitor CLI), JDK 17+ and the Android SDK
+(`ANDROID_HOME` / `ANDROID_SDK_ROOT`, or `android/local.properties`).
+
 ## Common commands
 
 | Command                                      | Purpose                                                   |
@@ -202,6 +237,8 @@ php artisan diary:create-user
 | `vendor/bin/pint`                            | Format PHP code (use `composer run lint`)                 |
 | `npm run types:check`                        | TypeScript type check (`tsc --noEmit`)                    |
 | `npm run check`                              | Frontend lint + format check (`npm run check:fix` to fix) |
+| `npm run cap:init`                           | Generate the native `android/` Capacitor project          |
+| `npm run apk:release`                        | Build, sign and publish the Android APK (`/download`)     |
 | `php artisan migrate`                        | Run database migrations                                   |
 | `php artisan wayfinder:generate --with-form` | Regenerate typed TS route/action helpers                  |
 

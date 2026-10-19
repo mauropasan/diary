@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RecoveryController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Auth\UnlockController;
+use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\MoodController;
@@ -18,6 +19,13 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TwoFactorController;
 use Illuminate\Support\Facades\Route;
+
+// The APK carries no diary data, so the install link for the Android shell
+// stays public: users download from here before signing in. `scripts/apk.sh`
+// republishes the file on every build, so the link is always up to date.
+Route::get('download', [DownloadController::class, 'apk'])
+    ->middleware('throttle:10,1')
+    ->name('download.apk');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [LoginController::class, 'create'])->name('login');

@@ -337,6 +337,10 @@
         "twoFactorDisable": "Deaktivieren",
         "twoFactorDisableConfirm": "Zwei-Faktor-Authentifizierung deaktivieren? Zum Anmelden wird nur noch Ihr Passwort benötigt."
     },
+    "update": {
+        "message": "Ein Update ist verfügbar ({{version}}).",
+        "install": "Installieren"
+    },
     "error": {
         "boundary": "Etwas ist schiefgelaufen.",
         "reload": "Neu laden"

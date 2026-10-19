@@ -337,6 +337,10 @@
         "twoFactorDisable": "Turn off",
         "twoFactorDisableConfirm": "Turn off two-factor authentication? Signing in will only require your password again."
     },
+    "update": {
+        "message": "An update is available ({{version}}).",
+        "install": "Install"
+    },
     "error": {
         "boundary": "Something went wrong.",
         "reload": "Reload"

@@ -209,7 +209,8 @@ The script (`scripts/apk.sh`):
    and optionally `DIARY_KEY_PASSWORD`);
 3. stamps the APK with the git commit count as `versionCode`, so every build
    installs as an update of the previous one;
-4. publishes the result to `storage/app/apk/diary.apk`.
+4. publishes the result to `storage/app/apk/diary.apk`, next to the
+   `version.json` behind the public `GET /download/version` route.
 
 The published APK is served by the public `GET /download` route (throttled,
 and the APK carries no diary data), so the install link is always:
@@ -219,6 +220,17 @@ https://your-diary-host/download
 ```
 
 nothing to copy around after a build.
+
+Because the shell only wraps the hosted app, the running build can be behind:
+it compares its own `versionCode` with `GET /download/version` on startup, on
+returning to the foreground and every few hours, and offers the newer build in
+a banner. Dismissing that banner silences only that build, so the next release
+asks again.
+
+The same shell also hands diary reminders to Android's scheduler
+(`@capacitor/local-notifications`), so a due reminder rings in the notification
+shade while the app is in the background or closed — the web view stops polling
+the moment it is put away. The bell and the popup keep working as before.
 
 > Back up `storage/app/diary-release.keystore` outside the machine: losing it
 > makes future APKs uninstallable as updates of the already-installed ones.

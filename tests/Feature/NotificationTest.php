@@ -4,6 +4,7 @@ use App\Mail\ReminderNotification;
 use App\Models\Note;
 use App\Models\User;
 use App\Security\TwoFactorNotifier;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia;
@@ -100,6 +101,53 @@ it('reveals a notification only when its slot comes due', function () {
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->where('notificationCount', 1)
         );
+});
+
+it('lists the reminders ahead of their moment for the native scheduler', function () {
+    ($this->unlock)();
+    $this->travelTo('2026-03-10 08:00:00');
+
+    $this->post(route('diary.notes.store'), [
+        'title' => 'Renew passport',
+        'body' => 'Go to the city hall.',
+        'kind' => 'reminder',
+        'date' => '2026-03-13',
+    ])->assertRedirect(route('diary.notes'));
+
+    // Both slots are still ahead: the popup stays empty, but the Android
+    // shell can already hand them to the system scheduler, which is what
+    // rings while the web view is in the background.
+    $this->get(route('diary.notifications.list'))->assertExactJson([]);
+
+    $this->get(route('diary.notifications.upcoming'))
+        ->assertOk()
+        ->assertJsonCount(2)
+        ->assertJsonStructure(['*' => ['id', 'title', 'body', 'dueAt']])
+        ->assertJsonFragment(['title' => 'Renew passport'])
+        ->assertJsonFragment(['body' => 'Go to the city hall.']);
+
+    // The first slot arrives: it leaves the scheduler list, and the popup
+    // takes it over from now on. The diary key has expired in the meantime,
+    // so unlock again.
+    $this->travelTo('2026-03-12 09:00:00');
+    ($this->unlock)();
+
+    $this->get(route('diary.notifications.upcoming'))
+        ->assertOk()
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.title', 'Renew passport')
+        ->assertJsonPath('0.dueAt', Carbon::parse('2026-03-13 09:00:00')->toISOString());
+
+    $this->get(route('diary.notifications.list'))
+        ->assertOk()
+        ->assertJsonCount(1);
+});
+
+it('blocks a locked diary from the upcoming reminders', function () {
+    ($this->unlock)();
+    $this->post(route('diary.lock'));
+
+    $this->get(route('diary.notifications.upcoming'))->assertRedirect(route('diary.unlock'));
 });
 
 it('shows application notifications translated without leaking their key', function () {

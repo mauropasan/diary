@@ -337,6 +337,10 @@
         "twoFactorDisable": "Disattiva",
         "twoFactorDisableConfirm": "Disattivare l'autenticazione a due fattori? All'accesso sarà richiesta solo la tua password."
     },
+    "update": {
+        "message": "È disponibile un aggiornamento ({{version}}).",
+        "install": "Installa"
+    },
     "error": {
         "boundary": "Qualcosa è andato storto.",
         "reload": "Ricarica"

@@ -126,6 +126,21 @@ class Notification extends Model
     }
 
     /**
+     * Scope for notifications whose trigger moment is still ahead.
+     *
+     * They are handed to the OS scheduler of the Android shell before their
+     * time comes, because a web view stops polling the moment the app is put
+     * in the background. The counterpart of {@see scopeDue()}.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    public function scopeUpcoming(Builder $query): Builder
+    {
+        return $query->where('due_at', '>', now());
+    }
+
+    /**
      * Mark the notification as read.
      */
     public function markAsRead(): void

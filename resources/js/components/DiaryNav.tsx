@@ -6,6 +6,7 @@ import { home, logout } from '@/routes';
 import { cn } from '@/lib/utils';
 import NotificationsPopup from '@/components/NotificationsPopup';
 import { useIsNativeApp } from '@/hooks/use-native-app';
+import { useNativeNotifications } from '@/hooks/useNativeNotifications';
 import { index as adminUsersIndex } from '@/routes/admin/users';
 import { apk as downloadApk } from '@/routes/download';
 import {
@@ -304,6 +305,9 @@ export default function DiaryNav({
     const pageUrl = usePage().url;
     const { auth, apkAvailable } = usePage().props;
     const isNativeApp = useIsNativeApp();
+    // Hand the diary's reminders to the OS scheduler, so they ring through
+    // Android even when the web view is in the background. No-op in a browser.
+    useNativeNotifications(notificationsList);
     // The shell itself is the app, so the APK download is pointless inside it.
     const showApkDownload = apkAvailable && !isNativeApp;
     const todayNumber = new Date().getDate();

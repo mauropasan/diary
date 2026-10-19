@@ -27,6 +27,14 @@ Route::get('download', [DownloadController::class, 'apk'])
     ->middleware('throttle:10,1')
     ->name('download.apk');
 
+// The version of that same build, written next to the APK by `scripts/apk.sh`.
+// The shell compares it with its own versionCode and offers the update before
+// the user has to wonder whether the APK is current. Public for the same reason
+// as the download itself.
+Route::get('download/version', [DownloadController::class, 'version'])
+    ->middleware('throttle:30,1')
+    ->name('download.version');
+
 Route::middleware('guest')->group(function () {
     Route::get('login', [LoginController::class, 'create'])->name('login');
     Route::post('login', [LoginController::class, 'store'])
@@ -120,6 +128,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('diary/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('diary.notifications.read');
         Route::delete('diary/notifications/{notification}', [NotificationController::class, 'destroy'])->name('diary.notifications.destroy');
         Route::get('diary/notifications/list', [NotificationController::class, 'list'])->name('diary.notifications.list');
+        Route::get('diary/notifications/upcoming', [NotificationController::class, 'upcoming'])->name('diary.notifications.upcoming');
         Route::patch('diary/notifications/read-all', [NotificationController::class, 'readAll'])->name('diary.notifications.read-all');
 
         Route::get('diary/schedule', [ScheduleController::class, 'index'])->name('diary.schedule');

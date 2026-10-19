@@ -19,6 +19,33 @@ it('returns not found when no apk has been published', function () {
     $this->get(route('download.apk'))->assertNotFound();
 });
 
+it('reports the version of the published apk', function () {
+    Storage::fake('apk');
+
+    $this->get(route('download.version'))->assertNotFound();
+
+    Storage::disk('apk')->put('version.json', json_encode([
+        'versionCode' => 37,
+        'versionName' => '1.37',
+        'publishedAt' => '2026-10-20T08:00:00Z',
+    ]));
+
+    $this->get(route('download.version'))
+        ->assertOk()
+        ->assertExactJson([
+            'versionCode' => 37,
+            'versionName' => '1.37',
+            'publishedAt' => '2026-10-20T08:00:00Z',
+        ]);
+});
+
+it('does not report a version file that carries no build', function () {
+    Storage::fake('apk');
+    Storage::disk('apk')->put('version.json', 'not json at all');
+
+    $this->get(route('download.version'))->assertNotFound();
+});
+
 it('tells the frontend when an apk is ready to download', function () {
     Storage::fake('apk');
 

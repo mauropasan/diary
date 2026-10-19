@@ -337,6 +337,10 @@
         "twoFactorDisable": "Désactiver",
         "twoFactorDisableConfirm": "Désactiver l'authentification à deux facteurs ? La connexion ne demandera plus que votre mot de passe."
     },
+    "update": {
+        "message": "Une mise à jour est disponible ({{version}}).",
+        "install": "Installer"
+    },
     "error": {
         "boundary": "Une erreur s'est produite.",
         "reload": "Recharger"

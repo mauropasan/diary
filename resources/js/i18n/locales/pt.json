@@ -337,6 +337,10 @@
         "twoFactorDisable": "Desativar",
         "twoFactorDisableConfirm": "Desativar a autenticação de dois fatores? Para iniciar sessão será pedida apenas a tua palavra-passe."
     },
+    "update": {
+        "message": "Há uma atualização disponível ({{version}}).",
+        "install": "Instalar"
+    },
     "error": {
         "boundary": "Algo deu errado.",
         "reload": "Recarregar"

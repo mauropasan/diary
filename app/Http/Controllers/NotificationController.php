@@ -63,6 +63,20 @@ class NotificationController extends Controller
     }
 
     /**
+     * List the notifications that are still ahead, for the native shell.
+     *
+     * The popup only ever shows what is already due, but a reminder has to be
+     * registered with Android's scheduler *before* its moment passes: the web
+     * view stops polling as soon as the app goes to the background. Title and
+     * body follow the same decryption and translation rules as the list, so
+     * this route sits behind the same `diary.unlocked` middleware.
+     */
+    public function upcoming(Request $request): JsonResponse
+    {
+        return response()->json($this->ahead($request));
+    }
+
+    /**
      * Delete a notification.
      *
      * The nav popup deletes in place with a plain fetch and only needs the
@@ -107,6 +121,27 @@ class NotificationController extends Controller
                 'body' => $notification->displayBody(),
                 'readAt' => $notification->read_at?->toISOString(),
                 'createdAt' => $notification->created_at->toISOString(),
+            ])
+            ->all();
+    }
+
+    /**
+     * The user's pending notifications, oldest moment first.
+     *
+     * @return array<int, array{id: int, title: string|null, body: string|null, dueAt: string}>
+     */
+    private function ahead(Request $request): array
+    {
+        return $request->user()
+            ->notifications()
+            ->upcoming()
+            ->orderBy('due_at')
+            ->get()
+            ->map(fn (Notification $notification): array => [
+                'id' => $notification->id,
+                'title' => $notification->displayTitle(),
+                'body' => $notification->displayBody(),
+                'dueAt' => $notification->due_at->toISOString(),
             ])
             ->all();
     }

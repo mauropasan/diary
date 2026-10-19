@@ -337,6 +337,10 @@
         "twoFactorDisable": "Desactivar",
         "twoFactorDisableConfirm": "Voleu desactivar l'autenticació de dos factors? Per iniciar sessió només es requerirà la vostra contrasenya."
     },
+    "update": {
+        "message": "Hi ha una actualització disponible ({{version}}).",
+        "install": "Instal·la"
+    },
     "error": {
         "boundary": "Alguna cosa ha anat malament.",
         "reload": "Torna-ho a carregar"

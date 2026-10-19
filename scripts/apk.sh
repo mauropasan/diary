@@ -102,5 +102,12 @@ cp "$OUTPUT_APK" "$PUBLISHED_APK"
 APP_URL="$(env_value APP_URL)"
 VERSION="$(sed -n 's/^versionName=//p' "$PROPERTIES")"
 
+# The installed shell reads this from /download/version to know whether it is
+# behind the published build, so it goes out with the APK on every release.
+PUBLISHED_VERSION="$(dirname "$PUBLISHED_APK")/version.json"
+cat > "$PUBLISHED_VERSION" <<EOF
+{"versionCode": $VERSION_CODE, "versionName": "$VERSION", "publishedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"}
+EOF
+
 echo "APK published: $PUBLISHED_APK (version $VERSION)"
 echo "Install link:  ${APP_URL:-<APP_URL>}/download"

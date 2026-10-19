@@ -11,6 +11,7 @@
 /storage/*.key
 /storage/pail
 /vendor
+/android
 .env
 .env.backup
 .env.production

@@ -9,6 +9,7 @@
         "check": "vp check",
         "check:fix": "vp check --fix",
         "types:check": "tsc --noEmit",
+        "cap:init": "cap add android",
         "cap:sync": "cap sync android",
         "cap:open": "cap open android",
         "apk:debug": "cap sync android && cd android && ./gradlew assembleDebug",

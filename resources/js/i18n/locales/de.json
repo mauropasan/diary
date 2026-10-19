@@ -25,7 +25,8 @@
         "closeMenu": "Menü schließen",
         "schedule": "Stundenplan",
         "settings": "Einstellungen",
-        "users": "Benutzer"
+        "users": "Benutzer",
+        "androidApp": "Android-App"
     },
     "theme": {
         "label": "Design",

@@ -25,7 +25,8 @@
         "closeMenu": "Close menu",
         "schedule": "Schedule",
         "settings": "Settings",
-        "users": "Users"
+        "users": "Users",
+        "androidApp": "Android app"
     },
     "theme": {
         "label": "Theme",

@@ -25,7 +25,8 @@
         "closeMenu": "Tanca el menú",
         "schedule": "Horari",
         "settings": "Configuració",
-        "users": "Usuaris"
+        "users": "Usuaris",
+        "androidApp": "Aplicació Android"
     },
     "theme": {
         "label": "Tema",

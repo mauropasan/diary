@@ -6,6 +6,7 @@ import { home, logout } from '@/routes';
 import { cn } from '@/lib/utils';
 import NotificationsPopup from '@/components/NotificationsPopup';
 import { index as adminUsersIndex } from '@/routes/admin/users';
+import { apk as downloadApk } from '@/routes/download';
 import {
     destroy as notificationDestroy,
     read as notificationMarkRead,
@@ -221,6 +222,26 @@ function UsersIcon(): React.JSX.Element {
     );
 }
 
+function DownloadIcon(): React.JSX.Element {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4"
+            aria-hidden="true"
+        >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+    );
+}
+
 function BellIcon({ unread }: { unread: boolean }): React.JSX.Element {
     return (
         <svg
@@ -280,7 +301,7 @@ export default function DiaryNav({
     >([]);
     const { t } = useTranslation();
     const pageUrl = usePage().url;
-    const { auth } = usePage().props;
+    const { auth, apkAvailable } = usePage().props;
     const todayNumber = new Date().getDate();
     const csrfToken =
         (usePage().props as { csrfToken?: string }).csrfToken ?? '';
@@ -539,6 +560,17 @@ export default function DiaryNav({
                 >
                     <LogoutIcon />
                 </button>
+
+                {apkAvailable && (
+                    <a
+                        href={downloadApk.url()}
+                        aria-label={t('nav.androidApp')}
+                        title={t('nav.androidApp')}
+                        className={iconButtonClass}
+                    >
+                        <DownloadIcon />
+                    </a>
+                )}
             </div>
 
             <div className="relative sm:hidden">
@@ -590,6 +622,15 @@ export default function DiaryNav({
                                 >
                                     {t('nav.users')}
                                 </Link>
+                            )}
+                            {apkAvailable && (
+                                <a
+                                    href={downloadApk.url()}
+                                    onClick={() => setOpen(false)}
+                                    className={mobileLinkClass}
+                                >
+                                    {t('nav.androidApp')}
+                                </a>
                             )}
                             <button
                                 type="button"

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -38,6 +39,9 @@ class HandleInertiaRequests extends Middleware
             'background' => $user?->backgroundChoice(),
             'backgroundVersion' => (string) ($user === null ? 0 : $user->background_version),
             'notificationCount' => (int) ($user?->notifications()->unread()->due()->count() ?? 0),
+            // scripts/apk.sh publishes the Android build here; the nav only
+            // offers the download while a build is actually available.
+            'apkAvailable' => is_file(Storage::disk('local')->path('apk/diary.apk')),
             'diary' => [
                 'lockAfterMinutes' => (int) config('diary.lock_after_minutes'),
                 'timezone' => config('app.timezone'),

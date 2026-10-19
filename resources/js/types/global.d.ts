@@ -21,6 +21,7 @@ declare module '@inertiajs/core' {
                 recoveryCodes: string[] | null;
             };
             notificationCount: number;
+            apkAvailable: boolean;
             sidebarOpen: boolean;
             [key: string]: unknown;
         };

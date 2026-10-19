@@ -25,7 +25,8 @@
         "closeMenu": "Chiudi menu",
         "schedule": "Orario",
         "settings": "Impostazioni",
-        "users": "Utenti"
+        "users": "Utenti",
+        "androidApp": "App Android"
     },
     "theme": {
         "label": "Tema",

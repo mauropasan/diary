@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { home, logout } from '@/routes';
 import { cn } from '@/lib/utils';
 import NotificationsPopup from '@/components/NotificationsPopup';
+import { useIsNativeApp } from '@/hooks/use-native-app';
 import { index as adminUsersIndex } from '@/routes/admin/users';
 import { apk as downloadApk } from '@/routes/download';
 import {
@@ -302,6 +303,9 @@ export default function DiaryNav({
     const { t } = useTranslation();
     const pageUrl = usePage().url;
     const { auth, apkAvailable } = usePage().props;
+    const isNativeApp = useIsNativeApp();
+    // The shell itself is the app, so the APK download is pointless inside it.
+    const showApkDownload = apkAvailable && !isNativeApp;
     const todayNumber = new Date().getDate();
     const csrfToken =
         (usePage().props as { csrfToken?: string }).csrfToken ?? '';
@@ -561,7 +565,7 @@ export default function DiaryNav({
                     <LogoutIcon />
                 </button>
 
-                {apkAvailable && (
+                {showApkDownload && (
                     <a
                         href={downloadApk.url()}
                         aria-label={t('nav.androidApp')}
@@ -623,7 +627,7 @@ export default function DiaryNav({
                                     {t('nav.users')}
                                 </Link>
                             )}
-                            {apkAvailable && (
+                            {showApkDownload && (
                                 <a
                                     href={downloadApk.url()}
                                     onClick={() => setOpen(false)}

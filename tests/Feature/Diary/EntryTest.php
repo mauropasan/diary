@@ -92,11 +92,21 @@ it('rejects entries for future dates', function () {
     $this->put(route('diary.update', $tomorrow), [
         'title' => 'Futuro',
         'content' => '<p>No debería guardarse</p>',
-    ])->assertSessionHasErrors('date');
+    ])->assertSessionHasErrors(['date' => 'You cannot write on future dates.']);
 
     $this->assertDatabaseCount('entries', 0);
 
     $this->get(route('diary.show', $tomorrow))->assertNotFound();
+});
+
+it('translates the future-date validation message', function () {
+    $tomorrow = now()->addDay()->toDateString();
+
+    $this->withUnencryptedCookie('lang', 'es')
+        ->put(route('diary.update', $tomorrow), [
+            'title' => 'Futuro',
+            'content' => '<p>No debería guardarse</p>',
+        ])->assertSessionHasErrors(['date' => 'No puedes escribir en fechas futuras.']);
 });
 
 it('lists within the current month the days that have an entry', function () {

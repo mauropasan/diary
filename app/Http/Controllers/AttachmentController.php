@@ -106,7 +106,7 @@ class AttachmentController extends Controller
         $dek = $this->keys->get();
 
         if ($dek === null) {
-            abort(403, 'La libreta está bloqueada.');
+            abort(403);
         }
 
         return $dek;

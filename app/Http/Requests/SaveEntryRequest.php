@@ -45,13 +45,13 @@ class SaveEntryRequest extends FormRequest
         return [
             function (Validator $validator): void {
                 if (! $this->dateIsValid()) {
-                    $validator->errors()->add('date', 'La fecha no es válida.');
+                    $validator->errors()->add('date', __('validation.custom.date.invalid'));
 
                     return;
                 }
 
                 if ($this->dateIsInTheFuture()) {
-                    $validator->errors()->add('date', 'No puedes escribir en fechas futuras.');
+                    $validator->errors()->add('date', __('validation.custom.date.future'));
                 }
             },
         ];

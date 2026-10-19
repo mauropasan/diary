@@ -113,7 +113,9 @@ return [
 
     'custom' => [
         'date' => [
-            'date' => 'La fecha no es válida.',
+            'invalid' => 'La fecha no es válida.',
+            'future' => 'No puedes escribir en fechas futuras.',
+            'future_attachment' => 'No puedes adjuntar archivos en fechas futuras.',
         ],
     ],
 

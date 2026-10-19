@@ -113,7 +113,9 @@ return [
 
     'custom' => [
         'date' => [
-            'date' => 'Das Datum ist ungültig.',
+            'invalid' => 'Das Datum ist ungültig.',
+            'future' => 'Du kannst nicht in zukünftige Tage schreiben.',
+            'future_attachment' => 'Du kannst keine Dateien an zukünftige Tage anhängen.',
         ],
     ],
 

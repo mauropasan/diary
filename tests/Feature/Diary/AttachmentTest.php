@@ -136,7 +136,7 @@ it('rejects uploads for future dates', function () {
     $this->postJson(route('diary.attachments.store', $tomorrow), [
         'attachment' => UploadedFile::fake()->image('foto.png'),
     ])->assertUnprocessable()
-        ->assertJsonValidationErrors('date');
+        ->assertJsonValidationErrors(['date' => 'You cannot attach files on future dates.']);
 
     $this->assertDatabaseCount('attachments', 0);
 });

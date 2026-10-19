@@ -38,6 +38,16 @@ return [
             'report' => false,
         ],
 
+        // Where scripts/apk.sh publishes the signed Android build. This is
+        // deliberately not the 'local' disk: that one is rooted in
+        // storage/app/private and would never see the file.
+        'apk' => [
+            'driver' => 'local',
+            'root' => storage_path('app/apk'),
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

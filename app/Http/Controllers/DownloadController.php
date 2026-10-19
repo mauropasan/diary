@@ -16,7 +16,7 @@ class DownloadController extends Controller
      */
     public function apk(): BinaryFileResponse
     {
-        $path = Storage::disk('local')->path('apk/diary.apk');
+        $path = Storage::disk('apk')->path('diary.apk');
 
         abort_unless(is_file($path), 404);
 

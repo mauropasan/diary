@@ -41,7 +41,7 @@ class HandleInertiaRequests extends Middleware
             'notificationCount' => (int) ($user?->notifications()->unread()->due()->count() ?? 0),
             // scripts/apk.sh publishes the Android build here; the nav only
             // offers the download while a build is actually available.
-            'apkAvailable' => is_file(Storage::disk('local')->path('apk/diary.apk')),
+            'apkAvailable' => Storage::disk('apk')->exists('diary.apk'),
             'diary' => [
                 'lockAfterMinutes' => (int) config('diary.lock_after_minutes'),
                 'timezone' => config('app.timezone'),

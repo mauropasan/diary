@@ -4,12 +4,8 @@ namespace App\Models;
 
 use App\Casts\EncryptedEntryText;
 use App\Crypto\TagNameIndex;
-use Database\Factories\TagFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -19,14 +15,10 @@ use Illuminate\Support\Carbon;
  * @property string $name_index
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read User $user
  */
 #[Fillable(['user_id', 'name', 'name_index'])]
 class Tag extends Model
 {
-    /** @use HasFactory<TagFactory> */
-    use HasFactory;
-
     /**
      * Get the attributes that should be cast.
      *
@@ -72,25 +64,5 @@ class Tag extends Model
             ['name_index' => $index],
             ['name' => $displayName],
         );
-    }
-
-    /**
-     * The user that owns the tag.
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * The entries carrying this tag.
-     *
-     * @return BelongsToMany<Entry, $this>
-     */
-    public function entries(): BelongsToMany
-    {
-        return $this->belongsToMany(Entry::class)->withTimestamps();
     }
 }

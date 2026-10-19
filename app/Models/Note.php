@@ -3,9 +3,7 @@
 namespace App\Models;
 
 use App\Casts\EncryptedEntryText;
-use Database\Factories\NoteFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -32,9 +30,6 @@ use Illuminate\Support\Carbon;
 #[Fillable(['user_id', 'title', 'body', 'color', 'kind', 'date', 'background_image'])]
 class Note extends Model
 {
-    /** @use HasFactory<NoteFactory> */
-    use HasFactory;
-
     public const string DEFAULT_COLOR = 'yellow';
 
     public const string DEFAULT_KIND = 'note';

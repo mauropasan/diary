@@ -105,7 +105,6 @@ export default defineConfig(({ mode }) => {
                 'bootstrap/ssr/**',
                 'tailwind.config.js',
                 'resources/js/actions/**',
-                'resources/js/components/ui/*',
                 'resources/js/routes/**',
                 'resources/js/wayfinder/**',
             ],
@@ -121,12 +120,7 @@ export default defineConfig(({ mode }) => {
             semi: true,
             singleAttributePerLine: false,
             htmlWhitespaceSensitivity: 'css',
-            ignorePatterns: [
-                '.github/**',
-                'composer.json',
-                'resources/js/components/ui/*',
-                'resources/views/mail/*',
-            ],
+            ignorePatterns: ['.github/**', 'composer.json'],
             sortTailwindcss: {
                 functions: ['clsx', 'cn', 'cva'],
                 stylesheet: 'resources/css/app.css',

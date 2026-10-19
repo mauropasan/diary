@@ -177,16 +177,6 @@ class User extends Authenticatable
     }
 
     /**
-     * The media attachments owned by the user.
-     *
-     * @return HasMany<Attachment, $this>
-     */
-    public function attachments(): HasMany
-    {
-        return $this->hasMany(Attachment::class);
-    }
-
-    /**
      * The notes owned by the user.
      *
      * @return HasMany<Note, $this>

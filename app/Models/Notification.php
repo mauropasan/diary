@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use App\Casts\EncryptedEntryText;
-use Database\Factories\NotificationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -31,9 +29,6 @@ use Illuminate\Support\Carbon;
 #[Hidden(['title', 'body', 'kind', 'params'])]
 class Notification extends Model
 {
-    /** @use HasFactory<NotificationFactory> */
-    use HasFactory;
-
     protected function casts(): array
     {
         return [
@@ -128,17 +123,6 @@ class Notification extends Model
     public function scopeDue(Builder $query): Builder
     {
         return $query->where('due_at', '<=', now());
-    }
-
-    /**
-     * Scope for read notifications.
-     *
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    public function scopeRead(Builder $query): Builder
-    {
-        return $query->whereNotNull('read_at');
     }
 
     /**

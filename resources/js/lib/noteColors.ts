@@ -8,7 +8,7 @@
 
 import type { CSSProperties } from 'react';
 
-export const noteColorClasses: Record<string, string> = {
+const noteColorClasses: Record<string, string> = {
     yellow: 'border-amber-200 bg-amber-100 dark:border-amber-900 dark:bg-amber-950',
     pink: 'border-rose-200 bg-rose-100 dark:border-rose-900 dark:bg-rose-950',
     blue: 'border-sky-200 bg-sky-100 dark:border-sky-900 dark:bg-sky-950',
@@ -26,7 +26,7 @@ export const noteSwatchClasses: Record<string, string> = {
     gray: 'bg-zinc-300',
 };
 
-export function noteColorClass(color: string): string {
+function noteColorClass(color: string): string {
     return noteColorClasses[color] ?? noteColorClasses.gray;
 }
 

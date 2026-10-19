@@ -25,7 +25,7 @@ const resources = {
 /**
  * Read the language chosen by the user, if any.
  */
-export function readPreference(): SupportedLocale | null {
+function readPreference(): SupportedLocale | null {
     if (typeof document === 'undefined') {
         return null;
     }

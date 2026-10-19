@@ -5,9 +5,9 @@ import {
     type Editor,
 } from '@tiptap/core';
 
-export type MediaKind = 'image' | 'audio' | 'video' | 'file';
+type MediaKind = 'image' | 'audio' | 'video' | 'file';
 
-export type MediaAttributes = {
+type MediaAttributes = {
     src: string;
     kind: MediaKind;
     originalName: string;

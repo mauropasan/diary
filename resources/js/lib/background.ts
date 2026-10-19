@@ -65,7 +65,7 @@ function imageUrl(version: string | null): string {
  * stable URL, so replacing the picture only shows up once the query string
  * changes and the browser fetches it again.
  */
-export function applyBodyBackground(
+function applyBodyBackground(
     background: string | null,
     version: string | null = null,
 ): void {

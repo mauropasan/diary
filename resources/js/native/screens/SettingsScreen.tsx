@@ -476,7 +476,7 @@ export default function SettingsScreen(): React.JSX.Element {
     const versionLabel = Capacitor.isNativePlatform() ? String(installedVersion ?? '') : '';
 
     return (
-        <div className="pb-10">
+        <div>
             <Card>
                 <Row
                     icon={PaletteIcon}

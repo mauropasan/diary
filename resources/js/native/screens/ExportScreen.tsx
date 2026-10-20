@@ -145,7 +145,7 @@ export default function ExportScreen(): React.JSX.Element {
     const empty = entries !== null && entries.length === 0;
 
     return (
-        <div className="pb-10">
+        <div>
             <div className="mb-6 flex items-start gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-zinc-200/60 dark:bg-zinc-900 dark:ring-zinc-800">
                 <InfoIcon className="mt-0.5 h-5 w-5 shrink-0 text-zinc-400" />
                 <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-400">

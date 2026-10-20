@@ -64,7 +64,7 @@ export function TopBar({
     const { t } = useTranslation();
 
     return (
-        <header className="sticky top-0 z-20 flex min-h-14 items-center gap-2 border-b border-zinc-200/70 bg-white/90 px-2 py-2 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90">
+        <header className="sticky top-0 z-20 -mt-[max(env(safe-area-inset-top),var(--app-status-bar-height,0px))] flex min-h-14 items-center gap-2 border-b border-zinc-200/70 bg-white/90 px-2 py-2 pt-[max(env(safe-area-inset-top),var(--app-status-bar-height,0px))] backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90">
             {showBack ? (
                 <button
                     type="button"

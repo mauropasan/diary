@@ -455,6 +455,12 @@ if ! grep -q 'USE_BIOMETRIC' android/app/src/main/AndroidManifest.xml; then
     perl -0pi -e 's{(\s*)(<uses-permission android:name="android.permission.INTERNET" />\n)}{$1$2$1<uses-permission android:name="android.permission.USE_BIOMETRIC" />\n}' android/app/src/main/AndroidManifest.xml
 fi
 
+# The keyboard must resize the WebView instead of panning the window: without
+# this, focusing a field slides the whole page (title bar included) off-screen.
+if ! grep -q 'windowSoftInputMode' android/app/src/main/AndroidManifest.xml; then
+    perl -0pi -e 's{(android:configChanges="[^\n]+"\n)}{$1            android:windowSoftInputMode="adjustResize"\n}' android/app/src/main/AndroidManifest.xml
+fi
+
 npx cap sync android
 
 (cd android && ./gradlew assembleRelease)

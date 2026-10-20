@@ -4,6 +4,14 @@
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+/*
+| The Android bundle builds with its Vite root inside `resources/native`, and
+| Tailwind's automatic source detection follows that root — so every utility
+| used in the shared and native components has to be listed explicitly here,
+| or the native CSS silently loses it. The web build scans this tree anyway,
+| making the directive a no-op there.
+*/
+@source '../../resources/js';
 
 @theme {
     --font-sans:

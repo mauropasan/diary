@@ -344,5 +344,39 @@
     "error": {
         "boundary": "Etwas ist schiefgelaufen.",
         "reload": "Neu laden"
+    },
+    "native": {
+        "action": {
+            "delete": "Löschen"
+        },
+        "export": {
+            "title": "Exportieren",
+            "share": "Teilen",
+            "copy": "In die Zwischenablage kopieren",
+            "copied": "In die Zwischenablage kopiert.",
+            "exporting": "Wird vorbereitet…",
+            "hint": "Dein Tagebuch wird in eine Markdown-Datei geschrieben und an die Android-Freigabeübergabe übergeben, damit du es speichern oder wohin du willst senden kannst. Nichts verlässt dieses Gerät, bis du es teilst."
+        },
+        "settings": {
+            "local_mode": "Dieses Tagebuch existiert nur auf diesem Gerät.",
+            "local_mode_value": "Auf diesem Gerät",
+            "connect_server": "Server verbinden",
+            "connect_merge_note": "Melde dich an, um dieses Tagebuch mit einem Server zu synchronisieren. Alles, was bereits auf diesem Gerät liegt, bleibt erhalten und wird zusammengeführt.",
+            "connected": "Verbunden",
+            "connect_done": "Dieses Tagebuch wird jetzt mit deinem Server synchronisiert.",
+            "forget_device": "Dieses Gerät vergessen",
+            "forget_confirm": "Konto und Schlüssel von diesem Gerät entfernen? Einträge, die bereits auf dem Server liegen, bleiben erhalten.",
+            "require_biometric": "Fingerabdruck zum Öffnen verlangen",
+            "lock_after": "Sperren nach",
+            "lock_minutes": "{{n}} Min.",
+            "lock_60": "1 Stunde",
+            "update_available": "Update verfügbar: v{{version}}"
+        },
+        "sync": {
+            "pull": "Jetzt synchronisieren",
+            "syncing": "Wird synchronisiert…",
+            "pull_confirm": "Neue Einträge vom Server holen und die Änderungen von diesem Gerät senden.",
+            "never": "Noch nie synchronisiert"
+        }
     }
 }

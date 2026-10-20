@@ -194,13 +194,14 @@ it('keeps an entry that only contains media', function () {
     $this->assertDatabaseCount('attachments', 1);
 });
 
-it('removes the attached files when the entry is deleted', function () {
+it('keeps the attached files when the entry is soft-deleted', function () {
     $today = now()->toDateString();
 
     $this->postJson(route('diary.attachments.store', $today), [
         'attachment' => UploadedFile::fake()->image('foto.png'),
     ]);
 
+    $entry = Entry::firstOrFail();
     $attachment = Attachment::firstOrFail();
 
     $this->put(route('diary.update', $today), [
@@ -208,6 +209,26 @@ it('removes the attached files when the entry is deleted', function () {
         'title' => '',
         'mood' => null,
     ]);
+
+    $this->assertSoftDeleted('entries', ['id' => $entry->id]);
+
+    // Media survives a soft delete on purpose: restoring the day (or
+    // re-editing it later) must find its attachments again.
+    $this->assertDatabaseCount('attachments', 1);
+    Storage::disk('diary')->assertExists($attachment->path);
+});
+
+it('removes the attached files when the entry is permanently deleted', function () {
+    $today = now()->toDateString();
+
+    $this->postJson(route('diary.attachments.store', $today), [
+        'attachment' => UploadedFile::fake()->image('foto.png'),
+    ]);
+
+    $entry = Entry::firstOrFail();
+    $attachment = Attachment::firstOrFail();
+
+    Entry::withTrashed()->findOrFail($entry->id)->forceDelete();
 
     $this->assertDatabaseCount('entries', 0);
     $this->assertDatabaseCount('attachments', 0);

@@ -83,7 +83,7 @@ it('deletes the entry when its content is cleared', function () {
         'content' => '<p></p>',
     ]);
 
-    $this->assertDatabaseCount('entries', 0);
+    $this->assertSoftDeleted('entries');
 });
 
 it('rejects entries for future dates', function () {

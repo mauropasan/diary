@@ -84,16 +84,31 @@ class SaveEntryRequest extends FormRequest
      */
     public function entryIsEmpty(): bool
     {
-        $rawContent = $this->string('content')->toString();
+        return static::fieldsAreEmpty(
+            $this->input('title'),
+            $this->input('content'),
+            $this->input('mood'),
+        );
+    }
 
-        $content = html_entity_decode(
+    /**
+     * Whether the given entry fields describe an empty day.
+     *
+     * Shared with the sync API, which applies the same "nothing written means
+     * delete" rule per record instead of per request.
+     */
+    public static function fieldsAreEmpty(mixed $title, mixed $content, mixed $mood): bool
+    {
+        $rawContent = is_string($content) ? $content : '';
+
+        $text = html_entity_decode(
             strip_tags($rawContent),
             ENT_QUOTES | ENT_HTML5,
         );
 
-        return blank($this->string('title')->toString())
-            && Str::of($content)->replace("\u{00A0}", ' ')->trim()->isEmpty()
-            && blank($this->input('mood'))
+        return blank(is_string($title) ? $title : null)
+            && Str::of($text)->replace("\u{00A0}", ' ')->trim()->isEmpty()
+            && blank($mood)
             && ! Str::contains($rawContent, 'data-attachment-id');
     }
 }

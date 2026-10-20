@@ -5,6 +5,7 @@ return [
     'login' => [
         'failed' => 'As credenciais indicadas não correspondem aos nossos registos.',
         'unwrap-failed' => 'Não foi possível desencriptar a chave do diário; os dados podem estar corrompidos.',
+        'challenge-expired' => 'Essa tentativa de início de sessão expirou. Inicia sessão novamente.',
     ],
 
     'unlock' => [

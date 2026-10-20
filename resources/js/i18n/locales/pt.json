@@ -344,5 +344,39 @@
     "error": {
         "boundary": "Algo deu errado.",
         "reload": "Recarregar"
+    },
+    "native": {
+        "action": {
+            "delete": "Excluir"
+        },
+        "export": {
+            "title": "Exportar",
+            "share": "Compartilhar",
+            "copy": "Copiar para a área de transferência",
+            "copied": "Copiado para a área de transferência.",
+            "exporting": "Preparando…",
+            "hint": "Seu diário é escrito em um arquivo Markdown e entregue à folha de compartilhamento do Android, para que você possa salvá-lo ou enviá-lo onde quiser. Nada sai deste dispositivo até que você compartilhe."
+        },
+        "settings": {
+            "local_mode": "Este diário vive apenas neste dispositivo.",
+            "local_mode_value": "Neste dispositivo",
+            "connect_server": "Conectar um servidor",
+            "connect_merge_note": "Entre para sincronizar este diário com um servidor. Tudo o que já está neste dispositivo é mantido e mesclado.",
+            "connected": "Conectado",
+            "connect_done": "Este diário agora é sincronizado com o seu servidor.",
+            "forget_device": "Esquecer este dispositivo",
+            "forget_confirm": "Remover a conta e sua chave deste dispositivo? As entradas já no servidor são mantidas.",
+            "require_biometric": "Exigir digital para abrir",
+            "lock_after": "Bloquear depois de",
+            "lock_minutes": "{{n}} min",
+            "lock_60": "1 hora",
+            "update_available": "Atualização disponível: v{{version}}"
+        },
+        "sync": {
+            "pull": "Sincronizar agora",
+            "syncing": "Sincronizando…",
+            "pull_confirm": "Buscar novas entradas do servidor e enviar as alterações feitas neste dispositivo.",
+            "never": "Ainda não sincronizado"
+        }
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @property int $id
@@ -28,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $kdf_salt
  * @property string|null $wrapped_key
  * @property string|null $recovery_wrapped_key
+ * @property string|null $key_check
  * @property string|null $two_factor_secret
  * @property Carbon|null $two_factor_confirmed_at
  * @property array<int, string>|null $two_factor_recovery_codes
@@ -40,7 +42,7 @@ use Illuminate\Support\Carbon;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * Get the attributes that should be cast.

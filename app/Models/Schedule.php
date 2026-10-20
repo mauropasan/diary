@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Casts\EncryptedEntryText;
+use App\Models\Concerns\TracksSyncChanges;
 use Database\Factories\ScheduleFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -18,6 +20,8 @@ use Illuminate\Support\Carbon;
  * @property bool $only_weekdays
  * @property bool $active
  * @property int $position
+ * @property int|null $updated_ms
+ * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -25,7 +29,7 @@ use Illuminate\Support\Carbon;
 class Schedule extends Model
 {
     /** @use HasFactory<ScheduleFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes, TracksSyncChanges;
 
     protected function casts(): array
     {
@@ -35,6 +39,7 @@ class Schedule extends Model
             'only_weekdays' => 'boolean',
             'active' => 'boolean',
             'position' => 'integer',
+            'updated_ms' => 'integer',
         ];
     }
 

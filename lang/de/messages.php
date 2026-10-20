@@ -5,6 +5,7 @@ return [
     'login' => [
         'failed' => 'Diese Anmeldedaten stimmen nicht mit unseren Aufzeichnungen überein.',
         'unwrap-failed' => 'Der Tagebuchschlüssel konnte nicht entschlüsselt werden; die Daten sind möglicherweise beschädigt.',
+        'challenge-expired' => 'Dieser Anmeldeversuch ist abgelaufen. Bitte melden Sie sich erneut an.',
     ],
 
     'unlock' => [

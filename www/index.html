@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
     <head>
         <meta charset="utf-8" />
         <meta
@@ -7,28 +7,33 @@
             content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
         <title>Diario</title>
-        <style>
-            html,
-            body {
-                margin: 0;
-                height: 100%;
-                background: #0a0a0a;
-                color: #ededec;
-                font-family: system-ui, sans-serif;
-            }
-            body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                padding: 2rem;
-            }
-        </style>
+
+        <!--
+            Applied before paint to avoid a flash of the wrong theme; the same
+            logic as public/js/appearance.js, inlined because the native bundle
+            loads from the file system with no origin-CSP to allow it.
+        -->
+        <script>
+            (function () {
+                try {
+                    var stored = localStorage.getItem('appearance');
+                    var dark =
+                        stored === 'dark' ||
+                        ((stored === null || stored === 'system') &&
+                            window.matchMedia(
+                                '(prefers-color-scheme: dark)',
+                            ).matches);
+                    document.documentElement.classList.toggle('dark', dark);
+                    document.documentElement.style.colorScheme = dark
+                        ? 'dark'
+                        : 'light';
+                } catch (error) {}
+            })();
+        </script>
+      <script type="module" crossorigin src="./assets/index-C-Fnrv6L.js"></script>
+      <link rel="stylesheet" crossorigin href="./assets/index-BNb5dYqv.css">
     </head>
-    <body>
-        <p>
-            No se pudo cargar el diario.<br />
-            Comprueba tu conexión a internet e inténtalo de nuevo.
-        </p>
+    <body class="font-sans antialiased">
+        <div id="diary-app"></div>
     </body>
 </html>

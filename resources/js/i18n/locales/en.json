@@ -11,7 +11,8 @@
         "cancel": "Cancel",
         "save": "Save",
         "language": "Language",
-        "backToLogin": "Back to sign in"
+        "backToLogin": "Back to sign in",
+        "back": "Back"
     },
     "nav": {
         "today": "Go to today",
@@ -196,6 +197,7 @@
     },
     "notes": {
         "title": "Notes",
+        "new": "New note",
         "subtitle": "Notes, reminders and events. Give them a color and, if you like, attach them to a day.",
         "titleLabel": "Title",
         "titlePlaceholder": "Title (optional)",
@@ -254,6 +256,7 @@
     },
     "schedule": {
         "title": "Schedule",
+        "new": "New schedule",
         "subtitle": "Create and organize your timetables freely.",
         "nameLabel": "Name",
         "namePlaceholder": "e.g. School, Work, Gym",
@@ -335,7 +338,21 @@
         "twoFactorCodesRemaining_other": "{{count}} recovery codes remaining.",
         "twoFactorRegenerate": "New recovery codes",
         "twoFactorDisable": "Turn off",
-        "twoFactorDisableConfirm": "Turn off two-factor authentication? Signing in will only require your password again."
+        "twoFactorDisableConfirm": "Turn off two-factor authentication? Signing in will only require your password again.",
+        "appearance": {
+            "title": "Appearance",
+            "light": "Light",
+            "dark": "Dark"
+        },
+        "locale": {
+            "label": "Language"
+        },
+        "sync": {
+            "title": "Sync"
+        },
+        "account": {
+            "title": "Account"
+        }
     },
     "update": {
         "message": "An update is available ({{version}}).",
@@ -344,5 +361,79 @@
     "error": {
         "boundary": "Something went wrong.",
         "reload": "Reload"
+    },
+    "setup": {
+        "subtitle": "Your diary, on your device.",
+        "connectServer": "Connect to a server",
+        "connectKnown": "Sign in to a server",
+        "useOffline": "Use the diary without an account",
+        "offlineHint": "With no account everything stays on this device: no connection, no server, no recovery.",
+        "serverUrl": "Server address",
+        "continue": "Continue",
+        "offline": "The server could not be reached. Check the address and your connection.",
+        "failed": "Something went wrong. Try again.",
+        "useRecoveryKey": "Sign in with a recovery key",
+        "createFirstAccount": "Create the first account",
+        "twoFactorHint": "This account protects sign-in with a second factor.",
+        "twoFactorCode": "Authentication code",
+        "recoveryCode": "One-time recovery code",
+        "useAuthenticator": "Use an authentication app instead",
+        "useRecoveryCode": "Use a recovery code instead",
+        "recoverHint": "Enter the recovery key shown once when the account was created.",
+        "recoveryKey": "Recovery key",
+        "registerHint": "The server has no accounts yet; this creates its first one.",
+        "createAccount": "Create account",
+        "recoveryKeyOnce": "Copy this recovery key somewhere safe now - it is shown only once and it is the only way back into the account without your password.",
+        "recoveryKeySaved": "I saved it - open my diary"
+    },
+    "session": {
+        "wrongPassword": "That password does not open this diary.",
+        "noKeyMaterial": "This device has no key material for the diary. Sign in to the server again to repair it.",
+        "needReconnect": "The connection to the server needs to be renewed: sign in again and your local data will be kept.",
+        "offline": "The server could not be reached.",
+        "offlineHint": "You can unlock without a connection - your key is stored on this device.",
+        "localHint": "This diary lives only on this device.",
+        "useBiometric": "Unlock with fingerprint"
+    },
+    "sync": {
+        "never": "Not synced yet",
+        "synced": "Up to date",
+        "running": "Syncing...",
+        "offline": "Offline",
+        "action": "Sync now"
+    },
+    "native": {
+        "action": {
+            "delete": "Delete"
+        },
+        "export": {
+            "title": "Export",
+            "share": "Share",
+            "copy": "Copy to clipboard",
+            "copied": "Copied to the clipboard.",
+            "exporting": "Preparing…",
+            "hint": "Your diary is written to a Markdown file and handed to the Android share sheet, so you can save it or send it wherever you like. Nothing leaves this device until you share it."
+        },
+        "settings": {
+            "local_mode": "This diary lives only on this device.",
+            "local_mode_value": "On this device",
+            "connect_server": "Connect a server",
+            "connect_merge_note": "Sign in to sync this diary with a server. Everything already on this device is kept and merged.",
+            "connected": "Connected",
+            "connect_done": "This diary now syncs with your server.",
+            "forget_device": "Forget this device",
+            "forget_confirm": "Remove the account and its key from this device? Entries already on the server are kept.",
+            "require_biometric": "Require fingerprint to open",
+            "lock_after": "Lock after",
+            "lock_minutes": "{{n}} min",
+            "lock_60": "1 hour",
+            "update_available": "Update available: v{{version}}"
+        },
+        "sync": {
+            "pull": "Sync now",
+            "syncing": "Syncing…",
+            "pull_confirm": "Fetch new entries from the server and send the changes made on this device.",
+            "never": "Not synced yet"
+        }
     }
 }

@@ -72,11 +72,20 @@ class EntryController extends Controller
         $day = $this->resolveDate($date);
         $user = $request->user();
 
-        $entry = $user->entries()->where('date', $day->toDateString())->first();
+        $entry = $user->entries()->withTrashed()->where('date', $day->toDateString())->first();
 
         if ($request->entryIsEmpty()) {
-            $entry?->delete();
+            if ($entry !== null && ! $entry->trashed()) {
+                $entry->delete();
+            }
         } else {
+            // A soft-deleted row still holds the (user_id, date) unique index,
+            // so writing a deleted day resurrects it instead of tripping over
+            // the constraint.
+            if ($entry !== null && $entry->trashed()) {
+                $entry->restore();
+            }
+
             $entry = $user->entries()->updateOrCreate(
                 ['date' => $day->toDateString()],
                 [

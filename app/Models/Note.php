@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Casts\EncryptedEntryText;
+use App\Models\Concerns\TracksSyncChanges;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -23,6 +25,8 @@ use Illuminate\Support\Carbon;
  * @property string $color
  * @property string $kind
  * @property Carbon|null $date
+ * @property int|null $updated_ms
+ * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read User $user
@@ -30,6 +34,8 @@ use Illuminate\Support\Carbon;
 #[Fillable(['user_id', 'title', 'body', 'color', 'kind', 'date', 'background_image'])]
 class Note extends Model
 {
+    use SoftDeletes, TracksSyncChanges;
+
     public const string DEFAULT_COLOR = 'yellow';
 
     public const string DEFAULT_KIND = 'note';
@@ -68,6 +74,7 @@ class Note extends Model
             'body' => EncryptedEntryText::class,
             'background_image' => EncryptedEntryText::class,
             'date' => 'date:Y-m-d',
+            'updated_ms' => 'integer',
         ];
     }
 

@@ -3,13 +3,19 @@
     "appName": "Diario",
     "webDir": "www",
     "server": {
-        "url": "https://your-diary-host",
         "androidScheme": "https",
         "cleartext": false
     },
     "plugins": {
         "StatusBar": {
             "overlaysWebView": true
+        },
+        "SplashScreen": {
+            "launchShowDuration": 400,
+            "launchAutoHide": true,
+            "androidScaleType": "CENTER_CROP",
+            "backgroundColor": "#111827",
+            "showSpinner": false
         }
     }
 }

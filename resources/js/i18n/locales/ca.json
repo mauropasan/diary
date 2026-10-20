@@ -344,5 +344,39 @@
     "error": {
         "boundary": "Alguna cosa ha anat malament.",
         "reload": "Torna-ho a carregar"
+    },
+    "native": {
+        "action": {
+            "delete": "Suprimeix"
+        },
+        "export": {
+            "title": "Exporta",
+            "share": "Comparteix",
+            "copy": "Copia a porta-retalls",
+            "copied": "S’ha copiat a porta-retalls.",
+            "exporting": "S’està preparant…",
+            "hint": "El teu diari s’escriu en un fitxer Markdown i es lliura a la fulla de compartició d’Android, perquè el puguis desar o enviar on vulguis. Res no surt d’aquest dispositiu fins que el comparteixes."
+        },
+        "settings": {
+            "local_mode": "Aquest diari viu només en aquest dispositiu.",
+            "local_mode_value": "En aquest dispositiu",
+            "connect_server": "Connecta un servidor",
+            "connect_merge_note": "Inicia la sessió per sincronitzar aquest diari amb un servidor. Tot el que ja hi ha en aquest dispositiu es conserva i es fusiona.",
+            "connected": "Connectat",
+            "connect_done": "Aquest diari ara se sincronitza amb el teu servidor.",
+            "forget_device": "Oblida aquest dispositiu",
+            "forget_confirm": "Vols eliminar el compte i la seva clau d’aquest dispositiu? Les entrades que ja són al servidor es conserven.",
+            "require_biometric": "Exigeix l’empremta per obrir",
+            "lock_after": "Bloqueja després de",
+            "lock_minutes": "{{n}} min",
+            "lock_60": "1 hora",
+            "update_available": "Hi ha una actualització disponible: v{{version}}"
+        },
+        "sync": {
+            "pull": "Sincronitza ara",
+            "syncing": "S’està sincronitzant…",
+            "pull_confirm": "Recupera les entrades noves del servidor i envia els canvis fets en aquest dispositiu.",
+            "never": "Encara no s’ha sincronitzat"
+        }
     }
 }

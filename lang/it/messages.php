@@ -5,6 +5,7 @@ return [
     'login' => [
         'failed' => 'Le credenziali fornite non corrispondono ai nostri dati.',
         'unwrap-failed' => 'Impossibile decifrare la chiave del diario; i dati potrebbero essere danneggiati.',
+        'challenge-expired' => 'Quel tentativo di accesso è scaduto. Accedi di nuovo.',
     ],
 
     'unlock' => [

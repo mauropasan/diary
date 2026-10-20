@@ -5,6 +5,7 @@ return [
     'login' => [
         'failed' => 'The provided credentials do not match our records.',
         'unwrap-failed' => 'Could not decrypt the diary key; the data may be corrupted.',
+        'challenge-expired' => 'That sign-in attempt has expired. Please sign in again.',
     ],
 
     'unlock' => [

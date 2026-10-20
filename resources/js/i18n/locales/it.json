@@ -344,5 +344,39 @@
     "error": {
         "boundary": "Qualcosa è andato storto.",
         "reload": "Ricarica"
+    },
+    "native": {
+        "action": {
+            "delete": "Elimina"
+        },
+        "export": {
+            "title": "Esporta",
+            "share": "Condividi",
+            "copy": "Copia negli appunti",
+            "copied": "Copiato negli appunti.",
+            "exporting": "Preparazione…",
+            "hint": "Il tuo diario viene scritto in un file Markdown e consegnato alla scheda di condivisione di Android, così puoi salvarlo o inviarlo dove vuoi. Nulla lascia questo dispositivo finché non lo condividi."
+        },
+        "settings": {
+            "local_mode": "Questo diario vive solo su questo dispositivo.",
+            "local_mode_value": "Su questo dispositivo",
+            "connect_server": "Connetti un server",
+            "connect_merge_note": "Accedi per sincronizzare questo diario con un server. Tutto ciò che è già su questo dispositivo viene conservato e unito.",
+            "connected": "Connesso",
+            "connect_done": "Questo diario ora si sincronizza con il tuo server.",
+            "forget_device": "Dimentica questo dispositivo",
+            "forget_confirm": "Rimuovere l’account e la sua chiave da questo dispositivo? Le voci già sul server vengono conservate.",
+            "require_biometric": "Richiedi l’impronta per aprire",
+            "lock_after": "Blocca dopo",
+            "lock_minutes": "{{n}} min",
+            "lock_60": "1 ora",
+            "update_available": "Aggiornamento disponibile: v{{version}}"
+        },
+        "sync": {
+            "pull": "Sincronizza ora",
+            "syncing": "Sincronizzazione…",
+            "pull_confirm": "Recupera le nuove voci dal server e invia le modifiche fatte su questo dispositivo.",
+            "never": "Mai sincronizzato"
+        }
     }
 }

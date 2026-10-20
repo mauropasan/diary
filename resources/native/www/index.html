@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
+        <title>Diario</title>
+
+        <!--
+            Applied before paint to avoid a flash of the wrong theme; the same
+            logic as public/js/appearance.js, inlined because the native bundle
+            loads from the file system with no origin-CSP to allow it.
+        -->
+        <script>
+            (function () {
+                try {
+                    var stored = localStorage.getItem('appearance');
+                    var dark =
+                        stored === 'dark' ||
+                        ((stored === null || stored === 'system') &&
+                            window.matchMedia(
+                                '(prefers-color-scheme: dark)',
+                            ).matches);
+                    document.documentElement.classList.toggle('dark', dark);
+                    document.documentElement.style.colorScheme = dark
+                        ? 'dark'
+                        : 'light';
+                } catch (error) {}
+            })();
+        </script>
+      <script type="module" crossorigin src="./assets/index-CBJv9Z_8.js"></script>
+      <link rel="stylesheet" crossorigin href="./assets/index-BGRC3bDg.css">
+    </head>
+    <body class="font-sans antialiased">
+        <div id="diary-app"></div>
+    </body>
+</html>

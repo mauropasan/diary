@@ -5,6 +5,7 @@ return [
     'login' => [
         'failed' => 'Ces identifiants ne correspondent pas à nos enregistrements.',
         'unwrap-failed' => 'Impossible de déchiffrer la clé du journal ; les données sont peut-être corrompues.',
+        'challenge-expired' => 'Cette tentative de connexion a expiré. Veuillez vous reconnecter.',
     ],
 
     'unlock' => [

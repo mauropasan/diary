@@ -5,6 +5,7 @@ return [
     'login' => [
         'failed' => 'Las credenciales no coinciden con nuestros registros.',
         'unwrap-failed' => 'No se pudo descifrar la clave del diario; los datos pueden estar dañados.',
+        'challenge-expired' => 'Ese intento de inicio de sesión ha caducado. Inicia sesión de nuevo.',
     ],
 
     'unlock' => [

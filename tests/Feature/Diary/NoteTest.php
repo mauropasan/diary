@@ -218,7 +218,7 @@ it('deletes a note', function () {
     $this->delete(route('diary.notes.destroy', $note))
         ->assertRedirect(route('diary.notes'));
 
-    $this->assertDatabaseMissing('notes', ['id' => $note->getKey()]);
+    $this->assertSoftDeleted('notes', ['id' => $note->getKey()]);
 });
 
 it('rejects a note with neither title nor body', function () {

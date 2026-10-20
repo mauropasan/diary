@@ -5,6 +5,7 @@ return [
     'login' => [
         'failed' => 'Les credencials no coincideixen amb els nostres registres.',
         'unwrap-failed' => 'No s\'ha pogut desxifrar la clau del diari; les dades poden estar danyades.',
+        'challenge-expired' => 'Aquest intent d\'inici de sessió ha caducat. Inicia sessió de nou.',
     ],
 
     'unlock' => [

@@ -344,5 +344,39 @@
     "error": {
         "boundary": "Une erreur s'est produite.",
         "reload": "Recharger"
+    },
+    "native": {
+        "action": {
+            "delete": "Supprimer"
+        },
+        "export": {
+            "title": "Exporter",
+            "share": "Partager",
+            "copy": "Copier dans le presse-papiers",
+            "copied": "Copié dans le presse-papiers.",
+            "exporting": "Préparation…",
+            "hint": "Votre journal est écrit dans un fichier Markdown et remis à la feuille de partage Android, pour que vous puissiez l’enregistrer ou l’envoyer où vous voulez. Rien ne quitte cet appareil tant que vous ne le partagez pas."
+        },
+        "settings": {
+            "local_mode": "Ce journal ne vit que sur cet appareil.",
+            "local_mode_value": "Sur cet appareil",
+            "connect_server": "Connecter un serveur",
+            "connect_merge_note": "Connectez-vous pour synchroniser ce journal avec un serveur. Tout ce qui est déjà sur cet appareil est conservé et fusionné.",
+            "connected": "Connecté",
+            "connect_done": "Ce journal se synchronise désormais avec votre serveur.",
+            "forget_device": "Oublier cet appareil",
+            "forget_confirm": "Retirer le compte et sa clé de cet appareil ? Les entrées déjà sur le serveur sont conservées.",
+            "require_biometric": "Exiger l’empreinte digitale pour ouvrir",
+            "lock_after": "Verrouiller après",
+            "lock_minutes": "{{n}} min",
+            "lock_60": "1 heure",
+            "update_available": "Mise à jour disponible : v{{version}}"
+        },
+        "sync": {
+            "pull": "Synchroniser maintenant",
+            "syncing": "Synchronisation…",
+            "pull_confirm": "Récupérer les nouvelles entrées du serveur et envoyer les modifications faites sur cet appareil.",
+            "never": "Jamais synchronisé"
+        }
     }
 }

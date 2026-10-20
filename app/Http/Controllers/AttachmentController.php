@@ -32,6 +32,18 @@ class AttachmentController extends Controller
         $file = $request->file('attachment');
         $mime = (string) ($file?->getMimeType() ?? 'application/octet-stream');
 
+        // Attaching media resurrects a soft-deleted day: the deleted row still
+        // holds the (user_id, date) unique index, and the file belongs to the
+        // entry the client is looking at.
+        $existing = $user->entries()
+            ->withTrashed()
+            ->where('date', $day->toDateString())
+            ->first();
+
+        if ($existing !== null && $existing->trashed()) {
+            $existing->restore();
+        }
+
         $entry = $user->entries()->updateOrCreate(['date' => $day->toDateString()]);
 
         $blob = $this->crypto->encryptBytes((string) ($file?->get() ?? ''), $this->dek());

@@ -23,16 +23,31 @@ class DiaryKeyStore
 
     private ?string $dek = null;
 
-    public function __construct(private readonly Encrypter $encrypter) {}
+    public function __construct(
+        private readonly Encrypter $encrypter,
+        private readonly TransientKey $transient,
+    ) {}
 
     /**
      * Resolve the DEK for the current request, loading it from the session when needed.
+     *
+     * A stateless API request has no session to read from: it parks the key it
+     * verified from the `X-Diary-Key` header in the {@see TransientKey} holder
+     * instead, which is consulted first. The web flow never populates that
+     * holder, so it falls straight through to the session and behaves exactly
+     * as before.
      *
      * The inactivity deadline is re-checked on every call so a key cached earlier
      * in the process cannot outlive its expiry.
      */
     public function get(): ?string
     {
+        $transient = $this->transient->get();
+
+        if ($transient !== null) {
+            return $transient;
+        }
+
         if ($this->dek !== null) {
             if ($this->isExpired()) {
                 $this->forget();
@@ -50,6 +65,7 @@ class DiaryKeyStore
     public function put(string $dek, CarbonInterface $expiresAt): void
     {
         $this->dek = $dek;
+        $this->transient->forget();
 
         session([
             self::DEK_KEY => $this->encrypter->encryptString($dek),
@@ -63,6 +79,7 @@ class DiaryKeyStore
     public function forget(): void
     {
         $this->dek = null;
+        $this->transient->forget();
 
         session()->forget([self::DEK_KEY, self::EXPIRES_KEY]);
     }

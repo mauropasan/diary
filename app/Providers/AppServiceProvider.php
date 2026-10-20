@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Crypto\DiaryCrypto;
 use App\Crypto\DiaryKeyStore;
+use App\Crypto\TransientKey;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\DevCommands;
 use Illuminate\Support\Facades\Date;
@@ -20,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(DiaryCrypto::class);
         $this->app->scoped(DiaryKeyStore::class);
+
+        // The stateless sync API parks the header-verified DEK here for the
+        // duration of one request; the web session flow never touches it.
+        $this->app->singleton(TransientKey::class);
     }
 
     /**

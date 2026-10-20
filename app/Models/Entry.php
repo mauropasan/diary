@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\EncryptedEntryText;
+use App\Models\Concerns\TracksSyncChanges;
 use Database\Factories\EntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -19,6 +21,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $title
  * @property string|null $content
  * @property int|null $mood
+ * @property int|null $updated_ms
+ * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read User $user
@@ -27,7 +31,7 @@ use Illuminate\Support\Carbon;
 class Entry extends Model
 {
     /** @use HasFactory<EntryFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes, TracksSyncChanges;
 
     /**
      * Get the attributes that should be cast.
@@ -40,6 +44,7 @@ class Entry extends Model
             'date' => 'date:Y-m-d',
             'title' => EncryptedEntryText::class,
             'content' => EncryptedEntryText::class,
+            'updated_ms' => 'integer',
         ];
     }
 
@@ -66,10 +71,18 @@ class Entry extends Model
     /**
      * Delete the attachment blobs alongside the entry so no encrypted file is
      * left behind. The rows themselves are removed by the foreign key cascade.
+     *
+     * A soft delete deliberately leaves the attachments alone: the entry keeps
+     * referencing them from its content, so restoring the day (or re-editing
+     * it later) recovers the media. Only a permanent delete cleans the files.
      */
     protected static function booted(): void
     {
         static::deleting(function (Entry $entry): void {
+            if (! $entry->isForceDeleting()) {
+                return;
+            }
+
             $entry->attachments()->get()->each(fn (Attachment $attachment): bool => $attachment->delete());
         });
     }

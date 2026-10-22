@@ -67,4 +67,22 @@ return [
 
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | DevTools
+    |--------------------------------------------------------------------------
+    |
+    | The request recorder is a local debugging aid and must never be exposed
+    | on a deployed server: it writes page props (including diary data) to
+    | disk and serves them to a browser extension. Keep it off by default and
+    | require an explicit opt-in for local development.
+    |
+    */
+
+    'devtools' => [
+
+        'enabled' => env('INERTIA_DEVTOOLS_ENABLED', false),
+
+    ],
+
 ];

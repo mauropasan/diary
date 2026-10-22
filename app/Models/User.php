@@ -66,6 +66,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Hide internal security markers from array/JSON representations.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'key_check',
+        'kdf_salt',
+        'wrapped_key',
+        'recovery_wrapped_key',
+    ];
+
+    /**
      * Whether signing in requires a code from an authenticator app.
      *
      * The secret alone only means enrolment is in progress; the account starts

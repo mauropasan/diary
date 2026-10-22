@@ -16,7 +16,8 @@
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "league/html-to-markdown": "^5.1"
+        "league/html-to-markdown": "^5.1",
+        "mews/purifier": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",

@@ -9,6 +9,7 @@ export default function Recovery() {
     const { data, setData, post, processing, errors } = useForm({
         email: '',
         recovery_key: '',
+        code: '',
         password: '',
         password_confirmation: '',
     });
@@ -81,6 +82,34 @@ export default function Recovery() {
                             {errors.recovery_key && (
                                 <p className="text-xs text-red-600 dark:text-red-400">
                                     {errors.recovery_key}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <label
+                                htmlFor="code"
+                                className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                            >
+                                {t('recovery.twoFactorCode')}
+                            </label>
+                            <input
+                                id="code"
+                                type="text"
+                                inputMode="numeric"
+                                autoComplete="one-time-code"
+                                value={data.code}
+                                onChange={(event) =>
+                                    setData('code', event.target.value)
+                                }
+                                className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm transition outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:focus:border-zinc-400"
+                            />
+                            <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                                {t('recovery.twoFactorHint')}
+                            </p>
+                            {errors.code && (
+                                <p className="text-xs text-red-600 dark:text-red-400">
+                                    {errors.code}
                                 </p>
                             )}
                         </div>

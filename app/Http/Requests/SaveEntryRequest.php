@@ -8,6 +8,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
+use Mews\Purifier\Facades\Purifier;
 
 class SaveEntryRequest extends FormRequest
 {
@@ -89,6 +90,37 @@ class SaveEntryRequest extends FormRequest
             $this->input('content'),
             $this->input('mood'),
         );
+    }
+
+    /**
+     * Sanitize rich text content before persisting.
+     */
+    public function sanitizedContent(): ?string
+    {
+        $content = $this->input('content');
+
+        if (! is_string($content) || $content === '') {
+            return $content === '' ? null : (is_string($content) ? $content : null);
+        }
+
+        $sanitized = Purifier::clean($content);
+
+        return $sanitized === '' ? null : $sanitized;
+    }
+
+    public function sanitizedTitle(): ?string
+    {
+        $title = $this->input('title');
+
+        if ($title === null || $title === '') {
+            return null;
+        }
+
+        if (! is_string($title)) {
+            return null;
+        }
+
+        return strip_tags($title);
     }
 
     /**

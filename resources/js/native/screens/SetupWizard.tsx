@@ -12,6 +12,7 @@ import {
     finishPairing,
     listKnownServers,
 } from '@/native/session';
+import { b64decode, deriveKek, sodiumReady, unwrapDek, b64encode } from '@/native/crypto';
 import type { PairChallenge, PairSuccess } from '@/native/types';
 import { KeyIcon, ServerIcon, WarningIcon } from '@/native/components/icons';
 
@@ -96,15 +97,34 @@ export default function SetupWizard(): React.JSX.Element {
 
     /* ------------------------------ pairing ------------------------------ */
 
+    async function derivePairDek(pair: PairSuccess): Promise<string> {
+        if (typeof pair.dek === 'string' && pair.dek !== '') {
+            return pair.dek;
+        }
+
+        await sodiumReady();
+
+        const salt = pair.key?.kdf_salt;
+        const wrapped = pair.key?.wrapped_key;
+
+        if (!salt || !wrapped) {
+            throw new Error('setup.missing-key-material');
+        }
+
+        const kek = deriveKek(state.password, salt);
+        const dekBytes = unwrapDek(wrapped, kek);
+
+        return b64encode(dekBytes);
+    }
+
     const pairWith = useAsyncAction(
         async (pair: PairSuccess) => {
+            const dekB64 = await derivePairDek(pair);
+
             await finishPairing({
                 serverUrl: state.serverUrl,
                 pair,
-                // The pairing payload carries the DEK itself, so no local
-                // derivation is needed here — it unwraps offline later from
-                // the stored `kdf_salt`/`wrapped_key`.
-                dekB64: pair.dek,
+                dekB64,
             });
         },
     );
@@ -144,6 +164,7 @@ export default function SetupWizard(): React.JSX.Element {
         const pair = await api.recover(
             state.email.trim(),
             state.recoveryKey.trim(),
+            state.code.trim() || undefined,
         );
 
         await pairWith.run(pair);
@@ -505,6 +526,27 @@ export default function SetupWizard(): React.JSX.Element {
                             {recoverFields.recovery_key && (
                                 <span className="text-xs font-normal text-red-600 dark:text-red-400">
                                     {recoverFields.recovery_key}
+                                </span>
+                            )}
+                        </label>
+                        <label className="flex flex-col gap-1.5 text-sm font-medium">
+                            {t('setup.twoFactorCode')}
+                            <input
+                                type="text"
+                                inputMode="numeric"
+                                autoComplete="one-time-code"
+                                value={state.code}
+                                onChange={(event) =>
+                                    patch({ code: event.target.value })
+                                }
+                                className={inputClass}
+                            />
+                            <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">
+                                {t('setup.recoverTwoFactorHint')}
+                            </span>
+                            {recoverFields.code && (
+                                <span className="text-xs font-normal text-red-600 dark:text-red-400">
+                                    {recoverFields.code}
                                 </span>
                             )}
                         </label>

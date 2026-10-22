@@ -35,6 +35,7 @@ class DiaryKeyManager
             'kdf_salt' => base64_encode($salt),
             'wrapped_key' => $this->crypto->wrapDek($dek, $kek),
             'recovery_wrapped_key' => $this->crypto->wrapDek($dek, $recoveryKey),
+            'key_check' => $this->crypto->createKeyCheck($dek),
         ])->save();
 
         return base64_encode($recoveryKey);
@@ -58,8 +59,11 @@ class DiaryKeyManager
         }
 
         $kek = $this->crypto->deriveKek($password, $salt);
+        $dek = $this->crypto->unwrapDek($user->wrapped_key, $kek);
 
-        return $this->crypto->unwrapDek($user->wrapped_key, $kek);
+        $this->ensureKeyCheck($user, $dek);
+
+        return $dek;
     }
 
     /**
@@ -79,7 +83,11 @@ class DiaryKeyManager
             throw new KeyUnwrapException('The recovery key is malformed.');
         }
 
-        return $this->crypto->unwrapDek($user->recovery_wrapped_key, $key);
+        $dek = $this->crypto->unwrapDek($user->recovery_wrapped_key, $key);
+
+        $this->ensureKeyCheck($user, $dek);
+
+        return $dek;
     }
 
     /**
@@ -108,6 +116,48 @@ class DiaryKeyManager
         $user->forceFill([
             'kdf_salt' => base64_encode($salt),
             'wrapped_key' => $this->crypto->wrapDek($dek, $kek),
+            'key_check' => $this->keyCheckValue($user, $dek),
         ])->save();
+    }
+
+    /**
+     * Initialise a missing key marker, or verify the existing one.
+     *
+     * Accounts provisioned before the marker existed get one created from the
+     * just-proven DEK. Once a marker exists it must match the key: a mismatch
+     * means the key material and the marker disagree, which is corruption, not
+     * an invitation to trust whichever value arrived last.
+     *
+     * @throws KeyUnwrapException When the stored marker does not match the DEK.
+     */
+    private function ensureKeyCheck(User $user, string $dek): void
+    {
+        if ($user->key_check === null) {
+            $user->forceFill(['key_check' => $this->crypto->createKeyCheck($dek)])->save();
+
+            return;
+        }
+
+        if (! $this->crypto->verifyKeyCheck($user->key_check, $dek)) {
+            throw new KeyUnwrapException('The stored key check does not match the diary key.');
+        }
+    }
+
+    /**
+     * The existing marker when it matches, otherwise a freshly created one.
+     *
+     * @throws KeyUnwrapException When the stored marker does not match the DEK.
+     */
+    private function keyCheckValue(User $user, string $dek): string
+    {
+        if ($user->key_check === null) {
+            return $this->crypto->createKeyCheck($dek);
+        }
+
+        if (! $this->crypto->verifyKeyCheck($user->key_check, $dek)) {
+            throw new KeyUnwrapException('The stored key check does not match the diary key.');
+        }
+
+        return $user->key_check;
     }
 }

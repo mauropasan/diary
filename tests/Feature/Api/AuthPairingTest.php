@@ -20,14 +20,14 @@ it('pairs a device with email and password', function () {
     expect($response->json('token'))->toBeString()
         ->and($response->json('token_type'))->toBe('Bearer')
         ->and($response->json('user.email'))->toBe($this->user->email)
-        ->and($response->json('user.two_factor_enabled'))->toBeFalse();
+        ->and($response->json('user.two_factor_enabled'))->toBeFalse()
+        ->and($response->json('dek'))->toBeNull()
+        ->and($response->json('key.kdf_salt'))->not->toBeNull()
+        ->and($response->json('key.wrapped_key'))->not->toBeNull();
 
-    // The DEK comes back base64-encoded and unwraps to the very key the
-    // account was provisioned with, so the client can fill X-Diary-Key.
-    $dek = base64_decode((string) $response->json('dek'), true);
-
-    expect($dek)->toBeString()
-        ->and($dek)->toBe(app(DiaryKeyManager::class)->unlock($this->user, 'secret-password'));
+    // The client derives the DEK locally by unwrapping with a KEK derived
+    // from the password and the returned salt/wrapped key material.
+    expect(app(DiaryKeyManager::class)->unlock($this->user, 'secret-password'))->toBeString();
 
     // The token carries only the sync ability and works on the API.
     $this->withToken((string) $response->json('token'))
@@ -113,15 +113,15 @@ it('registers the first account with its key material and recovery key', functio
 
     expect($user->is_admin)->toBeTrue()
         ->and($user->wrapped_key)->not->toBeNull()
-        ->and($user->key_check)->toBeNull()
+        ->and($user->key_check)->not->toBeNull()
         ->and($response->json('recovery_key'))->toBeString()
-        ->and($response->json('token'))->toBeString();
+        ->and($response->json('token'))->toBeString()
+        ->and($response->json('dek'))->toBeNull()
+        ->and($response->json('key.kdf_salt'))->not->toBeNull()
+        ->and($response->json('key.wrapped_key'))->not->toBeNull();
 
-    // The DEK in the response is the real one: it unlocks the account.
-    $dek = base64_decode((string) $response->json('dek'), true);
-    expect($dek)->toBe(app(DiaryKeyManager::class)->unlock($user, 'secret-password'));
-
-    // The recovery key unwraps that same DEK.
+    // The password and recovery key both unwrap the same DEK.
+    $dek = app(DiaryKeyManager::class)->unlock($user, 'secret-password');
     expect(app(DiaryKeyManager::class)->unlockWithRecoveryKey($user, (string) $response->json('recovery_key')))
         ->toBe($dek);
 

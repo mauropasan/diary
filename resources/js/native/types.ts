@@ -131,8 +131,8 @@ export type PairSuccess = {
      * can be narrowed against {@link PairChallenge} with a single check.
      */
     two_factor_required?: false;
-    /** The diary key, base64 — same value as `unwrapDek(wrapped_key, kek)`. */
-    dek: string;
+    /** The diary key is no longer returned; clients unwrap it locally. */
+    dek?: string | null;
     user: {
         id: number;
         email: string;
@@ -140,7 +140,11 @@ export type PairSuccess = {
         is_admin?: boolean;
         two_factor_enabled?: boolean;
     };
-    key: { kdf_salt: string | null; wrapped_key: string | null };
+    key: {
+        kdf_salt: string | null;
+        wrapped_key: string | null;
+        recovery_wrapped_key?: string | null;
+    };
     recovery_available: boolean;
     /** Only present on register: shown once. */
     recovery_key?: string;

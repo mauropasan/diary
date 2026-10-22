@@ -66,7 +66,9 @@
         "subtitle": "Introduce tu correo, la clave de recuperación que guardaste y una contraseña nueva. Sin la clave de recuperación no es posible acceder a tus entradas.",
         "recoveryKey": "Clave de recuperación",
         "submit": "Restaurar acceso",
-        "submitting": "Restaurando…"
+        "submitting": "Restaurando…",
+        "twoFactorCode": "Código de autenticación (si está activado)",
+        "twoFactorHint": "Solo es necesario si la cuenta tiene activada la autenticación de dos factores."
     },
     "unlock": {
         "title": "Desbloquear diario",
@@ -378,5 +380,8 @@
             "pull_confirm": "Obtener las entradas nuevas del servidor y enviar los cambios hechos en este dispositivo.",
             "never": "Aún sin sincronizar"
         }
+    },
+    "setup": {
+        "recoverTwoFactorHint": "Solo es necesario si la cuenta tiene activada la autenticación de dos factores."
     }
 }

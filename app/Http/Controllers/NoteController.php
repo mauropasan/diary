@@ -98,8 +98,8 @@ class NoteController extends Controller
     private function attributes(SaveNoteRequest $request): array
     {
         return [
-            'title' => $request->input('title'),
-            'body' => $request->input('body'),
+            'title' => $request->sanitizedTitle(),
+            'body' => $request->sanitizedBody(),
             'color' => $request->input('color') ?? Note::DEFAULT_COLOR,
             'kind' => $request->input('kind') ?? Note::DEFAULT_KIND,
             'date' => $request->input('date'),

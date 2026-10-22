@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+import DOMPurify from 'dompurify';
 import { useTranslation } from 'react-i18next';
 import DiaryNav from '@/components/DiaryNav';
 import { formatLongDate } from '@/lib/dates';
@@ -154,7 +155,9 @@ export default function Export({ entries }: ExportProps) {
                                     <div
                                         className="diary-content text-zinc-800 dark:text-zinc-200"
                                         dangerouslySetInnerHTML={{
-                                            __html: entry.content,
+                                            __html: DOMPurify.sanitize(
+                                                entry.content,
+                                            ),
                                         }}
                                     />
                                 )}

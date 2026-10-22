@@ -66,7 +66,9 @@
         "subtitle": "Saisissez votre e-mail, la clé de récupération que vous avez conservée et un nouveau mot de passe. Sans la clé de récupération, il est impossible d'accéder à vos entrées.",
         "recoveryKey": "Clé de récupération",
         "submit": "Restaurer l'accès",
-        "submitting": "Restauration…"
+        "submitting": "Restauration…",
+        "twoFactorCode": "Code d’authentification (si activé)",
+        "twoFactorHint": "Nécessaire uniquement si l’authentification à deux facteurs est activée sur le compte."
     },
     "unlock": {
         "title": "Déverrouiller le journal",
@@ -378,5 +380,8 @@
             "pull_confirm": "Récupérer les nouvelles entrées du serveur et envoyer les modifications faites sur cet appareil.",
             "never": "Jamais synchronisé"
         }
+    },
+    "setup": {
+        "recoverTwoFactorHint": "Nécessaire uniquement si l’authentification à deux facteurs est activée sur ce compte."
     }
 }

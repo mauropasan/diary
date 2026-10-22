@@ -4,11 +4,15 @@ use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia;
 
-it('serves the published android apk', function () {
+it('serves the published android apk only when authenticated', function () {
     Storage::fake('apk');
     Storage::disk('apk')->put('diary.apk', 'fake apk bytes');
 
-    $this->get(route('download.apk'))
+    $this->get(route('download.apk'))->assertRedirect(route('login'));
+
+    $user = User::factory()->create();
+    $this->actingAs($user)
+        ->get(route('download.apk'))
         ->assertOk()
         ->assertDownload('diary.apk');
 });
@@ -16,13 +20,15 @@ it('serves the published android apk', function () {
 it('returns not found when no apk has been published', function () {
     Storage::fake('apk');
 
-    $this->get(route('download.apk'))->assertNotFound();
+    $user = User::factory()->create();
+    $this->actingAs($user)->get(route('download.apk'))->assertNotFound();
 });
 
-it('reports the version of the published apk', function () {
+it('reports the version of the published apk only when authenticated', function () {
     Storage::fake('apk');
 
-    $this->get(route('download.version'))->assertNotFound();
+    $user = User::factory()->create();
+    $this->actingAs($user)->get(route('download.version'))->assertNotFound();
 
     Storage::disk('apk')->put('version.json', json_encode([
         'versionCode' => 37,
@@ -30,7 +36,8 @@ it('reports the version of the published apk', function () {
         'publishedAt' => '2026-10-20T08:00:00Z',
     ]));
 
-    $this->get(route('download.version'))
+    $this->actingAs($user)
+        ->get(route('download.version'))
         ->assertOk()
         ->assertExactJson([
             'versionCode' => 37,
@@ -43,15 +50,16 @@ it('does not report a version file that carries no build', function () {
     Storage::fake('apk');
     Storage::disk('apk')->put('version.json', 'not json at all');
 
-    $this->get(route('download.version'))->assertNotFound();
+    $user = User::factory()->create();
+    $this->actingAs($user)->get(route('download.version'))->assertNotFound();
 });
 
-it('tells the frontend when an apk is ready to download', function () {
+it('tells the frontend when an apk is ready to download only for signed in users', function () {
     Storage::fake('apk');
 
     // The login page only renders once at least one account exists;
     // otherwise the first-run flow redirects to registration.
-    User::factory()->create();
+    $user = User::factory()->withDiaryKey('secret-password')->create();
 
     $this->get(route('login'))
         ->assertOk()
@@ -62,8 +70,10 @@ it('tells the frontend when an apk is ready to download', function () {
 
     Storage::disk('apk')->put('diary.apk', 'fake apk bytes');
 
-    $this->get(route('login'))
-        ->assertOk()
+    $this->actingAs($user)
+        ->post(route('diary.unlock.store'), ['password' => 'secret-password']);
+
+    $this->get(route('diary.show', now()->toDateString()))
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->where('apkAvailable', true)
         );

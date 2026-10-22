@@ -67,7 +67,9 @@
         "subtitle": "Enter your email, the recovery key you saved and a new password. Without the recovery key it is not possible to access your entries.",
         "recoveryKey": "Recovery key",
         "submit": "Restore access",
-        "submitting": "Restoring…"
+        "submitting": "Restoring…",
+        "twoFactorCode": "Authentication code (if enabled)",
+        "twoFactorHint": "Required only when two-factor authentication is enabled on the account."
     },
     "unlock": {
         "title": "Unlock diary",
@@ -283,11 +285,17 @@
     "settings": {
         "title": "Settings",
         "subtitle": "Personalize your diary.",
-        "account": "Account",
+        "account": {
+            "title": "Account"
+        },
         "accountSubtitle": "The email address you sign in with. Reminders are also sent there.",
         "emailSubmit": "Update email",
         "emailSubmitting": "Saving…",
-        "appearance": "Appearance",
+        "appearance": {
+            "title": "Appearance",
+            "light": "Light",
+            "dark": "Dark"
+        },
         "appearanceSubtitle": "Theme, language and diary background.",
         "background": "Background",
         "backgrounds": {
@@ -339,19 +347,11 @@
         "twoFactorRegenerate": "New recovery codes",
         "twoFactorDisable": "Turn off",
         "twoFactorDisableConfirm": "Turn off two-factor authentication? Signing in will only require your password again.",
-        "appearance": {
-            "title": "Appearance",
-            "light": "Light",
-            "dark": "Dark"
-        },
         "locale": {
             "label": "Language"
         },
         "sync": {
             "title": "Sync"
-        },
-        "account": {
-            "title": "Account"
         }
     },
     "update": {
@@ -384,7 +384,8 @@
         "registerHint": "The server has no accounts yet; this creates its first one.",
         "createAccount": "Create account",
         "recoveryKeyOnce": "Copy this recovery key somewhere safe now - it is shown only once and it is the only way back into the account without your password.",
-        "recoveryKeySaved": "I saved it - open my diary"
+        "recoveryKeySaved": "I saved it - open my diary",
+        "recoverTwoFactorHint": "Only required if two-factor authentication is enabled on this account."
     },
     "session": {
         "wrongPassword": "That password does not open this diary.",

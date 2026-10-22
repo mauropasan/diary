@@ -26,6 +26,7 @@ class RecoveryRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'recovery_key' => ['required', 'string'],
+            'code' => ['nullable', 'string', 'max:32'],
             'password' => ['required', 'string', 'confirmed', Password::defaults()],
         ];
     }

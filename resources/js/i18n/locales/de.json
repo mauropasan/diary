@@ -66,7 +66,9 @@
         "subtitle": "Geben Sie Ihre E-Mail, den gespeicherten Wiederherstellungsschlüssel und ein neues Passwort ein. Ohne den Wiederherstellungsschlüssel ist kein Zugriff auf Ihre Einträge möglich.",
         "recoveryKey": "Wiederherstellungsschlüssel",
         "submit": "Zugriff wiederherstellen",
-        "submitting": "Wiederherstellung…"
+        "submitting": "Wiederherstellung…",
+        "twoFactorCode": "Authentifizierungscode (falls aktiviert)",
+        "twoFactorHint": "Nur erforderlich, wenn die Zwei-Faktor-Authentifizierung für das Konto aktiviert ist."
     },
     "unlock": {
         "title": "Tagebuch entsperren",
@@ -378,5 +380,8 @@
             "pull_confirm": "Neue Einträge vom Server holen und die Änderungen von diesem Gerät senden.",
             "never": "Noch nie synchronisiert"
         }
+    },
+    "setup": {
+        "recoverTwoFactorHint": "Nur erforderlich, wenn die Zwei-Faktor-Authentifizierung für dieses Konto aktiviert ist."
     }
 }

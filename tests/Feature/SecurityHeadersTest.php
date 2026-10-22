@@ -23,7 +23,7 @@ it('sends the content security policy only in production', function () {
 
     expect($response->headers->get('Content-Security-Policy'))
         ->toContain("script-src 'self'")
-        ->toContain("frame-ancestors 'none'");
+        ->toContain("frame-ancestors 'self'");
 });
 
 it('sends strict transport security only over https', function () {

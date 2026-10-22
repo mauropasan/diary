@@ -66,7 +66,9 @@
         "subtitle": "Introdueix el teu correu electrònic, la clau de recuperació que vas desar i una contrasenya nova. Sense la clau de recuperació no és possible accedir a les teves entrades.",
         "recoveryKey": "Clau de recuperació",
         "submit": "Restaura l'accés",
-        "submitting": "S'està restaurant…"
+        "submitting": "S'està restaurant…",
+        "twoFactorCode": "Codi d’autenticació (si està activat)",
+        "twoFactorHint": "Només cal si el compte té activada l’autenticació de dos factors."
     },
     "unlock": {
         "title": "Desbloqueja el diari",
@@ -378,5 +380,8 @@
             "pull_confirm": "Recupera les entrades noves del servidor i envia els canvis fets en aquest dispositiu.",
             "never": "Encara no s’ha sincronitzat"
         }
+    },
+    "setup": {
+        "recoverTwoFactorHint": "Només cal si el compte té activada l’autenticació de dos factors."
     }
 }

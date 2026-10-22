@@ -13,6 +13,7 @@ use App\Reminders\ReminderScheduler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Mews\Purifier\Facades\Purifier;
 
 /**
  * The pull/push heart of the offline-first sync API.
@@ -251,8 +252,8 @@ class SyncController extends Controller
 
             $entry = $user->entries()->make(['date' => $date]);
             $entry->forceFill([
-                'title' => $record['title'] ?? null,
-                'content' => $record['content'] ?? null,
+                'title' => isset($record['title']) && is_string($record['title']) ? strip_tags($record['title']) : ($record['title'] ?? null),
+                'content' => isset($record['content']) && is_string($record['content']) ? Purifier::clean($record['content']) : ($record['content'] ?? null),
                 'mood' => $record['mood'] ?? null,
                 'updated_ms' => $clientMs,
             ])->save();
@@ -275,8 +276,8 @@ class SyncController extends Controller
                 }
             } else {
                 $entry->forceFill([
-                    'title' => $record['title'] ?? null,
-                    'content' => $record['content'] ?? null,
+                    'title' => isset($record['title']) && is_string($record['title']) ? strip_tags($record['title']) : ($record['title'] ?? null),
+                    'content' => isset($record['content']) && is_string($record['content']) ? Purifier::clean($record['content']) : ($record['content'] ?? null),
                     'mood' => $record['mood'] ?? null,
                     'updated_ms' => $clientMs,
                 ]);
@@ -326,7 +327,14 @@ class SyncController extends Controller
             }
 
             $note = $user->notes()->make(['color' => Note::DEFAULT_COLOR, 'kind' => Note::DEFAULT_KIND]);
-            $note->forceFill($this->noteAttributes($record) + ['updated_ms' => $clientMs])->save();
+            $noteAttrs = $this->noteAttributes($record);
+            if (isset($noteAttrs['body']) && is_string($noteAttrs['body'])) {
+                $noteAttrs['body'] = Purifier::clean($noteAttrs['body']);
+            }
+            if (isset($noteAttrs['title']) && is_string($noteAttrs['title'])) {
+                $noteAttrs['title'] = strip_tags($noteAttrs['title']);
+            }
+            $note->forceFill($noteAttrs + ['updated_ms' => $clientMs])->save();
 
             $this->scheduleReminders($note);
 
@@ -349,7 +357,14 @@ class SyncController extends Controller
                     $note->delete();
                 }
             } else {
-                $note->forceFill($this->noteAttributes($record) + ['updated_ms' => $clientMs]);
+                $noteAttrs = $this->noteAttributes($record);
+                if (isset($noteAttrs['body']) && is_string($noteAttrs['body'])) {
+                    $noteAttrs['body'] = Purifier::clean($noteAttrs['body']);
+                }
+                if (isset($noteAttrs['title']) && is_string($noteAttrs['title'])) {
+                    $noteAttrs['title'] = strip_tags($noteAttrs['title']);
+                }
+                $note->forceFill($noteAttrs + ['updated_ms' => $clientMs]);
 
                 if ($note->trashed()) {
                     $note->restore();

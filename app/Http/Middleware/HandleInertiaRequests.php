@@ -40,8 +40,9 @@ class HandleInertiaRequests extends Middleware
             'backgroundVersion' => (string) ($user === null ? 0 : $user->background_version),
             'notificationCount' => (int) ($user?->notifications()->unread()->due()->count() ?? 0),
             // scripts/apk.sh publishes the Android build here; the nav only
-            // offers the download while a build is actually available.
-            'apkAvailable' => Storage::disk('apk')->exists('diary.apk'),
+            // offers the download while a build is actually available and the
+            // viewer is signed in (the routes are auth-protected).
+            'apkAvailable' => $user !== null && Storage::disk('apk')->exists('diary.apk'),
             'diary' => [
                 'lockAfterMinutes' => (int) config('diary.lock_after_minutes'),
                 'timezone' => config('app.timezone'),

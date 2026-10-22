@@ -95,7 +95,7 @@ it('rejects an account without recovery material', function () {
         'recovery_key' => $this->recoveryKey,
         'password' => 'recovered-password',
         'password_confirmation' => 'recovered-password',
-    ])->assertSessionHasErrors('email');
+    ])->assertSessionHasErrors('recovery_key');
 });
 
 it('throttles repeated recovery attempts', function () {

@@ -66,7 +66,9 @@
         "subtitle": "Inserisci la tua email, la chiave di recupero che hai conservato e una nuova password. Senza la chiave di recupero non è possibile accedere alle tue voci.",
         "recoveryKey": "Chiave di recupero",
         "submit": "Ripristina l'accesso",
-        "submitting": "Ripristino…"
+        "submitting": "Ripristino…",
+        "twoFactorCode": "Codice di autenticazione (se attivo)",
+        "twoFactorHint": "Necessario solo se l’autenticazione a due fattori è attiva sull’account."
     },
     "unlock": {
         "title": "Sblocca il diario",
@@ -378,5 +380,8 @@
             "pull_confirm": "Recupera le nuove voci dal server e invia le modifiche fatte su questo dispositivo.",
             "never": "Mai sincronizzato"
         }
+    },
+    "setup": {
+        "recoverTwoFactorHint": "Necessario solo se l’autenticazione a due fattori è attiva su questo account."
     }
 }

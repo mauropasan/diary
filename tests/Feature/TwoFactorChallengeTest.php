@@ -244,14 +244,15 @@ it('keeps unlocking after inactivity password only', function () {
     $this->get(route('diary.show', now()->toDateString()))->assertOk();
 });
 
-it('lets the one time recovery key bypass the second factor', function () {
+it('requires a second factor when recovering an account with two-factor enabled', function () {
     $user = User::factory()->create(['password' => Hash::make('old-password')]);
     $recoveryKey = app(DiaryKeyManager::class)->provision($user, 'old-password');
 
+    $totp = new Totp;
     $recovery = new RecoveryCodes;
 
     $user->forceFill([
-        'two_factor_secret' => (new Totp)->generateSecret(),
+        'two_factor_secret' => $totp->generateSecret(),
         'two_factor_confirmed_at' => now(),
         'two_factor_recovery_codes' => $recovery->hash($recovery->generate()),
     ])->save();
@@ -259,6 +260,16 @@ it('lets the one time recovery key bypass the second factor', function () {
     $this->post(route('diary.recovery.store'), [
         'email' => $user->email,
         'recovery_key' => $recoveryKey,
+        'password' => 'recovered-password',
+        'password_confirmation' => 'recovered-password',
+    ])->assertSessionHasErrors('code');
+
+    $this->assertGuest();
+
+    $this->post(route('diary.recovery.store'), [
+        'email' => $user->email,
+        'recovery_key' => $recoveryKey,
+        'code' => $totp->currentCode($user->fresh()->two_factor_secret),
         'password' => 'recovered-password',
         'password_confirmation' => 'recovered-password',
     ])->assertRedirect(route('diary.show', now()->toDateString()));

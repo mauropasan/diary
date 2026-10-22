@@ -89,8 +89,8 @@ class EntryController extends Controller
             $entry = $user->entries()->updateOrCreate(
                 ['date' => $day->toDateString()],
                 [
-                    'title' => $request->input('title'),
-                    'content' => $request->input('content'),
+                    'title' => $request->sanitizedTitle(),
+                    'content' => $request->sanitizedContent(),
                     'mood' => $request->input('mood'),
                 ],
             );

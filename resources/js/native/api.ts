@@ -236,16 +236,17 @@ export class DiarioApi {
 
     /**
      * Sign in with the one-time recovery key issued at registration — the
-     * passwordless way back into a paired account.
+     * way back into a paired account when the password is gone.
      */
-    async recover(email: string, recoveryKey: string): Promise<PairSuccess> {
-        const { data } = await this.json<PairSuccess>(
-            '/api/v1/auth/recover-key',
-            {
-                method: 'POST',
-                json: { email, recovery_key: recoveryKey },
-            },
-        );
+    async recover(
+        email: string,
+        recoveryKey: string,
+        code?: string,
+    ): Promise<PairSuccess> {
+        const { data } = await this.json<PairSuccess>('/api/v1/auth/recover-key', {
+            method: 'POST',
+            json: { email, recovery_key: recoveryKey, code },
+        });
 
         return data;
     }

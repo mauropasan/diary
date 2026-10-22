@@ -20,21 +20,6 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TwoFactorController;
 use Illuminate\Support\Facades\Route;
 
-// The APK carries no diary data, so the install link for the Android shell
-// stays public: users download from here before signing in. `scripts/apk.sh`
-// republishes the file on every build, so the link is always up to date.
-Route::get('download', [DownloadController::class, 'apk'])
-    ->middleware('throttle:10,1')
-    ->name('download.apk');
-
-// The version of that same build, written next to the APK by `scripts/apk.sh`.
-// The shell compares it with its own versionCode and offers the update before
-// the user has to wonder whether the APK is current. Public for the same reason
-// as the download itself.
-Route::get('download/version', [DownloadController::class, 'version'])
-    ->middleware('throttle:30,1')
-    ->name('download.version');
-
 Route::middleware('guest')->group(function () {
     Route::get('login', [LoginController::class, 'create'])->name('login');
     Route::post('login', [LoginController::class, 'store'])
@@ -65,6 +50,16 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+
+    // The Android shell is distributed from the signed-in interface only, so
+    // the build (and its version metadata) is never exposed to anonymous
+    // visitors. `scripts/apk.sh` republishes the file on every release.
+    Route::get('download', [DownloadController::class, 'apk'])
+        ->middleware('throttle:10,1')
+        ->name('download.apk');
+    Route::get('download/version', [DownloadController::class, 'version'])
+        ->middleware('throttle:30,1')
+        ->name('download.version');
 
     Route::middleware('admin')->group(function () {
         Route::get('admin/users', [AdminUsersController::class, 'index'])

@@ -23,12 +23,13 @@ use Illuminate\Validation\ValidationException;
  * Login mirrors the web sign-in (password first, authenticator second) but is
  * stateless: a two-factor attempt is parked in the cache under a random id
  * instead of the session, and a successful sign-in answers with a Sanctum
- * bearer token plus the diary encryption key.
+ * bearer token and the wrapped key material the device needs.
  *
- * The DEK is handed back over HTTPS only after the password (and second
- * factor) have been proven, because the offline-first app needs it to encrypt
- * and decrypt locally and to fill the X-Diary-Key header on every later
- * request. The server never stores it in the clear.
+ * The DEK itself never leaves the server in this payload. The client derives
+ * the KEK from the password (or opens the recovery copy with the recovery
+ * key) and unwraps the DEK locally from `kdf_salt`/`wrapped_key`, exactly as
+ * the web client does from its session. The server only verifies that the
+ * password really unwraps the key before minting the token.
  */
 class AuthController extends Controller
 {
@@ -175,23 +176,29 @@ class AuthController extends Controller
      * Finish a sign-in with the one-time recovery key issued at registration.
      *
      * The recovery key wraps the same DEK as the password does, so proving it
-     * is enough to pair a device when the password is gone — no second factor
-     * applies, because losing the password is exactly what it is for.
+     * pairs a device when the password is gone. It does not replace the second
+     * factor: an account with two-factor authentication still has to provide a
+     * current authenticator code, otherwise a stolen recovery key would be a
+     * complete bypass.
      */
     public function recoverKey(Request $request): JsonResponse
     {
         $request->validate([
             'email' => ['required', 'string', 'email'],
             'recovery_key' => ['required', 'string'],
+            'code' => ['nullable', 'string', 'max:32'],
         ]);
 
         $user = User::query()
             ->where('email', $request->string('email')->toString())
             ->first();
 
+        // Unknown accounts and accounts without recovery material fail with
+        // exactly the same message as a wrong key, so this endpoint cannot be
+        // used to enumerate registered email addresses.
         if ($user === null || $user->recovery_wrapped_key === null) {
             throw ValidationException::withMessages([
-                'email' => __('messages.recovery.no-account'),
+                'recovery_key' => __('messages.recovery.invalid-key'),
             ]);
         }
 
@@ -206,7 +213,9 @@ class AuthController extends Controller
             ]);
         }
 
-        return response()->json($this->payload($user, $dek));
+        $this->requireSecondFactor($user, $request->string('code')->trim()->toString());
+
+        return response()->json($this->payload($user));
     }
 
     /**
@@ -247,33 +256,37 @@ class AuthController extends Controller
     private function finish(User $user, string $password): array
     {
         try {
-            $dek = $this->keys->unlock($user, $password);
+            // Unwrapping also verifies the account's key marker. The key is
+            // not sent to the client; it only proves the password opens it.
+            $this->keys->unlock($user, $password);
         } catch (KeyUnwrapException) {
             throw ValidationException::withMessages([
                 'password' => __('messages.login.unwrap-failed'),
             ]);
         }
 
-        return $this->payload($user, $dek);
+        return $this->payload($user);
     }
 
     /**
-     * The pairing payload itself: a fresh token, the DEK (base64) and the
-     * wrapped key material the client keeps for offline unlocking.
+     * The pairing payload itself: a fresh token and the wrapped key material
+     * the client keeps for offline unlocking. The DEK is intentionally absent:
+     * the device derives it locally from these values and the password (or the
+     * recovery key).
      *
      * @return array<string, mixed>
      */
-    private function payload(User $user, string $dek): array
+    private function payload(User $user): array
     {
         $token = $user->createToken('api', ['sync']);
 
         return [
             'token' => $token->plainTextToken,
             'token_type' => 'Bearer',
-            'dek' => base64_encode($dek),
             'key' => [
                 'kdf_salt' => $user->kdf_salt,
                 'wrapped_key' => $user->wrapped_key,
+                'recovery_wrapped_key' => $user->recovery_wrapped_key,
             ],
             'recovery_available' => $user->recovery_wrapped_key !== null,
             'user' => [
@@ -284,6 +297,31 @@ class AuthController extends Controller
                 'two_factor_enabled' => $user->twoFactorEnabled(),
             ],
         ];
+    }
+
+    /**
+     * Require a current authenticator code when the account has two factor on.
+     *
+     * The recovery key proves knowledge of a long-lived secret; it must not
+     * silently downgrade an account that deliberately enabled a second factor.
+     *
+     * @throws ValidationException When the account needs a code and it is missing or wrong.
+     */
+    private function requireSecondFactor(User $user, string $code): void
+    {
+        if (! $user->twoFactorEnabled()) {
+            return;
+        }
+
+        $secret = $user->two_factor_secret;
+
+        if (! is_string($secret)
+            || preg_match('/^\d{'.Totp::DIGITS.'}$/', $code) !== 1
+            || ! $this->totp->verify($code, $secret)) {
+            throw ValidationException::withMessages([
+                'code' => __('messages.two_factor.invalid-code'),
+            ]);
+        }
     }
 
     /**

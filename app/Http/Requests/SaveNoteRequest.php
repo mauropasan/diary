@@ -6,8 +6,10 @@ use App\Models\Note;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
+use Mews\Purifier\Facades\Purifier;
 
 class SaveNoteRequest extends FormRequest
 {
@@ -61,8 +63,43 @@ class SaveNoteRequest extends FormRequest
      */
     private function isEmpty(): bool
     {
-        return blank($this->string('title')->toString())
-            && blank($this->string('body')->toString());
+        $title = $this->input('title');
+        $body = $this->input('body');
+
+        $title = is_string($title) ? strip_tags($title) : $title;
+        $body = is_string($body) ? trim(strip_tags(Purifier::clean($body))) : $body;
+
+        return blank($title) && blank($body);
+    }
+
+    public function sanitizedTitle(): ?string
+    {
+        $title = $this->input('title');
+
+        if ($title === null || $title === '') {
+            return null;
+        }
+
+        if (! is_string($title)) {
+            return null;
+        }
+
+        $title = strip_tags($title);
+
+        return $title === '' ? null : $title;
+    }
+
+    public function sanitizedBody(): ?string
+    {
+        $body = $this->input('body');
+
+        if (! is_string($body) || $body === '') {
+            return null;
+        }
+
+        $body = Purifier::clean($body);
+
+        return $body === '' ? null : $body;
     }
 
     /**

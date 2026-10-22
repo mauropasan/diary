@@ -170,8 +170,8 @@ export async function bootSession(): Promise<void> {
  * Finish the setup wizard for a server profile: persist the account, wrap
  * the DEK under the device Keystore key and enter the app unlocked.
  *
- * The caller has already unwrapped `dekB64` from the server's material
- * (password KEK, or the raw recovery key) — this only verifies and stores.
+ * The DEK must be unwrapped locally from the returned key material before
+ * calling this function.
  */
 export async function finishPairing(input: {
     serverUrl: string;
